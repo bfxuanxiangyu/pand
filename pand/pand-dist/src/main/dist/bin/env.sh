@@ -13,16 +13,16 @@ if [ ! -x "$JAVA" ]; then
     exit 1
 fi
 
-if [ "x$FFA_MIN_MEM" = "x" ]; then
-    FFA_MIN_MEM=2g
+if [ "x$PAND_MIN_MEM" = "x" ]; then
+    PAND_MIN_MEM=2g
 fi
-if [ "x$FFA_MAX_MEM" = "x" ]; then
-    FFA_MAX_MEM=4g
+if [ "x$PAND_MAX_MEM" = "x" ]; then
+    PAND_MAX_MEM=4g
 fi
 
-if [ "x$FFA_HEAP_SIZE" != "x" ]; then
-    FFA_MIN_MEM=$FFA_HEAP_SIZE
-    FFA_MAX_MEM=$FFA_HEAP_SIZE
+if [ "x$PAND_HEAP_SIZE" != "x" ]; then
+    PAND_MIN_MEM=$PAND_HEAP_SIZE
+    PAND_MAX_MEM=$PAND_HEAP_SIZE
 fi
 
 if [ "x${LOG4J_PROP}" = "x" ]
@@ -30,22 +30,22 @@ then
     LOG4J_PROP="WARN,LOGFILE"
 fi
 
-if [ ! -d "${FFA_HOME}/temp" ]
+if [ ! -d "${PAND_HOME}/temp" ]
 then
-    mkdir "${FFA_HOME}/temp";
+    mkdir "${PAND_HOME}/temp";
 fi
 
 JAVA_DIRECT_SIZE=4096m
 
 #JVM
 JAVA_OPTS="-server $JAVA_OPTS"
-JAVA_OPTS="$JAVA_OPTS -Xms${FFA_MIN_MEM} -Xmx${FFA_MAX_MEM} -XX:MaxDirectMemorySize=${JAVA_DIRECT_SIZE}"
+JAVA_OPTS="$JAVA_OPTS -Xms${PAND_MIN_MEM} -Xmx${PAND_MAX_MEM} -XX:MaxDirectMemorySize=${JAVA_DIRECT_SIZE}"
 JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m"
-JAVA_OPTS="$JAVA_OPTS -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${FFA_HOME}\logs\dump.log"
+JAVA_OPTS="$JAVA_OPTS -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${PAND_HOME}\logs\dump.log"
 
 #PATH
-JAVA_OPTS="$JAVA_OPTS -Dpath.home=${FFA_HOME}"
-JAVA_OPTS="$JAVA_OPTS -Djava.io.tmpdir=${FFA_HOME}/temp"
+JAVA_OPTS="$JAVA_OPTS -Dpath.home=${PAND_HOME}"
+JAVA_OPTS="$JAVA_OPTS -Djava.io.tmpdir=${PAND_HOME}/temp"
 
 #DEBUG
 #DEBUG_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
@@ -80,7 +80,7 @@ JAVA_OPTS="$JAVA_OPTS $GC_OPTS -XX:+DisableExplicitGC"
 JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
 
 # Set base classpath
-CLASSPATH="${FFA_HOME}/lib/*"
+CLASSPATH="${PAND_HOME}/lib/*"
 
 # function
 stopprocess(){
