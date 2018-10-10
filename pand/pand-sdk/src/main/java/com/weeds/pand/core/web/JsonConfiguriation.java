@@ -34,7 +34,7 @@ public class JsonConfiguriation implements Serializable {
 	/**
 	 * 前端采集地址
 	 */
-	@Value("${app.collect.host}")
+//	@Value("${app.collect.host}")
 	private String collectHost;
 
 	public String getCollectHost() {

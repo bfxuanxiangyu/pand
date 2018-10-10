@@ -72,7 +72,8 @@ public class AdminController {
 	@RequestMapping("")
 	public ModelAndView webmain(){
 		ModelAndView view = new ModelAndView();
-		view.setViewName("main");
+		view.setViewName("login");
+//		view.setViewName("main");
 		return view;
 	}
 
@@ -81,9 +82,9 @@ public class AdminController {
 		return "admin";
     }
 	
-	/*@RequestMapping("/main")
+	@RequestMapping("/main")
     public String main() {
 		return "main";
-    }*/
+    }
 	
 }
