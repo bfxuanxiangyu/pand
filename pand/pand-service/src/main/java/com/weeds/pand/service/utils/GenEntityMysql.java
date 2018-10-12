@@ -32,11 +32,11 @@ public class GenEntityMysql {
 
     private String packageOutPath = "com.weeds.pand.service.system.domain";//指定实体生成所在包的路径
     private String authorName = "xuanxy";//作者名字
-    private String tablename = "ask_for";//表名
-    private String className = "AskFor";//类名
+    private String tablename = "skills";//表名
+    private String className = "Skills";//类名
     private String tableComment = null;//表注释
     private String javaFilePath = "./";
-    private String[] colnames; // 列名数组
+    private String[] colnames; // 列名数组	
     private String[] filedNames;//属性名，遵守驼峰规则
     private Map<String, String> columnCommentMap = new HashMap<String, String>();
     private String[] colTypes; //列名类型数组
@@ -46,9 +46,9 @@ public class GenEntityMysql {
     private boolean f_jpa = true; // 是否需要生成基于注解的JPA实体对象
 
     //数据库连接
-    private static final String URL = "jdbc:mysql://61.129.57.240:33036/aoi";
-    private static final String NAME = "aoi";
-    private static final String PASS = "sinnrenadmin";
+    private static final String URL = "jdbc:mysql://61.129.57.240:33036/pand";
+    private static final String NAME = "pand";
+    private static final String PASS = "pandadmin";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     
     

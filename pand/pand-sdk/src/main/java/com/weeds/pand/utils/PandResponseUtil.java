@@ -73,10 +73,30 @@ public class PandResponseUtil {
 	 * @param data
 	 * @return
 	 */
-	public static String printJson(int result,int code,Object data){
+	public static String printJson(String message,Object data){
 		Map<String, Object> printMap = Maps.newHashMap();
-		printMap.put("result", result);
-		printMap.put("code", code);
+		printMap.put("result", 1);
+		printMap.put("message", message);
+		printMap.put("data", data);
+		ObjectMapper mapper = new ObjectMapper();
+		String returnValue = "";
+		try {
+			returnValue = mapper.writeValueAsString(printMap);
+		} catch (JsonProcessingException e) {
+			logger.error("json转换失败"+e.getMessage(),e);
+		}
+		return returnValue;
+	}
+	/**
+	 * @param result
+	 * @param code
+	 * @param data
+	 * @return
+	 */
+	public static String printFailJson(String message,Object data){
+		Map<String, Object> printMap = Maps.newHashMap();
+		printMap.put("result", 0);
+		printMap.put("message", message);
 		printMap.put("data", data);
 		ObjectMapper mapper = new ObjectMapper();
 		String returnValue = "";
