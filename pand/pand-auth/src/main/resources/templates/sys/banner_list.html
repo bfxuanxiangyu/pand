@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<br/>
+        <div class="panel panel-default">
+             <div class="panel-heading ">
+			    <div class="btn-group pull-right">
+					<button class="btn btn-primary"  onclick="menuManager(this, '/sys/banner_add');">新增</button>
+			    </div>
+				<h4>轮播图管理</h4>
+			</div>
+			<div class="panel-body">
+					<table class="table table-striped table-bordered table-hover" id="dataTables-banners">
+						<thead>
+							<tr>
+								<th>创建时间</th>
+								<th>修改时间</th>
+								<th>轮播图状态</th>
+								<th>图片</th>
+								<th>排序</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+            				<tr class="odd gradeX" th:each="list:${bannerList}">
+            					<td th:text="${list.createTime== null ? '' : #dates.format(list.createTime, 'yyyy/MM/dd HH:mm:ss')}"></td>
+                				<td th:text="${list.updateTime== null ? '' : #dates.format(list.updateTime, 'yyyy/MM/dd HH:mm:ss')}"></td>
+                				<td>
+                					<span th:if="${list.status==1}" style="color: green;">可用</span>
+                					<span th:if="${list.status==0}" style="color: red;">不可用</span>
+                				</td>
+                				<td style="width:30%; cursor: pointer;">
+                					<img alt="暂无" th:src="${list.imgUrl}" width="100%" height="80px" th:title="${list.imgUrl}"/>
+                				</td>
+                				<td th:text="${list.imgOrder}"></td>
+                				<td class="center">
+	                            <div class="btn-group">
+	                            	<button type="button" class="btn btn-primary btn-sm"
+	                                         th:onclick="'menuManager(this,\'/sys/banner_update?id='+${list.id}+'\');'">编辑</button>
+	                                <button class="btn btn-danger btn-sm" data-toggle="modal" th:if="${list.status == 1}" th:onclick="'delBanner(\''+${list.id}+'\');'">变为不可用</button>
+	                                <button class="btn btn-success btn-sm" data-toggle="modal" th:if="${list.status == 0}" th:onclick="'noDelBanner(\''+${list.id}+'\');'">变为可用</button>
+	                            </div>
+	                        </td>
+            				</tr>
+            			</tbody>		
+					</table>
+				</div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+
+<script type="text/javascript">
+
+function menuManager(e, action){
+    $.ajax({url:action,success:function(result){
+        $("#page-wrapper").html(result);
+    }});
+}
+
+function delBanner(id){
+	$.ajax({
+		 data: {
+	        	"status": 0,"id":id
+	        	},
+		url:"/sys/banner_status",
+		success: function(data){
+			$("#page-wrapper").html(data);
+		}
+	})
+}
+function noDelBanner(id){
+	$.ajax({
+		 data: {
+	        	"status": 1,"id":id
+	        	},
+		url:"/sys/banner_status",
+		success: function(data){
+			$("#page-wrapper").html(data);
+		}
+	})
+}
+</script>
+
+</html>

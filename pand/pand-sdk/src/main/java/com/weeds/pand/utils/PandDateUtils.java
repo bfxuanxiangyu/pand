@@ -20,7 +20,7 @@ public class PandDateUtils {
     private static Date earlydate = new Date();  
     private static Date latedate = new Date();
 	
-public static final String format_day = "yyyy-MM-dd";
+    public static final String format_day = "yyyy-MM-dd";
 	
 	public static final String format_senconde = "yyyy-MM-dd HH:mm:ss";
 	

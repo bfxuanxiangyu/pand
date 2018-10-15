@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="row">
+	<div class="col-lg-12">
+		<h6 class="page-header"></h6>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="container">
+	<div class="row">
+		<!-- form: -->
+		<section>
+			<div class="col-lg-8 col-lg-offset-2">
+				<div class="page-header">
+					<h2>Banner添加</h2>
+				</div>
+
+				<form id="bannerForm" class="form-horizontal"
+					data-bv-message="This value is not valid"
+					data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+					data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+					data-bv-feedbackicons-validating="glyphicon glyphicon-refresh"
+					method="post" enctype="multipart/form-data"  th:object="${banner}">
+					
+					<input type="hidden" class="form-control" name="id" th:value="*{id}"/>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">banner图片</label>
+					    <input type="file" id="inputfile" name="file" required="required"/>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">排序</label>
+						<div class="col-lg-5">
+							<input type="number" class="form-control" name="imgOrder" th:value="*{imgOrder}" required="required"/>
+						</div>
+					</div>
+					<div class="form-group">
+                        <label class="col-lg-3 control-label">状态</label>
+                        <div class="col-lg-5">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" checked="checked" name="status" value="1" 
+                                    	required="required" data-bv-notempty-message="The gender is required" /> 使用
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="status" value="0"/> 禁用
+                                </label>
+                            </div>                        
+                        </div>
+                    </div>
+					<div class="form-group">
+						<div class="col-lg-9 col-lg-offset-3">
+							<button type="submit" class="btn btn-primary">修改提交</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</section>
+		<!-- :form -->
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(
+			function() {
+				$('#bannerForm').bootstrapValidator().on('success.form.bv',
+						function(e) {
+							$('#bannerForm').ajaxSubmit({
+								type : 'post',
+								url : '/sys/banner_save',
+								success : function(result) {
+									$("#page-wrapper").html(result);
+								},
+								error : function(result) {
+								}
+							});
+							return false;
+						});
+			});
+</script>
+</html>

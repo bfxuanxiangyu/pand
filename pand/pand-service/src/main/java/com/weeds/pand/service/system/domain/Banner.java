@@ -22,12 +22,10 @@ public class Banner {
 	@GenericGenerator(name = "uuid", strategy = "uuid")
 	private String id;
 
-	@JsonIgnore
 	@Column(name="create_time")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
 	private Date createTime;
 
-	@JsonIgnore
 	@Column(name="update_time")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
 	private Date updateTime;
@@ -35,7 +33,6 @@ public class Banner {
 	/**
 	* 是否可用 0不可用  1可用   默认1
 	*/ 
-	@JsonIgnore
 	@Column(name="status")
 	private Integer status;
 
@@ -59,7 +56,6 @@ public class Banner {
 	public void setId(String id){
 		this.id=id;
 	}
-	@JsonIgnore
 	public Date getCreateTime(){
 		return createTime;
 	}
@@ -67,7 +63,6 @@ public class Banner {
 	public void setCreateTime(Date createTime){
 		this.createTime=createTime;
 	}
-	@JsonIgnore
 	public Date getUpdateTime(){
 		return updateTime;
 	}
@@ -75,7 +70,6 @@ public class Banner {
 	public void setUpdateTime(Date updateTime){
 		this.updateTime=updateTime;
 	}
-	@JsonIgnore
 	public Integer getStatus(){
 		return status;
 	}
