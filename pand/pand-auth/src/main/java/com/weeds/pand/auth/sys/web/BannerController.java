@@ -27,9 +27,9 @@ import com.weeds.pand.utils.PandStringUtils;
 
 @Controller
 @RequestMapping("/sys")
-public class SysController {
+public class BannerController {
 	
-	private Logger logger = LoggerFactory.getLogger(SysController.class);
+	private Logger logger = LoggerFactory.getLogger(BannerController.class);
 	
 	@Value("${img.savePath}")
 	private String savePath;
