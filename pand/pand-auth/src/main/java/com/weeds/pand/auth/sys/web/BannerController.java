@@ -73,7 +73,7 @@ public class BannerController {
 		return bannerList();
 	}
 	@RequestMapping("/banner_save")
-	public ModelAndView bannerSave(@RequestParam("file") MultipartFile file,Integer imgOrder,Integer status,String id) {
+	public ModelAndView bannerSave(@RequestParam(value="file", required=false) MultipartFile file,Integer imgOrder,Integer status,String id) {
 		
 		String iu = "";
 		if (file != null && !file.isEmpty()) {    

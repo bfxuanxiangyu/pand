@@ -72,7 +72,7 @@ public class SkillsController {
 		return skillsList();
 	}
 	@RequestMapping("/skills_save")
-	public ModelAndView skillsSave(@RequestParam("file") MultipartFile file
+	public ModelAndView skillsSave(@RequestParam(value="file", required=false) MultipartFile file
 			,Integer iconOrder,Integer status,String id,String content,String title) {
 		
 		String iu = "";
