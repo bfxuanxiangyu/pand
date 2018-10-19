@@ -39,8 +39,13 @@ public class PandUserWorkController {
 	
 	/**
 	 * 个人信息补全信息
+	 *   1、修改手机   userPhone、anthCode不能为空
+	 *   2、修改昵称  userNickname不能为空
+	 *   3、绑定微信 userWeixin不能为空
+	 *   4、编辑头像 userHeadpng   不能为空，base64字符串上传
 	 * @param token
 	 * @param pandUser
+	 * @param authCode
 	 * @return
 	 */
 	@ResponseBody
