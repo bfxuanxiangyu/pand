@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Thu Oct 18 16:59:05 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.mechanic.mapper.PandUserMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.mechanic.domain.PandUser">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="user_type" jdbcType="BIGINT" property="userType" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+		<result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+		<result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
+		<result column="user_signature" jdbcType="VARCHAR" property="userSignature" />
+		<result column="user_weixin" jdbcType="VARCHAR" property="userWeixin" />
+		<result column="user_qq" jdbcType="VARCHAR" property="userQq" />
+		<result column="user_email" jdbcType="VARCHAR" property="userEmail" />
+		<result column="user_cardtype" jdbcType="BIGINT" property="userCardtype" />
+		<result column="user_cardcode" jdbcType="VARCHAR" property="userCardcode" />
+		<result column="user_sex" jdbcType="BIGINT" property="userSex" />
+		<result column="user_provinces" jdbcType="VARCHAR" property="userProvinces" />
+		<result column="user_city" jdbcType="VARCHAR" property="userCity" />
+		<result column="user_area" jdbcType="VARCHAR" property="userArea" />
+		<result column="user_address" jdbcType="VARCHAR" property="userAddress" />
+		<result column="user_headpng" jdbcType="VARCHAR" property="userHeadpng" />
+		<result column="user_status" jdbcType="VARCHAR" property="userStatus" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandUserList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_user where 1=1 
+       <if test="userType != null">
+       		and user_type = #{userType}
+       </if>
+       <if test="userName != null">
+       		and user_name = #{userName}
+       </if>
+       <if test="userPhone != null">
+       		and user_phone = #{userPhone}
+       </if>
+       <if test="userWeixin != null">
+       		and user_weixin = #{userWeixin}
+       </if>
+       <if test="userStatus != null">
+       		and user_status = #{userStatus}
+       </if>
+       
+       order by create_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+
+       </if>
+   </select>
+   <!-- 查询单个对象 -->
+   <select id="getPandUserObj" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_user where 1=1 
+       <if test="userType != null">
+       		and user_type = #{userType}
+       </if>
+       <if test="userName != null">
+       		and user_name = #{userName}
+       </if>
+       <if test="userPhone != null">
+       		and user_phone = #{userPhone}
+       </if>
+       <if test="userWeixin != null">
+       		and user_weixin = #{userWeixin}
+       </if>
+       limit 1
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandUserCount" parameterType="map" resultType="int">
+       select count(1) from pand_user where 1=1 
+   </select>
+
+
+</mapper>
+

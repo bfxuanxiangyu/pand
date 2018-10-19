@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
 import com.weeds.pand.utils.PandStringUtils;
 
 
@@ -30,10 +31,10 @@ import com.weeds.pand.utils.PandStringUtils;
  */
 public class GenEntityMysql {
 
-    private String packageOutPath = "com.weeds.pand.service.system.domain";//指定实体生成所在包的路径
+    private String packageOutPath = "com.weeds.pand.service.mechanic.domain";//指定实体生成所在包的路径
     private String authorName = "xuanxy";//作者名字
-    private String tablename = "skills";//表名
-    private String className = "Skills";//类名
+    private String tablename = "pand_user";//表名
+    private String className = "PandUser";//类名
     private String tableComment = null;//表注释
     private String javaFilePath = "./";
     private String[] colnames; // 列名数组	
@@ -54,19 +55,24 @@ public class GenEntityMysql {
     
     //开始生成dao层mapper对象   
     private String mapperFilePath = javaFilePath;//同一个项目里边
-    private String mapperPackageOutPath = "com.wounds.dao";//dao层包路径 
+    private String mapperPackageOutPath = "com.weeds.pand.service.mechanic.mapper";//dao层包路径 
     private String mapperClassName = className+"Mapper";
 
     private String [] manyMapperFilePath = {"./","./"};//同一个项目里边
-    private String [] manyMapperPackageOutPath = {"com.wounds.dao","com.wounds.dao"};//dao层包路径 
-    private String [] myBatisPackageOutPath = {"com.wounds.dao","com.wounds.dao"};//dao层包路径 
     //开始生成dao层mapperImpl到不同项目中   
     private String mapperImplClassName = mapperClassName;
-    private String jpaImplClassName = className;
+    private String jpaImplClassName = className+"JpaDao";
     
     //生成xml
     private String xmlName = mapperClassName;
     
+    //生成service
+    private String serviceOutputPath = "com.weeds.pand.service.mechanic.service";//dao层包路径
+    private String serviceClassName = className+"Service";
+    private String serviceImplOutputPath = "com.weeds.pand.service.mechanic.service.impl";//dao层包路径
+    private String serviceImplClassName = className+"ServiceImpl";
+    
+    private static List<Colums> colList = Lists.newArrayList();
     /*
      * 构造函数
      */
@@ -115,6 +121,11 @@ public class GenEntityMysql {
                     colnames[i] = rsmd.getColumnName(i + 1).toLowerCase();//小写
                     filedNames[i] = PandStringUtils.underlineToCamelZz(colnames[i]);//转换成属性
                     colTypes[i] = rsmd.getColumnTypeName(i + 1);
+                    Colums vo = new Colums();
+                    vo.setName(colnames[i]);
+                    vo.setField(filedNames[i]);
+                    vo.setType(colTypes[i]);
+                    colList.add(vo);
 
                     if (colTypes[i].equalsIgnoreCase("datetime")) {
                         f_util = true;
@@ -126,7 +137,6 @@ public class GenEntityMysql {
                 }
 
                 String content = parse(colnames, colTypes, colSizes);
-
                 try {
                     String outputPath = javaFilePath + "/src/main/java/" + this.packageOutPath.replace(".", "/") + "/" + initcap(className) + ".java";
                     FileWriter fw = new FileWriter(outputPath);
@@ -168,110 +178,68 @@ public class GenEntityMysql {
     	
     	System.out.println("公共mapper接口生成完毕！");
     }
-    
     /**
-     * 生成公共mapperImp对象
+     * 生成公共Jap对象
      * type   1只生成manage项目下的继承    2只生成api下的    3两个项目都生成
      * @throws Exception
      */
-    public void genMapperImpl(int type) throws Exception{
+    public void genJpaImpl() throws Exception{
     	
     	try {
-    		if(type==1){
-    			//生成manage项目路径
-    			String outputPath = manyMapperFilePath[0] + "/src/main/java/" + this.manyMapperPackageOutPath[0].replace(".", "/") + "/" + initcap(mapperImplClassName) + ".java";
-    			String content = parseMapperImpl( this.manyMapperPackageOutPath[0],this.myBatisPackageOutPath[0]);
-    			FileWriter fw = new FileWriter(outputPath);
-    			PrintWriter pw = new PrintWriter(fw);
-    			pw.println(content);
-    			pw.flush();
-    			pw.close();
-    		}
-    		if(type==2){
-    			//生成api项目路径
-    			String outputPath = manyMapperFilePath[1] + "/src/main/java/" + this.manyMapperPackageOutPath[1].replace(".", "/") + "/" + initcap(mapperImplClassName) + ".java";
-    			String content = parseMapperImpl( this.manyMapperPackageOutPath[1],this.myBatisPackageOutPath[1]);
-    			FileWriter fw = new FileWriter(outputPath);
-    			PrintWriter pw = new PrintWriter(fw);
-    			pw.println(content);
-    			pw.flush();
-    			pw.close();
-    		}
-    		if(type==3){
-    			//生成manage项目路径
-    			String outputPath = manyMapperFilePath[0] + "/src/main/java/" + this.manyMapperPackageOutPath[0].replace(".", "/") + "/" + initcap(mapperImplClassName) + ".java";
-    			String content = parseMapperImpl( this.manyMapperPackageOutPath[0],this.myBatisPackageOutPath[0]);
-    			FileWriter fw = new FileWriter(outputPath);
-    			PrintWriter pw = new PrintWriter(fw);
-    			pw.println(content);
-    			pw.flush();
-    			pw.close();
-    			//生成api项目路径
-    			String outputPath1 = manyMapperFilePath[1] + "/src/main/java/" + this.manyMapperPackageOutPath[1].replace(".", "/") + "/" + initcap(mapperImplClassName) + ".java";
-    			String content1 = parseMapperImpl( this.manyMapperPackageOutPath[1],this.myBatisPackageOutPath[1]);
-    			FileWriter fw1 = new FileWriter(outputPath1);
-    			PrintWriter pw1 = new PrintWriter(fw1);
-    			pw1.println(content1);
-    			pw1.flush();
-    			pw1.close();
-    		}
+    		String outputPath = manyMapperFilePath[1] + "/src/main/java/" + mapperPackageOutPath.replace(".", "/") + "/" + initcap(jpaImplClassName) + ".java";
+    		String content = parseJpaImpl( mapperPackageOutPath);
+    		FileWriter fw = new FileWriter(outputPath);
+    		PrintWriter pw = new PrintWriter(fw);
+    		pw.println(content);
+    		pw.flush();
+    		pw.close();
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
     	
-    	System.out.println("mapperImpl接口生成完毕！");
+    	System.out.println("jpa接口生成完毕！");
     }
     /**
      * 生成公共Jap对象
      * type   1只生成manage项目下的继承    2只生成api下的    3两个项目都生成
      * @throws Exception
      */
-    public void genJpaImpl(int type) throws Exception{
+    public void genService() throws Exception{
     	
     	try {
-    		if(type==1){
-    			//生成manage项目路径
-    			String outputPath = manyMapperFilePath[0] + "/src/main/java/" + this.manyMapperPackageOutPath[0].replace(".", "/") + "/" + initcap(jpaImplClassName) + ".java";
-    			String content = parseJpaImpl( this.manyMapperPackageOutPath[0]);
-    			FileWriter fw = new FileWriter(outputPath);
-    			PrintWriter pw = new PrintWriter(fw);
-    			pw.println(content);
-    			pw.flush();
-    			pw.close();
-    		}
-    		if(type==2){
-    			//生成api项目路径
-    			String outputPath = manyMapperFilePath[1] + "/src/main/java/" + this.manyMapperPackageOutPath[1].replace(".", "/") + "/" + initcap(jpaImplClassName) + ".java";
-    			String content = parseJpaImpl( this.manyMapperPackageOutPath[1]);
-    			FileWriter fw = new FileWriter(outputPath);
-    			PrintWriter pw = new PrintWriter(fw);
-    			pw.println(content);
-    			pw.flush();
-    			pw.close();
-    		}
-    		if(type==3){
-    			//生成manage项目路径
-    			String outputPath = manyMapperFilePath[0] + "/src/main/java/" + this.manyMapperPackageOutPath[0].replace(".", "/") + "/" + initcap(jpaImplClassName) + ".java";
-    			String content = parseJpaImpl( this.manyMapperPackageOutPath[0]);
-    			FileWriter fw = new FileWriter(outputPath);
-    			PrintWriter pw = new PrintWriter(fw);
-    			pw.println(content);
-    			pw.flush();
-    			pw.close();
-    			//生成api项目路径
-    			String outputPath1 = manyMapperFilePath[1] + "/src/main/java/" + this.manyMapperPackageOutPath[1].replace(".", "/") + "/" + initcap(jpaImplClassName) + ".java";
-    			String content1 = parseJpaImpl( this.manyMapperPackageOutPath[1]);
-    			FileWriter fw1 = new FileWriter(outputPath1);
-    			PrintWriter pw1 = new PrintWriter(fw1);
-    			pw1.println(content1);
-    			pw1.flush();
-    			pw1.close();
-    		}
+    		String outputPath = javaFilePath + "/src/main/java/" + serviceOutputPath.replace(".", "/") + "/" + serviceClassName + ".java";
+    		String content = parseService();
+    		FileWriter fw = new FileWriter(outputPath);
+    		PrintWriter pw = new PrintWriter(fw);
+    		pw.println(content);
+    		pw.flush();
+    		pw.close();
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
     	
-    	System.out.println("jpa接口生成完毕！");
+    	System.out.println("service接口生成完毕！");
+    }
+    /**
+     * 生成公共Jap对象
+     * type   1只生成manage项目下的继承    2只生成api下的    3两个项目都生成
+     * @throws Exception
+     */
+    public void genServiceImpl() throws Exception{
+    	
+    	try {
+			String outputPath = javaFilePath + "/src/main/java/" + serviceImplOutputPath.replace(".", "/") + "/" + serviceImplClassName + ".java";
+			String content = parseServiceImpl();
+			FileWriter fw = new FileWriter(outputPath);
+			PrintWriter pw = new PrintWriter(fw);
+			pw.println(content);
+			pw.flush();
+			pw.close();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	
+    	System.out.println("service实现类生成完毕！");
     }
     
     /**
@@ -279,52 +247,83 @@ public class GenEntityMysql {
      * type   1只生成manage项目下的继承    2只生成api下的    3两个项目都生成
      * @throws Exception
      */
-    public void genMapperXml(int type) throws Exception{
+    public void genMapperXml() throws Exception{
     	
     	try {
-    		if(type==1){
-    			//生成manage项目路径
-        		String outputPath = manyMapperFilePath[0] + "/src/main/resources/mybatis/"+xmlName+".xml";
-        		String content = parseXml(this.manyMapperPackageOutPath[0]+"."+mapperImplClassName);
-        		FileWriter fw = new FileWriter(outputPath);
-        		PrintWriter pw = new PrintWriter(fw);
-        		pw.println(content);
-        		pw.flush();
-        		pw.close();
-    		}
-    		if(type==2){
-    			//生成api项目路径
-    			String outputPath = manyMapperFilePath[1] + "/src/main/resources/mybatis/"+xmlName+".xml";
-        		String content = parseXml( this.manyMapperPackageOutPath[1]+"."+mapperImplClassName);
-        		FileWriter fw = new FileWriter(outputPath);
-        		PrintWriter pw = new PrintWriter(fw);
-        		pw.println(content);
-        		pw.flush();
-        		pw.close();
-    		}
-    		if(type==3){
-    			//生成manage项目路径
-    			String outputPath = manyMapperFilePath[0] + "/src/main/resources/mybatis/"+xmlName+".xml";
-        		String content = parseXml(this.manyMapperPackageOutPath[0]+"."+mapperImplClassName);
-        		FileWriter fw = new FileWriter(outputPath);
-        		PrintWriter pw = new PrintWriter(fw);
-        		pw.println(content);
-        		pw.flush();
-        		pw.close();
-    			//生成api项目路径
-    			String outputPath1 = manyMapperFilePath[1] + "/src/main/resources/mybatis/"+xmlName+".xml";
-        		String content1 = parseXml( this.manyMapperPackageOutPath[1]+"."+mapperImplClassName);
-        		FileWriter fw1 = new FileWriter(outputPath1);
-        		PrintWriter pw1 = new PrintWriter(fw1);
-        		pw1.println(content1);
-        		pw1.flush();
-        		pw1.close();
-    		}
+			//生成api项目路径
+			String outputPath = manyMapperFilePath[1] + "/src/main/java/" +mapperPackageOutPath.replace(".", "/") + "/" +xmlName+".xml";
+    		String content = parseXml( mapperPackageOutPath+"."+mapperImplClassName);
+    		FileWriter fw = new FileWriter(outputPath);
+    		PrintWriter pw = new PrintWriter(fw);
+    		pw.println(content);
+    		pw.flush();
+    		pw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     	
     	 System.out.println("xml接口生成完毕！");
+    }
+    
+    /**
+     * Service接口功能：生成实体类主体代码
+     *
+     * @return
+     */
+    private String parseService() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("package " + serviceOutputPath + ";\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	
+    	//注释部分
+    	sb.append("/**\r\n");
+    	sb.append(" * service接口\r\n");
+    	//GenEntityMysql
+    	sb.append(" * 由GenEntityMysql类自动生成\r\n");
+    	sb.append(" * " + new Date() + "\r\n");
+    	sb.append(" * @" + this.authorName + "\r\n");
+    	sb.append(" */ \r\n");
+    	
+    	//接口部分
+    	//类名稍微改造 ,去掉第一个单词
+    	sb.append("public interface " + serviceClassName +"{\r\n\r\n");
+    	sb.append("}\r\n");
+    	
+    	return sb.toString();
+    }
+
+    /**
+     * ServiceImpl类功能：生成实体类主体代码
+     *
+     * @return
+     */
+    private String parseServiceImpl() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("package " + serviceImplOutputPath + ";\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	sb.append("import org.springframework.stereotype.Service;\r\n");
+    	sb.append("\r\n");
+    	sb.append("import "+serviceOutputPath+"."+serviceClassName+"; \r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	//注释部分
+    	sb.append("/**\r\n");
+    	sb.append(" * service实现类\r\n");
+    	//GenEntityMysql
+    	sb.append(" * 由GenEntityMysql类自动生成\r\n");
+    	sb.append(" * " + new Date() + "\r\n");
+    	sb.append(" * @" + this.authorName + "\r\n");
+    	sb.append(" */ \r\n");
+    	
+    	//接口部分
+    	//类名稍微改造 ,去掉第一个单词
+    	sb.append("@Service");
+    	sb.append("public class " + serviceImplClassName +" implements "+ serviceClassName + "{\r\n\r\n");
+    	sb.append("}\r\n");
+    	
+    	return sb.toString();
     }
 
     /**
@@ -443,7 +442,7 @@ public class GenEntityMysql {
     	sb.append("\r\n");
     	sb.append("import java.util.List;\r\n");
     	sb.append("import java.util.Map;\r\n");
-    	sb.append("import "+this.myBatisPackageOutPath[0]+".MyBatisRepository; \r\n");
+    	sb.append("import org.apache.ibatis.annotations.Mapper; \r\n");
     	sb.append("\r\n");
     	sb.append("import "+this.packageOutPath+"."+className+"; \r\n");
     	
@@ -458,7 +457,7 @@ public class GenEntityMysql {
     	
     	//接口部分
     	//类名稍微改造 ,去掉第一个单词
-    	sb.append("@MyBatisRepository\r\n");
+    	sb.append("@Mapper\r\n");
     	sb.append("public interface " + initcap(mapperClassName) + " {\r\n\r\n");
     	
     	sb.append("	/**\r\n");
@@ -523,8 +522,7 @@ public class GenEntityMysql {
     	sb.append("package " + packageOutPath + ";\r\n");
     	sb.append("\r\n");
     	sb.append("\r\n");
-    	sb.append("import org.springframework.data.repository.PagingAndSortingRepository; \r\n");
-    	sb.append("import org.springframework.data.jpa.repository.JpaSpecificationExecutor; \r\n");
+    	sb.append("import org.springframework.data.repository.CrudRepository; \r\n");
     	sb.append("\r\n");
     	sb.append("\r\n");
     	sb.append("import "+this.packageOutPath+"."+className+"; \r\n");
@@ -540,10 +538,9 @@ public class GenEntityMysql {
     	
     	//接口部分
     	//类名稍微改造 ,去掉第一个单词
-    	sb.append("public interface " + initcap(jpaImplClassName) + " extends PagingAndSortingRepository<"+className+",String>,JpaSpecificationExecutor<"+className+">  {\r\n\r\n");
+    	sb.append("public interface " + initcap(jpaImplClassName) + " extends CrudRepository<"+className+",String>{\r\n\r\n");
     	sb.append("}\r\n");
     	
-    	System.out.println("生成"+packageOutPath+"完毕!");
     	return sb.toString();
     }
     
@@ -563,8 +560,11 @@ public class GenEntityMysql {
     	sb.append("<mapper namespace=\""+namespace+"\">");
     	sb.append("\r\n");
     	sb.append("\r\n");
+    	sb.append(getBaseMapXml());
+    	sb.append("\r\n");
+    	sb.append("\r\n");
     	sb.append("   <!-- 查询集合 -->\r\n");
-    	sb.append("   <select id=\"get"+className+"List\" parameterType=\"map\" resultType=\""+className+"\">\r\n");
+    	sb.append("   <select id=\"get"+className+"List\" parameterType=\"map\" resultMap=\"BaseResultMap\">\r\n");
     	sb.append("       select * from "+tablename +" where 1=1 order by create_time desc \r\n");
     	sb.append("       <if test=\"begin != null\">\r\n");
     	sb.append("           limit #{begin},#{end}\r\n\r\n");
@@ -580,8 +580,26 @@ public class GenEntityMysql {
     	sb.append("\r\n");
         sb.append("</mapper>\r\n");
 
-        System.out.println("生成"+namespace+"完毕!");
         return sb.toString();
+    }
+    
+    private String getBaseMapXml(){
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("	<resultMap id=\"BaseResultMap\" type=\""+packageOutPath+"."+className+"\">\r\n");
+    	for (Colums vo : colList) {
+    		if(vo.getType().equals("INT")){
+    			vo.setType("BIGINT");
+    		}else if(vo.getType().equals("DATETIME")){
+    			vo.setType("TIMESTAMP");
+    		}
+    		if(vo.getName().equals("id")){
+    			sb.append("		<id column=\""+vo.getName()+"\" jdbcType=\""+vo.getType()+"\" property=\""+vo.getField()+"\" />\r\n");
+    		}else{
+    			sb.append("		<result column=\""+vo.getName()+"\" jdbcType=\""+vo.getType()+"\" property=\""+vo.getField()+"\" />\r\n");
+    		}
+		}
+    	sb.append("	</resultMap>\r\n");
+    	return sb.toString();
     }
 
     /**
@@ -696,9 +714,11 @@ public class GenEntityMysql {
     public static void main(String[] args) throws Exception {
     	GenEntityMysql gem =  new GenEntityMysql();
     	gem.genEntity();
-    	/*gem.genMapper();
-    	gem.genJpaImpl(1);
-    	gem.genMapperXml(1);*/
+//    	gem.genMapper();
+//    	gem.genJpaImpl();
+//    	gem.genMapperXml();
+//    	gem.genService();
+//    	gem.genServiceImpl();
     }
 
 	public String getPackageOutPath() {
@@ -845,22 +865,6 @@ public class GenEntityMysql {
 		this.manyMapperFilePath = manyMapperFilePath;
 	}
 
-	public String[] getManyMapperPackageOutPath() {
-		return manyMapperPackageOutPath;
-	}
-
-	public void setManyMapperPackageOutPath(String[] manyMapperPackageOutPath) {
-		this.manyMapperPackageOutPath = manyMapperPackageOutPath;
-	}
-
-	public String[] getMyBatisPackageOutPath() {
-		return myBatisPackageOutPath;
-	}
-
-	public void setMyBatisPackageOutPath(String[] myBatisPackageOutPath) {
-		this.myBatisPackageOutPath = myBatisPackageOutPath;
-	}
-
 	public String getMapperImplClassName() {
 		return mapperImplClassName;
 	}
@@ -899,5 +903,29 @@ public class GenEntityMysql {
 
 	public static String getDriver() {
 		return DRIVER;
+	}
+	
+	class Colums{
+		private String name;
+		private String type;
+		private String field;
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getType() {
+			return type;
+		}
+		public void setType(String type) {
+			this.type = type;
+		}
+		public String getField() {
+			return field;
+		}
+		public void setField(String field) {
+			this.field = field;
+		}
 	}
 }

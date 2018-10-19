@@ -66,6 +66,9 @@ public class PandResponseUtil {
 	public static final int PICUPLOADFAIL = 1507;
 	/** token失败 */
 	public static final int token_error = 1508;
+	public static final int nopassword = 1509;//没有密码
+	public static final int passwd_match_fail = 1510;//密码不匹配
+	
 	
 	/**
 	 * @param result
@@ -93,9 +96,10 @@ public class PandResponseUtil {
 	 * @param data
 	 * @return
 	 */
-	public static String printFailJson(String message,Object data){
+	public static String printFailJson(int errorCode,String message,Object data){
 		Map<String, Object> printMap = Maps.newHashMap();
 		printMap.put("result", 0);
+		printMap.put("errorCode", errorCode);
 		printMap.put("message", message);
 		printMap.put("data", data);
 		ObjectMapper mapper = new ObjectMapper();

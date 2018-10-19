@@ -28,7 +28,7 @@ import com.weeds.pand.service.device.domain.DeviceEntity;
 import com.weeds.pand.service.utils.DeviceFactoryUtil;
 import com.weeds.pand.utils.PandResponseUtil;
 
-@WebFilter(filterName="oauthFilter",urlPatterns="/*")
+@WebFilter(filterName="oauthFilter",urlPatterns="/api/*")
 public class OauthFilter implements Filter {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OauthFilter.class);

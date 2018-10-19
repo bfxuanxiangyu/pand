@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Thu Oct 18 15:03:41 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.system.mapper.PandImagesMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.system.domain.PandImages">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="img_type" jdbcType="BIGINT" property="imgType" />
+		<result column="img_model" jdbcType="BIGINT" property="imgModel" />
+		<result column="model_id" jdbcType="VARCHAR" property="modelId" />
+		<result column="img_status" jdbcType="BIGINT" property="imgStatus" />
+		<result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+		<result column="img_base64" jdbcType="BIGINT" property="imgBase64" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandImagesList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_images where 1=1 order by create_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+
+       </if>
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandImagesCount" parameterType="map" resultType="int">
+       select count(1) from pand_images where 1=1 
+   </select>
+
+
+</mapper>
+

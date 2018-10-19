@@ -1,5 +1,7 @@
 package com.weeds.pand.api.token.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class AccessToken {
     private Long id;
 
@@ -15,6 +17,7 @@ public class AccessToken {
 
     private String platCode;
 
+    @JsonIgnore
     public Long getId() {
         return id;
     }
@@ -30,7 +33,7 @@ public class AccessToken {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
-
+    @JsonIgnore
     public Long getExpiresIn() {
         return expiresIn;
     }
@@ -38,7 +41,7 @@ public class AccessToken {
     public void setExpiresIn(Long expiresIn) {
         this.expiresIn = expiresIn;
     }
-
+    @JsonIgnore
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -46,7 +49,7 @@ public class AccessToken {
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
-
+    @JsonIgnore
     public Long getCreatedTime() {
         return createdTime;
     }
@@ -54,7 +57,7 @@ public class AccessToken {
     public void setCreatedTime(Long createdTime) {
         this.createdTime = createdTime;
     }
-
+    @JsonIgnore
     public String getDeviceId() {
         return deviceId;
     }
@@ -62,7 +65,7 @@ public class AccessToken {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
-
+    @JsonIgnore
     public String getPlatCode() {
         return platCode;
     }
