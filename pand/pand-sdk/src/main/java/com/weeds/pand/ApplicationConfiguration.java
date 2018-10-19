@@ -10,6 +10,7 @@
  */
 package com.weeds.pand;
 
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,6 +25,7 @@ import com.weeds.pand.core.cache.HashKeyGenerator;
  * @author Jetory
  * @date 2017年11月8日 上午10:40:45	
  */
+@ServletComponentScan
 @Configuration
 @EnableCaching
 @EnableScheduling

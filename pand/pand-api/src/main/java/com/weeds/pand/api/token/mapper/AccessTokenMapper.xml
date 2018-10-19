@@ -44,6 +44,9 @@
     <if test="deviceId != null">
     	and device_id = #{deviceId}
     </if>
+    <if test="token != null">
+    	and access_token = #{token}
+    </if>
   </select>
   <select id="selectAll" parameterType="map" resultMap="BaseResultMap">
     select id, access_token, expires_in, refresh_token, created_time, device_id, plat_code

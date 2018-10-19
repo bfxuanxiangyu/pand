@@ -41,7 +41,7 @@ public class OauthFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		logger.info("过滤器销毁");
+		logger.info("Pand filter destory success");
 	}
 
 	@Override
@@ -52,13 +52,38 @@ public class OauthFilter implements Filter {
 		String uri = hsRequest.getRequestURI(); 
 		//过滤器中获取设备信息
 		DeviceEntity device = new DeviceEntity();
+		String token = hsRequest.getParameter("token");
 		String devicetype = hsRequest.getParameter("devicetype");//androd、ios.pad
 		String version = hsRequest.getParameter("version");
 		device.setDevicetype(devicetype);
 		device.setVersion(version);
 		DeviceFactoryUtil.setDevice(device);
-		chain.doFilter(request, response);
+//		chain.doFilter(request, response);
 		
+		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/")) {
+			chain.doFilter(request, response);
+			return;
+		}
+		if (StringUtils.isEmpty(token)) {
+			response.getWriter().println(PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS, "no token",null));
+			return;
+		}
+		Map<String, Object> parameters = Maps.newHashMap();
+		parameters.put("token", token);
+		AccessToken at = accessTokenMapper.selectAccessToken(parameters);
+		if(at==null){
+			response.getWriter().println(PandResponseUtil.printFailJson(PandResponseUtil.no_token,"no token",null));
+			return;
+		}
+		if(System.currentTimeMillis()-at.getExpiresIn()> (1000*60*60*24)){//24小时过期
+			response.getWriter().println(PandResponseUtil.printFailJson(PandResponseUtil.no_token,"token overdue",null));
+			return;
+		}else{
+			at.setExpiresIn(System.currentTimeMillis());
+			//调用订单接口进行刷新
+			accessTokenMapper.updateByPrimaryKey(at);
+		}
+		chain.doFilter(request, response);
 		/*if (uri.contains("/api/upload/addSrc") || uri.contains("getToken.json") || uri.contains("getCitysList.json")||uri.contains("createRescueCompany.json")
 				||uri.contains("/api/baoxian/")||uri.contains("nearRescue.json")||uri.contains("userReviewInfo.json")
 				||uri.contains("userReview.json")||uri.contains("/api/system/toPayByScanQr.json")) {
@@ -99,7 +124,7 @@ public class OauthFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
-		logger.info("过滤器初始化");
+		logger.info("Pand filter init success");
 	}
 	
 	

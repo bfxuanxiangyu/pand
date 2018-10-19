@@ -63,11 +63,12 @@ public class PandResponseUtil {
 	/** 失败 */
 	public static final int failed = 1506;
 	/** 图片上传失败 */
-	public static final int PICUPLOADFAIL = 1507;
-	/** token失败 */
+	public static final int no_token = 1507;
+	/** token过期 */
 	public static final int token_error = 1508;
 	public static final int nopassword = 1509;//没有密码
 	public static final int passwd_match_fail = 1510;//密码不匹配
+	public static final int passwd_binding_again = 1511;//手机重复绑定
 	
 	
 	/**

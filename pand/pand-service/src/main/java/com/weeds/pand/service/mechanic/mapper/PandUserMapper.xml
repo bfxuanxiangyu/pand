@@ -58,6 +58,9 @@
    <!-- 查询单个对象 -->
    <select id="getPandUserObj" parameterType="map" resultMap="BaseResultMap">
        select * from pand_user where 1=1 
+       <if test="id != null">
+       		and id = #{id}
+       </if>
        <if test="userType != null">
        		and user_type = #{userType}
        </if>
