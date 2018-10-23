@@ -1,9 +1,13 @@
 package com.weeds.pand.api.system.rest;
 
+import static com.weeds.pand.utils.PandStringUtils.isBlank;
+import static com.weeds.pand.utils.PandStringUtils.isNotBlank;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,12 +20,15 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
+import com.weeds.pand.service.system.domain.CardImage;
+import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
-import com.weeds.pand.utils.PandStringUtils;
 
 @Controller
 @RequestMapping("/api/panduser")
@@ -36,6 +43,8 @@ public class PandUserWorkController {
 	
 	@Resource
 	private PandUserService pandUserService;
+	@Resource
+	private PandImagesService pandImagesService;
 	
 	/**
 	 * 个人信息补全信息
@@ -50,9 +59,9 @@ public class PandUserWorkController {
 	 */
 	@ResponseBody
 	@RequestMapping("/panduser_completion")
-	public String registerUser(String token,PandUser pandUser,String authCode) {
+	public String completionUser(String token,PandUser pandUser,String authCode) {
 		try {
-			if(PandStringUtils.isBlank(token) || PandStringUtils.isBlank(pandUser.getId())){
+			if(isBlank(token) || isBlank(pandUser.getId())){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}
 			
@@ -68,9 +77,9 @@ public class PandUserWorkController {
 			}
 			
 			//绑定手机手机
-			if(PandStringUtils.isNotBlank(pandUser.getUserPhone())){//修改手机
+			if(isNotBlank(pandUser.getUserPhone())){//修改手机
 				logger.info("绑定手机");
-				if(PandStringUtils.isBlank(authCode)){
+				if(isBlank(authCode)){
 					return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少手机绑定验证码", null);
 				}
 				//验证码校验
@@ -90,11 +99,11 @@ public class PandUserWorkController {
 				}
 			}
 			//补全昵称
-			if(PandStringUtils.isNotBlank(pandUser.getUserNickname())){
+			if(isNotBlank(pandUser.getUserNickname())){
 				oldObjById.setUserNickname(pandUser.getUserNickname());
 			}
 			//绑定微信
-			if(PandStringUtils.isNotBlank(pandUser.getUserWeixin())){
+			if(isNotBlank(pandUser.getUserWeixin())){
 				//单独查询微信是否是独立用户
 				parameters.clear();
 				parameters.put("userWeixin",pandUser.getUserWeixin());
@@ -110,7 +119,7 @@ public class PandUserWorkController {
 				}
 			}
 			//上传头像
-			if(PandStringUtils.isNotBlank(pandUser.getUserHeadpng())){
+			if(isNotBlank(pandUser.getUserHeadpng())){
 				String httpStr = uploadHeadPng(pandUser.getUserHeadpng());
 				oldObjById.setUserHeadpng(httpStr);
 			}
@@ -126,7 +135,93 @@ public class PandUserWorkController {
 		}
 	}
 	
+	/**
+	 * 成为商家  提交真实姓名、证件类型、证件号码、性别、所在区域（城市/区域）、详细地址、证件照
+	 * @param token          登录token
+	 * @param imagesJson 三种证件类型 1正面 2反面 3持证  baseStr是图片base64位后字符串  {[{"type": 1, "baseStr": "..."},{"type": 2, "baseStr": "..."},{"type": 3, "baseStr": "..."}]}
+	 * @param id             用户id
+	 * @param userRealname   用户真实姓名
+	 * @param userCardtype   用户证件类型
+	 * @param userCardcode   用户证件号码
+	 * @param userSex        用户性别
+	 * @param userProvinces  用户所在省份
+	 * @param userCity       用户所在城市
+	 * @param userArea       用户所在区域
+	 * @param userAddress    用户所在详细地址
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/panduser_enter_shopper")
+	public String enterShopper(String token,PandUser pu,String imagesJson) {
+		if(isBlank(token) || isBlank(pu.getId()) || isBlank(imagesJson)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			if(isBlank(pu.getUserRealname()) || pu.getUserCardtype()==null 
+				|| isBlank(pu.getUserCardcode()) || pu.getUserSex()==null 
+				|| isBlank(pu.getUserCity()) || isBlank(pu.getUserArea())
+				|| isBlank(pu.getUserProvinces()) || isBlank(pu.getUserAddress())){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("id", pu.getId());
+			PandUser oldObjById = pandUserService.getPandUserObj(parameters);
+			if(oldObjById == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
+			}
+			
+			//解析证件图片
+			boolean ciFlag = false;
+			try {
+				List<CardImage> ciList = JSON.parseArray(imagesJson, CardImage.class);
+				if(ciList!=null && !ciList.isEmpty()){
+					List<String> baseStrList = null;
+					for (CardImage cardImage : ciList) {
+						if(cardImage.getType()==null || isBlank(cardImage.getBaseStr())){
+							continue;
+						}
+						baseStrList = Lists.newArrayList();
+						baseStrList.add(cardImage.getBaseStr());
+						pandImagesService.savePandImages(cardImage.getType(), 1, pu.getId(), baseStrList);
+						ciFlag = true;
+					}
+				}
+			} catch (Exception e) {
+				logger.error("证件照片异常"+e.getMessage(),e);
+			}
+			
+			if(!ciFlag){
+				return PandResponseUtil.printFailJson(PandResponseUtil.card_image_error,"证件照片异常", null);
+			}
+			
+			
+			oldObjById.setUpdateTime(new Date());
+			oldObjById.setUserRealname(pu.getUserRealname());
+			oldObjById.setUserCardtype(pu.getUserCardtype());
+			oldObjById.setUserCardcode(pu.getUserCardcode());
+			oldObjById.setUserSex(pu.getUserSex());
+			oldObjById.setUserProvinces(pu.getUserProvinces());
+			oldObjById.setUserCity(pu.getUserCity());
+			oldObjById.setUserArea(pu.getUserArea());
+			oldObjById.setUserAddress(pu.getUserAddress());
+			oldObjById.setUserType(2);
+			pandUserService.savePandUser(oldObjById);
+			
+			return PandResponseUtil.printJson("入驻成功，请等待2-3个工作日审核，期间请保持电话畅通", oldObjById);//返回用户id 
+		} catch (Exception e) {
+			logger.error("用户登录异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+		
+	}
 	
+	
+	/**
+	 * 上传头像
+	 * @param baseStr
+	 * @return
+	 */
 	private String uploadHeadPng(String baseStr){
 		String httpStr = null;
 		try {

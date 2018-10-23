@@ -31,10 +31,10 @@ import com.weeds.pand.utils.PandStringUtils;
  */
 public class GenEntityMysql {
 
-    private String packageOutPath = "com.weeds.pand.service.mechanic.domain";//指定实体生成所在包的路径
+    private String packageOutPath = "com.weeds.pand.service.pandcore.domain";//指定实体生成所在包的路径
     private String authorName = "xuanxy";//作者名字
-    private String tablename = "pand_user";//表名
-    private String className = "PandUser";//类名
+    private String tablename = "pand_service";//表名
+    private String className = "PandService";//类名
     private String tableComment = null;//表注释
     private String javaFilePath = "./";
     private String[] colnames; // 列名数组	
@@ -55,7 +55,7 @@ public class GenEntityMysql {
     
     //开始生成dao层mapper对象   
     private String mapperFilePath = javaFilePath;//同一个项目里边
-    private String mapperPackageOutPath = "com.weeds.pand.service.mechanic.mapper";//dao层包路径 
+    private String mapperPackageOutPath = "com.weeds.pand.service.pandcore.mapper";//dao层包路径 
     private String mapperClassName = className+"Mapper";
 
     private String [] manyMapperFilePath = {"./","./"};//同一个项目里边
@@ -67,12 +67,28 @@ public class GenEntityMysql {
     private String xmlName = mapperClassName;
     
     //生成service
-    private String serviceOutputPath = "com.weeds.pand.service.mechanic.service";//dao层包路径
+    private String serviceOutputPath = "com.weeds.pand.service.pandcore.service";//dao层包路径
     private String serviceClassName = className+"Service";
-    private String serviceImplOutputPath = "com.weeds.pand.service.mechanic.service.impl";//dao层包路径
+    private String serviceImplOutputPath = "com.weeds.pand.service.pandcore.service.impl";//dao层包路径
     private String serviceImplClassName = className+"ServiceImpl";
     
     private static List<Colums> colList = Lists.newArrayList();
+    
+    /**
+     * 出口
+     * TODO
+     *
+     * @param args
+     */
+    public static void main(String[] args) throws Exception {
+    	GenEntityMysql gem =  new GenEntityMysql();
+    	gem.genEntity();
+    	gem.genMapper();
+    	gem.genJpaImpl();
+    	gem.genMapperXml();
+    	gem.genService();
+    	gem.genServiceImpl();
+    }
     /*
      * 构造函数
      */
@@ -319,7 +335,7 @@ public class GenEntityMysql {
     	
     	//接口部分
     	//类名稍微改造 ,去掉第一个单词
-    	sb.append("@Service");
+    	sb.append("@Service\r\n");
     	sb.append("public class " + serviceImplClassName +" implements "+ serviceClassName + "{\r\n\r\n");
     	sb.append("}\r\n");
     	
@@ -705,21 +721,6 @@ public class GenEntityMysql {
         return null;
     }
 
-    /**
-     * 出口
-     * TODO
-     *
-     * @param args
-     */
-    public static void main(String[] args) throws Exception {
-    	GenEntityMysql gem =  new GenEntityMysql();
-    	gem.genEntity();
-//    	gem.genMapper();
-//    	gem.genJpaImpl();
-//    	gem.genMapperXml();
-//    	gem.genService();
-//    	gem.genServiceImpl();
-    }
 
 	public String getPackageOutPath() {
 		return packageOutPath;

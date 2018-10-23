@@ -9,7 +9,7 @@ public interface PandImagesService {
 	
 	List<PandImages> listPandImages(Map<String, Object> parameters);
 	
-	void savePandImages(Map<String, Object> parameters,int imgModel,String modelId,List<String> imagesList);
+	void savePandImages(int imageCardType,int imgModel,String modelId,List<String> imagesList);
 	
 	void deletePandImages(String id);
 

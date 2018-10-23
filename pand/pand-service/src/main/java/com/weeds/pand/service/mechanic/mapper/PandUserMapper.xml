@@ -13,6 +13,7 @@
 		<result column="user_name" jdbcType="VARCHAR" property="userName" />
 		<result column="user_password" jdbcType="VARCHAR" property="userPassword" />
 		<result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+		<result column="user_realname" jdbcType="VARCHAR" property="userRealname" />
 		<result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
 		<result column="user_signature" jdbcType="VARCHAR" property="userSignature" />
 		<result column="user_weixin" jdbcType="VARCHAR" property="userWeixin" />

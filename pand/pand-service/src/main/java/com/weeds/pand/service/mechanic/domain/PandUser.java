@@ -54,10 +54,16 @@ public class PandUser {
 	private String userPhone;
 
 	/**
-	* 用户昵称
-	*/ 
+	 * 用户昵称
+	 */ 
 	@Column(name="user_nickname")
 	private String userNickname;
+	
+	/**
+	* 用户昵称
+	*/ 
+	@Column(name="user_realname")
+	private String userRealname;
 
 	/**
 	* 用户签名
@@ -304,6 +310,14 @@ public class PandUser {
 
 	public void setUserStatus(Integer userStatus){
 		this.userStatus=userStatus;
+	}
+
+	public String getUserRealname() {
+		return userRealname;
+	}
+
+	public void setUserRealname(String userRealname) {
+		this.userRealname = userRealname;
 	}
 
 }

@@ -50,24 +50,24 @@ public class PandImagesServiceImpl implements PandImagesService{
 
 	/**
 	 * @param parameters
+	 * @param imageCardType  图片类型  0通用型 1身份证正面，2反面  3持证  4港澳台通行证 5护照 
 	 * @param imgModel  所属模块  1用户审核   2评论 3服务图片
 	 * @param modelId
 	 * @param imagesList 图片流集合
 	 */
 	@Override
-	public void savePandImages(Map<String, Object> parameters,int imgModel,String modelId,List<String> imagesList) {
+	public void savePandImages(int imageCardType,int imgModel,String modelId,List<String> imagesList) {
 		
 		if(imagesList==null || imagesList.isEmpty()){
 			return ;
 		}
 		
 		PandImages vo = new PandImages();
+		vo.setImgType(imageCardType);
 		vo.setImgModel(imgModel);
 		vo.setModelId(modelId);
 		String porder = "common/";
 		if(imgModel==1){
-			int imgType = (int) parameters.get("imgType");
-			vo.setImgType(imgType);
 			porder = "user/";
 		}else if(imgModel==2){
 			porder = "comment/";
@@ -129,7 +129,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 			System.out.println(Base64Utils.encodeToString(data));
 			
 			
-			String str = "";
+			/*String str = "";
 			String porderPath = "/head/"+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+File.separator;
 			File file = new File("d://opt//"+porderPath);
 			if(!file.exists()){
@@ -140,7 +140,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 			OutputStream out = new FileOutputStream("d://opt//"+porderPath+fileName);
 			out.write(bytes);
 			out.flush();
-			out.close();
+			out.close();*/
 			
 		} catch (Exception e) {
 			// TODO: handle exception

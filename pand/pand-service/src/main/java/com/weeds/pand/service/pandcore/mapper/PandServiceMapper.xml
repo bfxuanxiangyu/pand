@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Mon Oct 22 16:04:37 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.pandcore.mapper.PandServiceMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandService">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
+		<result column="service_type_id" jdbcType="VARCHAR" property="serviceTypeId" />
+		<result column="service_tilte" jdbcType="VARCHAR" property="serviceTilte" />
+		<result column="service_des" jdbcType="VARCHAR" property="serviceDes" />
+		<result column="service_info" jdbcType="VARCHAR" property="serviceInfo" />
+		<result column="service_city" jdbcType="VARCHAR" property="serviceCity" />
+		<result column="service_area" jdbcType="VARCHAR" property="serviceArea" />
+		<result column="service_price" jdbcType="VARCHAR" property="servicePrice" />
+		<result column="service_scope" jdbcType="VARCHAR" property="serviceScope" />
+		<result column="service_invoice" jdbcType="BIGINT" property="serviceInvoice" />
+		<result column="service_status" jdbcType="BIGINT" property="serviceStatus" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandServiceList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_service where 1=1 
+       <if test="pandUserId != null">
+       		and pand_user_id = #{pandUserId}
+       </if>
+       <if test="serviceTypeId != null">
+       		and service_type_id = #{serviceTypeId}
+       </if>
+       <if test="serviceTilte != null">
+       		and service_tilte = #{serviceTilte}
+       </if>
+       <if test="serviceStatus != null">
+       		and service_status = #{serviceStatus}
+       </if>
+       <if test="contents != null">
+       		and  (
+		    	service_tilte like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or service_des like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or service_info like CONCAT(CONCAT('%', #{contents}), '%')
+	    		)
+       </if>
+       order by update_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+       </if>
+   </select>
+   
+   <!-- 查询单个对象 -->
+   <select id="getPandServiceObject" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_service where 1=1 
+       <if test="id != null">
+       		and id = #{id}
+       </if>
+       <if test="pandUserId != null">
+       		and pand_user_id = #{pandUserId}
+       </if>
+       <if test="serviceTypeId != null">
+       		and service_type_id = #{serviceTypeId}
+       </if>
+       <if test="serviceTilte != null">
+       		and service_tilte = #{serviceTilte}
+       </if>
+       <if test="serviceStatus != null">
+       		and service_status = #{serviceStatus}
+       </if>
+       <if test="contents != null">
+       		and  (
+		    	service_tilte like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or service_des like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or service_info like CONCAT(CONCAT('%', #{contents}), '%')
+	    		)
+       </if>
+       limit 1
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandServiceCount" parameterType="map" resultType="int">
+       select count(1) from pand_service where 1=1 
+   </select>
+
+
+</mapper>
+
