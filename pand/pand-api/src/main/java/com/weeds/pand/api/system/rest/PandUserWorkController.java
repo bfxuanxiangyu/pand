@@ -25,6 +25,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
+import com.weeds.pand.service.pandcore.domain.PandShop;
+import com.weeds.pand.service.pandcore.service.PandShopService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandDateUtils;
@@ -45,6 +47,8 @@ public class PandUserWorkController {
 	private PandUserService pandUserService;
 	@Resource
 	private PandImagesService pandImagesService;
+	@Resource
+	private PandShopService pandShopService; 
 	
 	/**
 	 * 个人信息补全信息
@@ -170,6 +174,9 @@ public class PandUserWorkController {
 			if(oldObjById == null){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
 			}
+			if(oldObjById.getUserType()==2){
+				return PandResponseUtil.printFailJson(PandResponseUtil.failed,"已经是商铺用户,请联系管理员", null);
+			}
 			
 			//解析证件图片
 			boolean ciFlag = false;
@@ -208,12 +215,34 @@ public class PandUserWorkController {
 			oldObjById.setUserType(2);
 			pandUserService.savePandUser(oldObjById);
 			
+			//生成自己店铺信息
+			savePandShopInfo(oldObjById);
+			
 			return PandResponseUtil.printJson("入驻成功，请等待2-3个工作日审核，期间请保持电话畅通", oldObjById);//返回用户id 
 		} catch (Exception e) {
 			logger.error("用户登录异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 		
+	}
+	
+	private void savePandShopInfo(PandUser pu){
+		Map<String, Object> parameters = Maps.newHashMap();
+		parameters.put("pandUserId", pu.getId());
+		PandShop oldPs = pandShopService.getPandShopObject(parameters);
+		if(oldPs!=null){
+			return;
+		}
+		PandShop ps = new PandShop();
+		ps.setCreateTime(new Date());
+		ps.setPandUserId(pu.getId());
+		ps.setShopDes("潘多菈授权荣誉店，旨在为您服务");
+		ps.setShopImg(pu.getUserHeadpng());
+		ps.setShopName(pu.getUserRealname()+"的店");
+		ps.setShopStatus(0);
+		ps.setShopTel(pu.getUserPhone());
+		ps.setShopTime("全天候");
+		pandShopService.savePandShop(ps);
 	}
 	
 	
@@ -225,7 +254,7 @@ public class PandUserWorkController {
 	private String uploadHeadPng(String baseStr){
 		String httpStr = null;
 		try {
-			String porderPath = "headPng/"+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+File.separator;
+			String porderPath = "headPng/"+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
 			File file = new File(savePath+porderPath);
 			if(!file.exists()){
 				file.mkdirs();

@@ -72,6 +72,7 @@ public class PandResponseUtil {
 	public static final int issue_error = 1513;//发布异常
 	public static final int issue_repeat = 1514;//重复发布
 	public static final int sold_out_error = 1515;//下架异常
+	public static final int no_shop = 1515;//店铺不存在
 	
 	
 	/**

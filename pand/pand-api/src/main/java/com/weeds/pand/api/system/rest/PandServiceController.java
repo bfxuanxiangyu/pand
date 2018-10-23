@@ -1,7 +1,11 @@
 package com.weeds.pand.api.system.rest;
 
 import static com.weeds.pand.utils.PandStringUtils.isBlank;
+import static com.weeds.pand.utils.PandStringUtils.isNotBlank;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -21,9 +26,12 @@ import com.google.common.collect.Maps;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
 import com.weeds.pand.service.pandcore.domain.PandService;
+import com.weeds.pand.service.pandcore.domain.PandShop;
 import com.weeds.pand.service.pandcore.service.PandServiceService;
+import com.weeds.pand.service.pandcore.service.PandShopService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.service.PandImagesService;
+import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
 
 /**
@@ -43,9 +51,16 @@ public class PandServiceController {
 	private PandImagesService pandImagesService;
 	@Resource
 	private PandServiceService pandServiceService;
+	@Resource
+	private PandShopService pandShopService; 
 	
 	@Value("${pand.service.status : 2}")
 	private Integer serviceStatus;
+	
+	@Value("${img.savePath}")
+	private String savePath;
+	@Value("${img.imgUrl}")
+	private String imgUrl;
 	
 	/**
 	 * 发布服务 需要token 图片、发布者id、服务技能id、标题、描述、须知、所属城市、所属区域、价格、区间、是否开具发票
@@ -167,5 +182,102 @@ public class PandServiceController {
 		}
 	}
 	
+	/**
+	 * 获取店铺详情
+	 * @param token      用户token
+	 * @param pandUserId 用户id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/shop_detail")
+	public String shopDetail(String token,String pandUserId) {
+		if(isBlank(token) || isBlank(pandUserId)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", pandUserId);
+			PandShop oldPs = pandShopService.getPandShopObject(parameters);
+			if(oldPs==null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_shop,"店铺不存在", null);
+			}
+			return PandResponseUtil.printJson("店铺信息获取成功", oldPs);
+		} catch (Exception e) {
+			logger.error("店铺获取异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	/**
+	 * 编辑店铺    可以更新店铺头像、名称、描述、联系方式、服务时间段
+	 * @param token        用户token
+	 * @param pandUserId   用户id
+	 * @param id           店铺id
+	 * @param shopDes      店铺描述
+	 * @param shopName     店铺名称
+	 * @param shopTel      店铺联系方式
+	 * @param shopTime     店铺服务时间段
+	 * @param shopImg      店铺图片
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/edit_shop")
+	public String editShop(String token,PandShop ps) {
+		if(isBlank(token) || isBlank(ps.getPandUserId()) || isBlank(ps.getId())){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("id", ps.getId());
+			PandShop oldPs = pandShopService.getPandShopObject(parameters);
+			if(oldPs==null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_shop,"店铺不存在", null);
+			}
+			//编辑店铺头像
+			if(isNotBlank(ps.getShopImg())){
+				String httpStr = uploadShopImg(ps.getShopImg());
+				oldPs.setShopImg(httpStr);
+			}
+			
+			//更新店铺信息
+			oldPs.setShopDes(ps.getShopDes());
+			oldPs.setShopName(ps.getShopName());
+			oldPs.setShopTel(ps.getShopTel());
+			oldPs.setShopTime(ps.getShopTime());
+			
+			pandShopService.savePandShop(oldPs);
+			return PandResponseUtil.printJson("店铺编辑成功", oldPs);
+		} catch (Exception e) {
+			logger.error("编辑店铺异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	/**
+	 * 上传头像
+	 * @param baseStr
+	 * @return
+	 */
+	private String uploadShopImg(String baseStr){
+		String httpStr = null;
+		try {
+			String porderPath = "shopImg/"+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
+			File file = new File(savePath+porderPath);
+			if(!file.exists()){
+				file.mkdirs();
+			}
+			String fileName = PandDateUtils.dateToStr(new Date(), "yyyyMMddHHmmss")+".png";
+			byte[] bytes = Base64Utils.decode(baseStr.getBytes());
+			OutputStream out = new FileOutputStream(savePath+porderPath+fileName);
+			out.write(bytes);
+			out.flush();
+			out.close();
+			
+			httpStr = imgUrl+porderPath+fileName;
+		} catch (Exception e) {
+			logger.error("图片保存异常"+e.getMessage(),e);
+		}
+		return httpStr;
+	}
 	
 }

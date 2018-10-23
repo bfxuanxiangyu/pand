@@ -100,7 +100,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 	private String saveImages(String str,String porder){
 		String httpStr = null;
 		try {
-			String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+File.separator;
+			String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
 			File file = new File(savePath+porderPath);
 			if(!file.exists()){
 				file.mkdirs();
