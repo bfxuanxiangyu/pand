@@ -280,4 +280,86 @@ public class PandServiceController {
 		return httpStr;
 	}
 	
+	/**
+	 * @param pageIndex     当前页 必填
+	 * @param pageSize      每页数量  默认为10 必填
+	 * @param token         用户token  必填
+	 * @param pandUserId    用户id  必填
+	 * @param serviceTypeId 服务种类  技能列表中的各自id 必填
+	 * @param searchType    查询类型  1综合查询 2销量  3上门速度 4筛选 必传
+	 * @param sortType      综合筛选  1综合 2评分最高 3距离最近 4价格降序 5价格升序 选填
+	 * @param lat           当前纬度 (选择综合查询距离最近时lat lng必传) 选填
+	 * @param lng           当前经度 选填
+	 * @param contents      关键字 选填
+	 * @param startPrice    价格区间 起始价 选填
+	 * @param endPrice      价格区间 最高价 选填
+	 * @param serviceInvoice是否开具发票 0不开具   1开具 选填
+	 * @param orderType     是否下过单  0未下过   1下过 选填
+	 * @param shopType		商家类型 1新商家  2企业商家  选填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/pand_service_list")
+	public String pandServiceList(String token,String pandUserId,String serviceTypeId,Integer searchType,
+								  Integer sortType,String lat,String lng,String contents,Integer startPrice,
+								  Integer endPrice,Integer serviceInvoice,Integer orderType,Integer shopType,
+								  Integer pageIndex, Integer pageSize) {
+		if(isBlank(token) || isBlank(serviceTypeId) || searchType==null
+				|| pageIndex==null || pageSize==null){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			Map<String, Object> parameters = getBaseMap(pandUserId, serviceTypeId, contents, startPrice, endPrice, serviceInvoice, pageIndex, pageSize);
+			//排序
+			if(sortType==null){
+			}else if(sortType==4 || sortType==5){//价格升降序
+				parameters.put("sortType", sortType);
+			}else if(sortType==2){//评分最高
+				
+			}else if(sortType==3){//距离最近
+				if(isBlank(lat) || isBlank(lng)){
+					return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少当前经纬度参数", null);
+				}
+			}
+			
+			
+			List<PandService> serviceList = pandServiceService.getPandServiceList(parameters);
+			return PandResponseUtil.printJson("服务列表获取成功", serviceList);
+		} catch (Exception e) {
+			logger.error("服务列表获取异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	/**
+	 * 获取基础map参数
+	 * @return
+	 */
+	private Map<String, Object> getBaseMap(String pandUserId,String serviceTypeId,String contents,Integer startPrice,
+			  Integer endPrice,Integer serviceInvoice,
+			  Integer pageIndex, Integer pageSize){
+		Map<String, Object> parameters = Maps.newHashMap();
+		if(pageIndex<=1){
+			pageIndex = 0;
+		}else{
+			pageIndex = pageIndex-1;
+		}
+		parameters.put("begin", pageIndex * pageSize);
+		parameters.put("end", pageSize);
+		
+		parameters.put("serviceTypeId", serviceTypeId);//服务种类
+		//价格区间查询
+		if(startPrice != null){	parameters.put("startPrice", startPrice);}
+		if(endPrice != null){	parameters.put("endPrice", endPrice);}
+		//是否开具发票
+		if(serviceInvoice != null){	parameters.put("serviceInvoice", serviceInvoice);}
+		//关键字查询
+		if(isNotBlank(contents)){	parameters.put("contents", contents);}
+		//指定某人查询
+		if(isNotBlank(pandUserId)){	parameters.put("pandUserId", pandUserId);}
+		
+		parameters.put("sortType", 0);//默认排序
+		return parameters;
+	}
+	
 }

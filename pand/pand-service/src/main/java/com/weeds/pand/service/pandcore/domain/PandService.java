@@ -1,16 +1,19 @@
 package com.weeds.pand.service.pandcore.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonFormat; 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.weeds.pand.service.system.domain.PandImages; 
 /**
  * pand_service 实体类
  * 服务表
@@ -100,7 +103,9 @@ public class PandService {
 	*/ 
 	@Column(name="service_status")
 	private Integer serviceStatus;
-
+	
+	@Transient
+	private List<PandImages> images;//服务图片集合
 
 	public String getId(){
 		return id;
@@ -212,6 +217,14 @@ public class PandService {
 
 	public void setServiceStatus(Integer serviceStatus){
 		this.serviceStatus=serviceStatus;
+	}
+
+	public List<PandImages> getImages() {
+		return images;
+	}
+
+	public void setImages(List<PandImages> images) {
+		this.images = images;
 	}
 
 }

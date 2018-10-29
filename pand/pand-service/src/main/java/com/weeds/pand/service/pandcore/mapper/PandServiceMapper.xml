@@ -20,8 +20,11 @@
 		<result column="service_scope" jdbcType="VARCHAR" property="serviceScope" />
 		<result column="service_invoice" jdbcType="BIGINT" property="serviceInvoice" />
 		<result column="service_status" jdbcType="BIGINT" property="serviceStatus" />
+		
+		<collection property="images" column="{modelId=id}" 
+			select="com.weeds.pand.service.system.mapper.PandImagesMapper.getPandImagesList"></collection>
+		
 	</resultMap>
-
 
    <!-- 查询集合 -->
    <select id="getPandServiceList" parameterType="map" resultMap="BaseResultMap">
@@ -35,8 +38,17 @@
        <if test="serviceTilte != null">
        		and service_tilte = #{serviceTilte}
        </if>
+       <if test="startPrice != null">
+	    	and   service_price &gt;= #{startPrice}
+	   </if>
+       <if test="endPrice != null">
+	    	and   service_price &lt;= #{endPrice}
+	   </if>
        <if test="serviceStatus != null">
        		and service_status = #{serviceStatus}
+       </if>
+       <if test="serviceInvoice != null">
+       		and service_invoice = #{serviceInvoice}
        </if>
        <if test="contents != null">
        		and  (
@@ -45,10 +57,22 @@
 		    	or service_info like CONCAT(CONCAT('%', #{contents}), '%')
 	    		)
        </if>
-       order by update_time desc 
+       <if test="sortType==4"><!-- 4价格降序 -->
+       		order by service_price desc
+       </if>
+       <if test="sortType==5"><!-- 5价格升序 -->
+       		order by service_price 
+       </if>
+       <if test="sortType==0"><!-- 时间降序 -->
+	       order by update_time desc 
+       </if>
        <if test="begin != null">
            limit #{begin},#{end}
        </if>
+   </select>
+   <!-- 查询集合总数 -->
+   <select id="getPandServiceCount" parameterType="map" resultType="int">
+       select count(1) from pand_service where 1=1 
    </select>
    
    <!-- 查询单个对象 -->
@@ -77,12 +101,6 @@
 	    		)
        </if>
        limit 1
-   </select>
-
-
-   <!-- 查询集合总数 -->
-   <select id="getPandServiceCount" parameterType="map" resultType="int">
-       select count(1) from pand_service where 1=1 
    </select>
 
 
