@@ -281,11 +281,12 @@ public class PandServiceController {
 	}
 	
 	/**
+	 * 服务列表   支持综合、销量、上门速度、高级筛选选择，支持分页  请仔细阅读以下参数
 	 * @param pageIndex     当前页 必填
 	 * @param pageSize      每页数量  默认为10 必填
 	 * @param token         用户token  必填
-	 * @param pandUserId    用户id  必填
 	 * @param serviceTypeId 服务种类  技能列表中的各自id 必填
+	 * @param pandUserId    用户id  选填
 	 * @param searchType    查询类型  1综合查询 2销量  3上门速度 4筛选 必传
 	 * @param sortType      综合筛选  1综合 2评分最高 3距离最近 4价格降序 5价格升序 选填
 	 * @param lat           当前纬度 (选择综合查询距离最近时lat lng必传) 选填
