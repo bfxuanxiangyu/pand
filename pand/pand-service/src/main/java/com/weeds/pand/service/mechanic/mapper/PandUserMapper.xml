@@ -56,6 +56,30 @@
 
        </if>
    </select>
+   <!-- 查询集合分页 -->
+   <select id="getPandUserListPage" parameterType="com.weeds.pand.service.pandcore.pagevo.PandUserQueryParam" resultMap="BaseResultMap">
+       select * from pand_user where 1=1 
+       <if test="userType != null">
+       		and user_type = #{userType}
+       </if>
+       <if test="userStatus != null">
+       		and user_status = #{userStatus}
+       </if>
+       <if test="contents != null and contents !=''">
+       		and  (
+		    	user_name like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or user_phone like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or user_weixin like CONCAT(CONCAT('%', #{contents}), '%')
+	    		)
+       </if>
+       <if test="startTime != null and startTime!=''">
+	    	and  create_time &gt;= #{startTime}
+	    </if>
+	    <if test="endTime != null and endTime!=''">
+	    	and create_time &lt;#{endTime}
+	    </if>
+       order by create_time desc 
+   </select>
    <!-- 查询单个对象 -->
    <select id="getPandUserObj" parameterType="map" resultMap="BaseResultMap">
        select * from pand_user where 1=1 

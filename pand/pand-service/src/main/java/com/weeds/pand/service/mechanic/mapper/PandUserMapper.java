@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.annotations.Mapper; 
 
-import com.weeds.pand.service.mechanic.domain.PandUser; 
+import com.weeds.pand.service.mechanic.domain.PandUser;
+import com.weeds.pand.service.pandcore.pagevo.PandUserQueryParam; 
 /**
  * mapper接口公共接口
  * 由GenEntityMysql类自动生成
@@ -18,6 +19,7 @@ public interface PandUserMapper {
 	* 根据条件获取所有PandUser集合
 	*/ 
 	List<PandUser>  getPandUserList(Map<String, Object> parameters);
+	List<PandUser>  getPandUserListPage(PandUserQueryParam params);
 
 	PandUser getPandUserObj(Map<String, Object> parameters);
 

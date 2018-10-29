@@ -1,6 +1,7 @@
 package com.weeds.pand.service.mechanic.service.impl;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.mapper.PandUserJpaDao;
 import com.weeds.pand.service.mechanic.mapper.PandUserMapper;
-import com.weeds.pand.service.mechanic.service.PandUserService; 
+import com.weeds.pand.service.mechanic.service.PandUserService;
+import com.weeds.pand.service.pandcore.pagevo.PandUserQueryParam; 
 
 
 /**
@@ -34,6 +38,7 @@ public class PandUserServiceImpl implements PandUserService{
 
 	@Override
 	public void savePandUser(PandUser pandUser) {
+		pandUser.setUpdateTime(new Date());
 		pandUserJpaDao.save(pandUser);
 	}
 
@@ -45,6 +50,14 @@ public class PandUserServiceImpl implements PandUserService{
 	@Override
 	public List<PandUser> selectAll(Map<String, Object> parameters) {
 		return pandUserMapper.getPandUserList(parameters);
+	}
+
+	@Override
+	public PageInfo<PandUser> selectAllForPage(PandUserQueryParam params) {
+		PageHelper.offsetPage(params.getStart(), params.getLength());
+		List<PandUser> pandUserListPage = pandUserMapper.getPandUserListPage(params);
+		PageInfo<PandUser> page = new PageInfo<PandUser>(pandUserListPage);
+		return page;
 	}
 
 }
