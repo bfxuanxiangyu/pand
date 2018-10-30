@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+     <div class="row" id="pandUserDetailModal">
+         <div class="col-lg-12">
+             <h6 class="page-header">技工用户详情</h6>
+         </div>
+         <div class="container" style="width: 100%;">
+		    <div class="row">
+		        <!-- form: -->
+		        <section>
+		            <div style="width: 100%;">
+		
+		                <form id="panduserForm"  class="form-horizontal" 
+		                      data-bv-message="This value is not valid"
+		                      data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+		                      data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+		                      data-bv-feedbackicons-validating="glyphicon glyphicon-refresh" th:object="${user}">
+		                   <div class="form-group">
+		                        <label class="col-lg-1 control-label">注册时间</label>
+		                        <div class="col-lg-3">
+									<input class="form-control" name="createTime" type="text" readonly="readonly" 
+											th:value="*{createTime == null ? '' : #dates.format(createTime, 'yyyy/MM/dd HH:mm')}"/>
+								</div>
+		                        <label class="col-lg-1 control-label">最新编辑时间</label>
+		                        <div class="col-lg-3">
+									<input class="form-control" name="updateTime" type="text" readonly="readonly" 
+											th:value="*{updateTime == null ? '' : #dates.format(updateTime, 'yyyy/MM/dd HH:mm')}"/>
+								</div>
+		                    </div>
+		                   <div class="form-group">
+		                        <label class="col-lg-1 control-label">用户名</label>
+		                        <div class="col-lg-3">
+									<input class="form-control" name="userName" type="text" readonly="readonly" 
+											th:value="*{userName}"/>
+								</div>
+		                        <label class="col-lg-1 control-label">手机号码</label>
+		                        <div class="col-lg-3">
+									<input class="form-control" name="userName" type="tel" readonly="readonly" 
+											th:value="*{userPhone}"/>
+								</div>
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">昵称</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userNickname" type="text" readonly="readonly" 
+												th:value="*{userNickname}"/>
+								</div>				
+		                        <label class="col-lg-1 control-label">真实姓名</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userRealname" type="text" 
+												th:value="*{userRealname}"/>
+								</div>				
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">用户签名</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userSignature" type="text" readonly="readonly" 
+												th:value="*{userSignature}"/>
+								</div>	
+		                        <label class="col-lg-1 control-label">微信号</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userWeixin" type="text" readonly="readonly" 
+												th:value="*{userWeixin}"/>
+								</div>	
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">QQ号</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userQq" type="text" readonly="readonly" 
+												th:value="*{userQq}"/>
+								</div>	
+		                        <label class="col-lg-1 control-label">邮箱</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userEmail" type="email" 
+												th:value="*{userEmail}"/>
+								</div>	
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">证件类型</label>
+		                        <div class="col-lg-3">
+		                        	<input th:if="*{userCardtype==1}" class="form-control" type="text" readonly="readonly" value="身份证"/>
+		                        	<input th:if="*{userCardtype==2}" class="form-control" type="text" readonly="readonly" value="身份证"/>
+		                        	<input th:if="*{userCardtype==3}" class="form-control" type="text" readonly="readonly" value="身份证"/>
+		                        	<input th:if="*{userCardtype==4}" class="form-control" type="text" readonly="readonly" value="身份证"/>
+								</div>	
+		                        <label class="col-lg-1 control-label">证件号码</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userCardcode" type="text"  readonly="readonly"
+												th:value="*{userCardcode}"/>
+								</div>	
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">性别</label>
+		                        <div class="col-lg-3">
+		                        	<input th:if="*{userSex==0}" class="form-control" type="text" readonly="readonly" value="男"/>
+		                        	<input th:if="*{userSex==1}" class="form-control" type="text" readonly="readonly" value="女"/>
+								</div>	
+		                        <label class="col-lg-1 control-label">所在区域</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userSex" type="text" readonly="readonly"
+												th:value="*{userProvinces+'-'+userCity+'-'+userArea}"/>
+								</div>	
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">详细地址</label>
+		                        <div class="col-lg-3">
+			                        <input class="form-control" name="userAddress" type="text" 
+												th:value="*{userAddress}"/>
+								</div>	
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">个人头像</label>
+		                        <div class="col-lg-3">
+			                        <img alt="暂无" th:src="*{userHeadpng}" style="width: 100px; height: 100px;"/>
+								</div>	
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-lg-1 control-label">证件照</label>
+		                        <div class="col-lg-9">
+		                        	<div th:each="images:${user.shoperImages}" style="float: left; padding-right: 10px;">
+				                        <img alt="暂无" th:src="${images.imgUrl}" style="width: 320px; height: 220px;"/>
+		                        	</div>
+								</div>	
+		                    </div>
+		                 	
+		                 	<input type="hidden" class="form-control" name="userId" th:value="*{id}"/>
+		
+		                    <div class="form-group">
+		                        <div class="col-lg-12 col-lg-offset-3">
+		                            <button type="button" onclick="colseDetail();" class="btn btn-primary">关闭</button>
+		                            <button type="button" onclick="updaPanduser();" class="btn btn-info">编辑保存</button>
+		                            <button type="button" th:if="*{userStatus==1 || userStatus==3}" th:onclick="'dealPandUser(2,\''+*{id}+'\');'" class="btn btn-success">审核通过</button>
+		                            <button type="button" th:if="*{userStatus==1 || userStatus==2}" data-toggle="modal" data-target="#auditPandShoperModal"
+		                            		class="btn btn-danger">审核不通过</button>
+		                        </div>
+		                    </div>
+		                </form>
+		            </div>
+		        </section>
+		        <!-- :form -->
+		    </div>
+		</div>
+     </div>
+	<div class="alert alert-success" id="successMsg" style="display: none;">
+		<!-- <a href="#" class="close" data-dismiss="alert">&times;</a> -->
+		编辑成功
+	</div>
+	<div class="alert alert-danger" id="failMsg"  style="display: none;">
+		<!-- <a href="#" class="close" data-dismiss="alert">&times;</a> -->
+		<strong>警告！</strong>编辑异常，请联系管理员
+	</div>
+	
+<div class="modal fade" id="auditPandShoperModal" tabindex="-1" role="dialog"
+	aria-labelledby="auditPandShoperLabel" aria-hidden="true"
+	data-backdrop="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="auditPandShoperModalLabel">审核不通过原因</h4>
+			</div>
+			<div class="modal-body">
+				<textarea id="auditContent" cols="70" rows="10" required="required"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary" onclick="dealPandUser(3,null);">不通过</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
+</div>	
+	
+	
+<script type="text/javascript">
+/*<![CDATA[*/
+	function colseDetail(){
+		$.ajax({
+			url : "/admin/user/pandArtisanUserlist",
+			success : function(result) {
+				$("#page-wrapper").html(result);
+			}
+		});
+	}
+	
+	function updaPanduser(){
+		var id = $("input[name='userId']").val();
+		var userEmail = $("input[name='userEmail']").val();
+		var userAddress = $("input[name='userAddress']").val();
+		var userRealname = $("input[name='userRealname']").val();
+		$.ajax({
+			url : "/admin/user/managerUpdatePanduser",
+			data: {id:id,userEmail:userEmail,userAddress:userAddress,userRealname:userRealname},
+			success : function(result) {
+				if(result=='success'){
+					$("#failMsg").hide();
+					$("#successMsg").show();
+				}else{
+					$("#successMsg").hide();
+					$("#failMsg").show();
+				}
+			}
+		});
+	}
+	
+	function dealPandUser(userStatus,id) {
+		if(!id){
+			id = $("input[name='userId']").val();
+		}
+		var auditContent;
+		if(userStatus==3){
+			auditContent = $("#auditContent").val();
+			if(!auditContent){
+				$("#auditContent").focus();
+				alert("请填写不通过原因");
+				return;
+			}
+			$('#auditPandShoperModal').modal('hide');
+			if(confirm('审核不通过，确认提交吗？')){
+				ajaxPandUserServer(id,userStatus,auditContent);
+			}
+		}else{
+			if(confirm('确认审核通过吗？')){
+				ajaxPandUserServer(id,userStatus,null);
+			}
+		}
+	}
+	
+	function ajaxPandUserServer(id,userStatus,auditContent){
+		$.ajax({
+	        url: "/admin/user/dealPandUser", data: {"id": id,"userStatus":userStatus,source:"aduit",auditContent:auditContent},
+	        success: function (result) {
+	        	$("#page-wrapper").html(result);
+	        }
+	    });
+	}
+	
+/*]]>*/
+</script>
+</html>

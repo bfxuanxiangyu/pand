@@ -17,6 +17,9 @@ import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.mapper.PandUserJpaDao;
 import com.weeds.pand.service.mechanic.mapper.PandUserMapper;
 import com.weeds.pand.service.mechanic.service.PandUserService;
+import com.weeds.pand.service.pandcore.domain.PandAuditLog;
+import com.weeds.pand.service.pandcore.mapper.PandAuditLogJpaDao;
+import com.weeds.pand.service.pandcore.mapper.PandAuditLogMapper;
 import com.weeds.pand.service.pandcore.pagevo.PandUserQueryParam; 
 
 
@@ -35,7 +38,12 @@ public class PandUserServiceImpl implements PandUserService{
 	private PandUserJpaDao pandUserJpaDao;
 	@Resource
 	private PandUserMapper pandUserMapper;
-
+	@Resource
+	private PandAuditLogJpaDao pandAuditLogJpaDao;
+	@Resource
+	private PandAuditLogMapper pandAuditLogMapper;
+	
+	
 	@Override
 	public void savePandUser(PandUser pandUser) {
 		pandUser.setUpdateTime(new Date());
@@ -58,6 +66,23 @@ public class PandUserServiceImpl implements PandUserService{
 		List<PandUser> pandUserListPage = pandUserMapper.getPandUserListPage(params);
 		PageInfo<PandUser> page = new PageInfo<PandUser>(pandUserListPage);
 		return page;
+	}
+
+	@Override
+	public PandUser getPandUserObjById(String id) {
+		return pandUserJpaDao.findOne(id);
+	}
+
+	@Override
+	public void savePandAuditLog(PandAuditLog pandAuditLog) {
+		pandAuditLog.setCreateTime(new Date());
+		pandAuditLog.setUpdateTime(new Date());
+		pandAuditLogJpaDao.save(pandAuditLog);
+	}
+
+	@Override
+	public List<PandAuditLog> selectPandAuditLogList(Map<String, Object> parameters) {
+		return pandAuditLogMapper.getPandAuditLogList(parameters);
 	}
 
 }

@@ -29,6 +29,12 @@
 		<result column="user_headpng" jdbcType="VARCHAR" property="userHeadpng" />
 		<result column="user_status" jdbcType="VARCHAR" property="userStatus" />
 	</resultMap>
+	
+	<resultMap type="com.weeds.pand.service.mechanic.domain.PandUser" extends="BaseResultMap" id="detailBaseResultMap">
+		<result column="imgModel" jdbcType="VARCHAR" />
+		<collection property="shoperImages" column="{modelId=id,imgModel=imgModel}" 
+			select="com.weeds.pand.service.system.mapper.PandImagesMapper.getPandImagesList"></collection>
+	</resultMap>
 
 
    <!-- 查询集合 -->
@@ -48,6 +54,9 @@
        </if>
        <if test="userStatus != null">
        		and user_status = #{userStatus}
+       </if>
+       <if test="userRealname != null">
+       		and user_realname = #{userRealname}
        </if>
        
        order by create_time desc 
@@ -70,6 +79,7 @@
 		    	user_name like CONCAT(CONCAT('%', #{contents}), '%')
 		    	or user_phone like CONCAT(CONCAT('%', #{contents}), '%')
 		    	or user_weixin like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or user_realname like CONCAT(CONCAT('%', #{contents}), '%')
 	    		)
        </if>
        <if test="startTime != null and startTime!=''">
@@ -81,8 +91,8 @@
        order by create_time desc 
    </select>
    <!-- 查询单个对象 -->
-   <select id="getPandUserObj" parameterType="map" resultMap="BaseResultMap">
-       select * from pand_user where 1=1 
+   <select id="getPandUserObj" parameterType="map" resultMap="detailBaseResultMap">
+       select *,1 imgModel from pand_user where 1=1 
        <if test="id != null">
        		and id = #{id}
        </if>

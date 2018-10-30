@@ -141,21 +141,21 @@ $('#dataTables-pandartisanusers').DataTable({
 	        	return html}
 	        },
 	        { "data": null,render:function(data){
-	        	var html='<button type=\"button\" class=\"btn btn-default btn-sm\" onclick=\"detailPandUser(\"'+data.id+'\")\">详情</button>&nbsp;|&nbsp;';
+	        	var html='<button type=\"button\" class=\"btn btn-default btn-sm\" onclick=\"menuManager(this,\'/admin/user/pandUserDetail?id='+data.id+'\')\">详情</button>&nbsp;|&nbsp;';
 	        	if(data.userStatus==1){
-	        		html+='<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"dealPandUser(2,\"'+data.id+'\")\">快速通过</button>&nbsp;|&nbsp;';
-	        		html+='<button type=\"button\" class=\"btn btn-danger btn-sm\" onclick=\"dealPandUser(3,\"'+data.id+'\")\">快速不通过</button>&nbsp;|&nbsp;';
+	        		html+='<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"dealPandUser(2,\''+data.id+'\')\">快速通过</button>&nbsp;|&nbsp;';
+	        		html+='<button type=\"button\" class=\"btn btn-danger btn-sm\" onclick=\"dealPandUser(3,\''+data.id+'\')\">快速不通过</button>&nbsp;|&nbsp;';
 	        	}
 	        	if(data.userStatus==2){
-	        		html+='<button type=\"button\" class=\"btn btn-warning btn-sm\" onclick=\"dealPandUser(3,\"'+data.id+'\")\">快速不通过</button>&nbsp;|&nbsp;';
+	        		html+='<button type=\"button\" class=\"btn btn-warning btn-sm\" onclick=\"dealPandUser(3,\''+data.id+'\')\">快速不通过</button>&nbsp;|&nbsp;';
 	        	}
 	        	if(data.userStatus==3){
-	        		html+='<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"dealPandUser(2,\"'+data.id+'\")\">快速通过</button>&nbsp;|&nbsp;';
+	        		html+='<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"dealPandUser(2,\''+data.id+'\')\">快速通过</button>&nbsp;|&nbsp;';
 	        	}
 	        	if(data.userStatus!=4){
-	        		html+='<button type=\"button\" class=\"btn btn-danger btn-sm\" onclick=\"dealPandUser(4,\"'+data.id+'\")\">封号</button>';
+	        		html+='<button type=\"button\" class=\"btn btn-danger btn-sm\" onclick=\"dealPandUser(4,\''+data.id+'\')\">封号</button>';
 	        	}else{
-	        		html+='<button type=\"button\" class=\"btn btn-info btn-sm\" onclick=\"dealPandUser(1,\"'+data.id+'\")\">重新激活</button>';
+	        		html+='<button type=\"button\" class=\"btn btn-info btn-sm\" onclick=\"dealPandUser(1,\''+data.id+'\')\">重新激活</button>';
 	        	}
 	        	return html}
 	        },
@@ -169,12 +169,20 @@ function delUser(name){
 }
 
 function dealPandUser(userStatus,id) {
-    $.ajax({
-        url: "/admin/user/dealPandUser", data: {"id": id,"userStatus":userStatus},
-        success: function (result) {
-        	$("#page-wrapper").html(result);
-        }
-    });
+	if(confirm('确定走快速通道吗？')){
+	    $.ajax({
+	        url: "/admin/user/dealPandUser", data: {"id": id,"userStatus":userStatus,source:"audit"},
+	        success: function (result) {
+	        	$("#page-wrapper").html(result);
+	        }
+	    });
+	}
+}
+
+function menuManager(e,action){
+    $.ajax({url:action,success:function(result){
+        $("#page-wrapper").html(result);
+    }});
 }
 /*]]>*/
 </script>

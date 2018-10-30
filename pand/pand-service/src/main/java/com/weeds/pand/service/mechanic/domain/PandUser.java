@@ -1,11 +1,14 @@
 package com.weeds.pand.service.mechanic.domain;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonFormat; 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.weeds.pand.service.system.domain.PandImages; 
 /**
  * pand_user 实体类
  * 由GenEntityMysql类自动生成
@@ -143,6 +146,8 @@ public class PandUser {
 	@Column(name="user_status")
 	private Integer userStatus;
 
+	@Transient
+	private List<PandImages> shoperImages;
 
 	public String getId(){
 		return id;
@@ -318,6 +323,14 @@ public class PandUser {
 
 	public void setUserRealname(String userRealname) {
 		this.userRealname = userRealname;
+	}
+
+	public List<PandImages> getShoperImages() {
+		return shoperImages;
+	}
+
+	public void setShoperImages(List<PandImages> shoperImages) {
+		this.shoperImages = shoperImages;
 	}
 
 }
