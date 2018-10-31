@@ -27,7 +27,9 @@
 		<result column="user_area" jdbcType="VARCHAR" property="userArea" />
 		<result column="user_address" jdbcType="VARCHAR" property="userAddress" />
 		<result column="user_headpng" jdbcType="VARCHAR" property="userHeadpng" />
-		<result column="user_status" jdbcType="VARCHAR" property="userStatus" />
+		<result column="user_status" jdbcType="BIGINT" property="userStatus" />
+		<result column="user_lat" jdbcType="VARCHAR" property="userLat" />
+		<result column="user_lng" jdbcType="VARCHAR" property="userLng" />
 	</resultMap>
 	
 	<resultMap type="com.weeds.pand.service.mechanic.domain.PandUser" extends="BaseResultMap" id="detailBaseResultMap">

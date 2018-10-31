@@ -141,10 +141,20 @@ public class PandUser {
 	private String userHeadpng;
 
 	/**
-	* 用户状态  0可用 1商家待审核 2商家审核通过 3商家审核不通过 4封号
-	*/ 
+	 * 用户状态  0可用 1商家待审核 2商家审核通过 3商家审核不通过 4封号
+	 */ 
 	@Column(name="user_status")
 	private Integer userStatus;
+	/**
+	 * 服务所在纬度
+	 */ 
+	@Column(name="user_lat")
+	private String userLat;
+	/**
+	* 服务所在经度
+	*/ 
+	@Column(name="user_lng")
+	private String userLng;
 
 	@Transient
 	private List<PandImages> shoperImages;
@@ -331,6 +341,22 @@ public class PandUser {
 
 	public void setShoperImages(List<PandImages> shoperImages) {
 		this.shoperImages = shoperImages;
+	}
+
+	public String getUserLat() {
+		return userLat;
+	}
+
+	public void setUserLat(String userLat) {
+		this.userLat = userLat;
+	}
+
+	public String getUserLng() {
+		return userLng;
+	}
+
+	public void setUserLng(String userLng) {
+		this.userLng = userLng;
 	}
 
 }

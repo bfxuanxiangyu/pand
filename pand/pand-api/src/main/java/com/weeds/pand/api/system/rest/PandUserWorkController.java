@@ -152,6 +152,8 @@ public class PandUserWorkController {
 	 * @param userCity       用户所在城市
 	 * @param userArea       用户所在区域
 	 * @param userAddress    用户所在详细地址
+	 * @param userLat        用户服务地址纬度
+	 * @param userLng        用户服务地址经度
 	 * @return
 	 */
 	@ResponseBody
@@ -164,7 +166,8 @@ public class PandUserWorkController {
 			if(isBlank(pu.getUserRealname()) || pu.getUserCardtype()==null 
 				|| isBlank(pu.getUserCardcode()) || pu.getUserSex()==null 
 				|| isBlank(pu.getUserCity()) || isBlank(pu.getUserArea())
-				|| isBlank(pu.getUserProvinces()) || isBlank(pu.getUserAddress())){
+				|| isBlank(pu.getUserProvinces()) || isBlank(pu.getUserAddress())
+				|| isBlank(pu.getUserLat()) || isBlank(pu.getUserLng())){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}
 			
@@ -213,6 +216,8 @@ public class PandUserWorkController {
 			oldObjById.setUserArea(pu.getUserArea());
 			oldObjById.setUserAddress(pu.getUserAddress());
 			oldObjById.setUserType(2);
+			oldObjById.setUserLat(pu.getUserLat());
+			oldObjById.setUserLng(pu.getUserLng());
 			pandUserService.savePandUser(oldObjById);
 			
 			//生成自己店铺信息
