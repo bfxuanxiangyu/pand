@@ -1,6 +1,7 @@
 package com.weeds.pand.api.system.rest;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.service.system.domain.Banner;
 import com.weeds.pand.service.system.domain.Skills;
@@ -43,8 +45,32 @@ public class SystemController {
 		Map<String, Object> parameters = Maps.newHashMap();
 		parameters.put("status", 1);
 		List<Skills> list = skillsMapper.selectAll(parameters);
-		
-		return PandResponseUtil.printJson("技能列表获取成功", list);
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("fullList", list);
+		List<LinkedHashMap<String, List<Skills>>> dataList = Lists.newArrayList();
+		LinkedHashMap<String, List<Skills>> dataMap = Maps.newLinkedHashMap();
+		int index = 0;
+		String keyName = "data"+index;
+		List<Skills> sList = Lists.newArrayList();
+		for (int i = 0; i < list.size(); i++) {
+			if(i>0 && i%8 == 0){
+				dataMap.put(keyName, sList);
+				dataList.add(dataMap);
+				index++;
+				keyName="data"+index;
+				sList = Lists.newArrayList();
+				sList.add(list.get(i));
+			}else{
+				sList.add(list.get(i));
+			}
+			
+			if(i==list.size()-1){//循环至最后一条   一次性加入
+				dataMap.put(keyName, sList);
+				dataList.add(dataMap);
+			}
+		}
+		map.put("dataArray", dataMap);
+		return PandResponseUtil.printJson("技能列表获取成功", map);
 	}
 	@ResponseBody
 	@RequestMapping("/banner_list")
