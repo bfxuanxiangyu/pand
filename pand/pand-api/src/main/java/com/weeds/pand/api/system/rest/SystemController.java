@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.weeds.pand.auth.user.domain.Area;
+import com.weeds.pand.auth.user.service.AreaService;
 import com.weeds.pand.service.system.domain.Banner;
 import com.weeds.pand.service.system.domain.Skills;
 import com.weeds.pand.service.system.domain.SystemVersionInfo;
@@ -37,6 +39,9 @@ public class SystemController {
 	private BannerMapper bannerMapper;
 	@Resource
 	private SkillsMapper skillsMapper;
+	
+	@Resource
+	private AreaService areaService;
 	
 	@ResponseBody
 	@RequestMapping("/skills_list")
@@ -93,7 +98,7 @@ public class SystemController {
 	
 	@ResponseBody
 	@RequestMapping("/save-version")
-    public String saveVersion() {
+	public String saveVersion() {
 		
 		SystemVersionInfo systemVersionInfo = new SystemVersionInfo();
 		systemVersionInfo.setCityCode("10010");
@@ -106,6 +111,23 @@ public class SystemController {
 		systemVersionInfo.setVersionDesc("正式上线");
 		
 		systemVersionInfoService.saveSystemVersionInfo(systemVersionInfo);
+		
+		return PandStringUtils.getJsonObj("success");
+	}
+	
+	@ResponseBody
+	@RequestMapping("/area_list")
+    public String areaList(String pAreaCode) {
+		if(PandStringUtils.isBlank(pAreaCode)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			List<Area> list = areaService.getAreaListByPAreaCode(pAreaCode);
+			return PandResponseUtil.printJson("区域列表获取成功", list);
+		} catch (Exception e) {
+			logger.error("区域列表获取异常"+e.getMessage(),e);
+		}
+		
 		
 		return PandStringUtils.getJsonObj("success");
     }

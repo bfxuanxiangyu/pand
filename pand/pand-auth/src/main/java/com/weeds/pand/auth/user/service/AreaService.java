@@ -13,6 +13,8 @@ package com.weeds.pand.auth.user.service;
 import java.util.List;
 import java.util.Map;
 
+import com.weeds.pand.auth.user.domain.Area;
+
 /**
  * @author sunxiaopeng
  * @date 2017年10月31日 下午5:28:44	
@@ -31,4 +33,6 @@ public interface AreaService {
 	 * @return
 	 */
 	String getAreaNameByAreaCode(String areaCode);
+	
+	List<Area> getAreaListByPAreaCode(String pAreaCode);
 }

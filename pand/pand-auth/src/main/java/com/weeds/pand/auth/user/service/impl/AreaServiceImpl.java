@@ -64,4 +64,11 @@ public class AreaServiceImpl implements AreaService{
 		}
 		return null;
 	}
+
+
+	@Override
+	@Cacheable(key="'getAreaList-' + #pAreaCode")
+	public List<Area> getAreaListByPAreaCode(String pAreaCode) {
+		return areaMapper.selectSubAll(pAreaCode);
+	}
 }

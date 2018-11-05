@@ -112,7 +112,7 @@ public interface AreaMapper {
     @Select({
         "select",
         "ID, AREA_CODE, AREA_NAME, P_AREA_CODE, REMARK, SORT, FLAG",
-        "from area where P_AREA_CODE = #{pAreaCode,jdbcType=VARCHAR} or AREA_CODE=#{pAreaCode,jdbcType=VARCHAR}"
+        "from area where P_AREA_CODE = #{pAreaCode,jdbcType=VARCHAR}"
     })
     
     @Results({
