@@ -90,6 +90,7 @@ public class PandUserController {
 				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"用户已存在，请登录", null);
 			}
 			pandUser.setCreateTime(new Date());
+			user.setUserNickname("pandid_"+PandStringUtils.getRandomStr(14));
 			pandUser.setUserStatus(0);
 			pandUser.setUserType(1);
 			pandUserService.savePandUser(pandUser);
@@ -137,7 +138,15 @@ public class PandUserController {
 			} 
 			PandUser user = pandUserService.getPandUserObj(parameters);
 			if(user == null){
-				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
+				//用户不存在   自动补充进去
+				user = new PandUser();
+				user.setUserPhone(userPhone);
+				user.setUserNickname("pandid_"+PandStringUtils.getRandomStr(14));
+				user.setCreateTime(new Date());
+				user.setUserStatus(0);
+				user.setUserType(1);
+				pandUserService.savePandUser(user);
+//				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
 			}
 			if(PandStringUtils.isNotBlank(userName)){//对比密码
 				String enStr = passwordMatcher.getPasswordService().encryptPassword(userPassword);
