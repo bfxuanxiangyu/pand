@@ -59,7 +59,7 @@ public class OauthFilter implements Filter {
 		device.setVersion(version);
 		DeviceFactoryUtil.setDevice(device);
 //		chain.doFilter(request, response);
-		
+		logger.info("pand url :"+uri);
 		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/")) {
 			chain.doFilter(request, response);
 			return;

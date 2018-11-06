@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,7 +35,8 @@ public class PandUserController {
 	private PasswordMatcher passwordMatcher;
 	@Resource
 	private AccessTokenService accessTokenService;
-	
+	@Value("${img.imgUrl}")
+	private String imgUrl;
 	/**
 	 * 用户注册   
 	 * @param regType 1提供微信注册   2用户名密码注册    3手机绑定
@@ -90,9 +92,10 @@ public class PandUserController {
 				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"用户已存在，请登录", null);
 			}
 			pandUser.setCreateTime(new Date());
-			user.setUserNickname("pandid_"+PandStringUtils.getRandomStr(14));
+			pandUser.setUserNickname("pandid_"+PandStringUtils.getRandomStr(14));
 			pandUser.setUserStatus(0);
 			pandUser.setUserType(1);
+			pandUser.setUserHeadpng(imgUrl+"headPng/pand_default_head.png");
 			pandUserService.savePandUser(pandUser);
 			
 			return PandResponseUtil.printJson("注册成功", pandUser.getId());//返回用户id
@@ -145,6 +148,7 @@ public class PandUserController {
 				user.setCreateTime(new Date());
 				user.setUserStatus(0);
 				user.setUserType(1);
+				user.setUserHeadpng(imgUrl+"headPng/pand_default_head.png");
 				pandUserService.savePandUser(user);
 //				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
 			}
