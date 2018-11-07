@@ -1,8 +1,12 @@
 package com.weeds.pand.service.pandcore.domain;
 
 import java.util.Date;
-import java.sql.*;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -151,6 +155,13 @@ public class PandShop {
 
 	public void setShopStatus(Integer shopStatus){
 		this.shopStatus=shopStatus;
+	}
+
+	@Override
+	public String toString() {
+		return "PandShop [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", pandUserId="
+				+ pandUserId + ", shopTel=" + shopTel + ", shopName=" + shopName + ", shopDes=" + shopDes
+				+ ", shopTime=" + shopTime + ", shopImg=" + shopImg + ", shopStatus=" + shopStatus + "]";
 	}
 
 }

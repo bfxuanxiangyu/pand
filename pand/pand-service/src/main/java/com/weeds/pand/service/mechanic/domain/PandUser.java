@@ -359,5 +359,17 @@ public class PandUser {
 		this.userLng = userLng;
 	}
 
+	@Override
+	public String toString() {
+		return "PandUser [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", userType="
+				+ userType + ", userName=" + userName + ", userPassword=" + userPassword + ", userPhone=" + userPhone
+				+ ", userNickname=" + userNickname + ", userRealname=" + userRealname + ", userSignature="
+				+ userSignature + ", userWeixin=" + userWeixin + ", userQq=" + userQq + ", userEmail=" + userEmail
+				+ ", userCardtype=" + userCardtype + ", userCardcode=" + userCardcode + ", userSex=" + userSex
+				+ ", userProvinces=" + userProvinces + ", userCity=" + userCity + ", userArea=" + userArea
+				+ ", userAddress=" + userAddress + ", userHeadpng=" + userHeadpng + ", userStatus=" + userStatus
+				+ ", userLat=" + userLat + ", userLng=" + userLng + "]";
+	}
+
 }
 

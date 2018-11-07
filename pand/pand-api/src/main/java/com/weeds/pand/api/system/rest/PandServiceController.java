@@ -81,6 +81,7 @@ public class PandServiceController {
 	@ResponseBody
 	@RequestMapping("/pand_issue")
 	public String enterShopper(String token,PandService ps,String imagesJson) {
+		logger.info("发布服务参数:"+token+",对象:"+ps.toString()+",图片:"+imagesJson);
 		if(isBlank(token) || isBlank(ps.getPandUserId()) || isBlank(imagesJson)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
@@ -156,6 +157,7 @@ public class PandServiceController {
 	@ResponseBody
 	@RequestMapping("/service_sold_out")
 	public String enterShopper(String token,Integer status,String id) {
+		logger.info("服务上下架参数:"+token+",status:"+status+",id:"+id);
 		if(isBlank(token) || isBlank(id) || status== null){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
@@ -191,6 +193,7 @@ public class PandServiceController {
 	@ResponseBody
 	@RequestMapping("/shop_detail")
 	public String shopDetail(String token,String pandUserId) {
+		logger.info("店铺详情参数:"+token+",pandUserId:"+pandUserId);
 		if(isBlank(token) || isBlank(pandUserId)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
@@ -223,6 +226,7 @@ public class PandServiceController {
 	@ResponseBody
 	@RequestMapping("/edit_shop")
 	public String editShop(String token,PandShop ps) {
+		logger.info("编辑店铺参数:"+token+",ps:"+ps.toString());
 		if(isBlank(token) || isBlank(ps.getPandUserId()) || isBlank(ps.getId())){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
@@ -301,11 +305,15 @@ public class PandServiceController {
 	 */
 	@ResponseBody
 	@RequestMapping("/pand_service_list")
-	public String pandServiceList(String token,String pandUserId,String serviceTypeId,Integer searchType,
+	public String pandServiceList(String pandUserId,String serviceTypeId,Integer searchType,
 								  Integer sortType,String lat,String lng,String contents,Integer startPrice,
 								  Integer endPrice,Integer serviceInvoice,Integer orderType,Integer shopType,
 								  Integer pageIndex, Integer pageSize) {
-		if(isBlank(token) || isBlank(serviceTypeId) || searchType==null
+		logger.info("编辑店铺参数 pandUserId="+pandUserId+",serviceTypeId:"+serviceTypeId+",searchType:"+searchType
+				+",sortType:"+sortType+",lat:"+lat+",lng:"+lng+",contents:"+contents
+				+",startPrice:"+startPrice+",endPrice:"+endPrice+",serviceInvoice:"+serviceInvoice
+				+",orderType:"+orderType+",shopType:"+shopType+",pageIndex:"+pageIndex+",pageSize:"+pageSize);
+		if(isBlank(serviceTypeId) || searchType==null
 				|| pageIndex==null || pageSize==null){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}

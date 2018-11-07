@@ -151,6 +151,7 @@ public class ShiroConfiguration {
 		chainDefinition.addPathDefinition("/js/**", "anon");
 		chainDefinition.addPathDefinition("/vendor/**", "anon");
 		chainDefinition.addPathDefinition("/images/**", "anon");
+		chainDefinition.addPathDefinition("/extendfile/**", "anon");
 		chainDefinition.addPathDefinition("/download/**", "anon");
 		
 		chainDefinition.addPathDefinition("/assets/**", "anon");

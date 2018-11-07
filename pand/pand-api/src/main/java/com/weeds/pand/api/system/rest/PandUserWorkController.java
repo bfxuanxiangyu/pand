@@ -64,6 +64,7 @@ public class PandUserWorkController {
 	@ResponseBody
 	@RequestMapping("/panduser_completion")
 	public String completionUser(String token,PandUser pandUser,String authCode) {
+		logger.info("个人信息补全信息参数:"+token+",pandUser:"+pandUser.toString()+",authCode="+authCode);
 		try {
 			if(isBlank(token) || isBlank(pandUser.getId())){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
@@ -159,6 +160,7 @@ public class PandUserWorkController {
 	@ResponseBody
 	@RequestMapping("/panduser_enter_shopper")
 	public String enterShopper(String token,PandUser pu,String imagesJson) {
+		logger.info("成为商家参数:"+token+",pandUser:"+pu.toString()+",imagesJson="+imagesJson);
 		if(isBlank(token) || isBlank(pu.getId()) || isBlank(imagesJson)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}

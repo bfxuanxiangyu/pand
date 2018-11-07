@@ -60,7 +60,7 @@ public class OauthFilter implements Filter {
 		DeviceFactoryUtil.setDevice(device);
 //		chain.doFilter(request, response);
 		logger.info("pand url :"+uri);
-		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/")) {
+		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/") || uri.contains("/api/pandwork/pand_service_list")) {
 			chain.doFilter(request, response);
 			return;
 		}

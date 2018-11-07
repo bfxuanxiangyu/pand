@@ -227,5 +227,17 @@ public class PandService {
 		this.images = images;
 	}
 
+	@Override
+	public String toString() {
+		return "PandService [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", pandUserId="
+				+ pandUserId + ", serviceTypeId=" + serviceTypeId + ", serviceTilte=" + serviceTilte + ", serviceDes="
+				+ serviceDes + ", serviceInfo=" + serviceInfo + ", serviceCity=" + serviceCity + ", serviceArea="
+				+ serviceArea + ", servicePrice=" + servicePrice + ", serviceScope=" + serviceScope
+				+ ", serviceInvoice=" + serviceInvoice + ", serviceStatus=" + serviceStatus 
+				+ "]";
+	}
+	
+	
+
 }
 
