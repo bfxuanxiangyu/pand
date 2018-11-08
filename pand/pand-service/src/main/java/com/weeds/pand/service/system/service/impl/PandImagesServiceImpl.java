@@ -147,4 +147,9 @@ public class PandImagesServiceImpl implements PandImagesService{
 		}
 	}
 
+	@Override
+	public void deletePandImagesObj(Map<String, Object> parameters) {
+		pandImagesMapper.deletePandImagesObj(parameters);
+	}
+
 }

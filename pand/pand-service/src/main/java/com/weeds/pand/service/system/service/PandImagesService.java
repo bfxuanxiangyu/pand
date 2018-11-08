@@ -12,5 +12,7 @@ public interface PandImagesService {
 	void savePandImages(int imageCardType,int imgModel,String modelId,List<String> imagesList);
 	
 	void deletePandImages(String id);
+	
+	void deletePandImagesObj(Map<String, Object> parameters);
 
 }

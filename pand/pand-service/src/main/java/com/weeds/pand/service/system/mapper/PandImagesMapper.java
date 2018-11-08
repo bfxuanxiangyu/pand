@@ -24,5 +24,7 @@ public interface PandImagesMapper {
 	* 根据条件获取所有PandImages总数
 	*/ 
 	int  getPandImagesCount(Map<String, Object> parameters);
+	
+	void deletePandImagesObj(Map<String, Object> parameters);
 }
 

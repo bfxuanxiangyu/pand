@@ -24,5 +24,7 @@ public interface PandAuditLogMapper {
 	* 根据条件获取所有PandAuditLog总数
 	*/ 
 	int  getPandAuditLogCount(Map<String, Object> parameters);
+	
+	PandAuditLog getPandAuditLogObj(Map<String, Object> parameters);
 }
 

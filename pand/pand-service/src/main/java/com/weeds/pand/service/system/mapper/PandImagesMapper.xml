@@ -46,6 +46,20 @@
    <select id="getPandImagesCount" parameterType="map" resultType="int">
        select count(1) from pand_images where 1=1 
    </select>
+   
+   <delete id="deletePandImagesObj" parameterType="map">
+    	delete from pand_images
+   	 	where 1=1 
+   	 	<if test="imgType != null">
+       		and img_type = #{imgType}
+       </if>
+       <if test="imgModel != null">
+       		and img_model = #{imgModel}
+       </if>
+       <if test="modelId != null">
+       		and model_id = #{modelId}
+       </if>
+  </delete>
 
 
 </mapper>

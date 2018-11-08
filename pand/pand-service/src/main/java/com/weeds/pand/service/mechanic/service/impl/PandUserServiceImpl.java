@@ -85,5 +85,10 @@ public class PandUserServiceImpl implements PandUserService{
 		return pandAuditLogMapper.getPandAuditLogList(parameters);
 	}
 
+	@Override
+	public PandAuditLog getPandAuditLogObj(Map<String, Object> parameters) {
+		return pandAuditLogMapper.getPandAuditLogObj(parameters);
+	}
+
 }
 

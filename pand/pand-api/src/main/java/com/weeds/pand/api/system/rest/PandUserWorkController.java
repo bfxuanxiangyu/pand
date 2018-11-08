@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
+import com.weeds.pand.service.pandcore.domain.PandAuditLog;
 import com.weeds.pand.service.pandcore.domain.PandShop;
 import com.weeds.pand.service.pandcore.service.PandShopService;
 import com.weeds.pand.service.system.domain.CardImage;
@@ -189,6 +190,11 @@ public class PandUserWorkController {
 				List<CardImage> ciList = JSON.parseArray(imagesJson, CardImage.class);
 				if(ciList!=null && !ciList.isEmpty()){
 					List<String> baseStrList = null;
+					//首先删除用户1下的照片
+					Map<String, Object> dep = Maps.newConcurrentMap();
+					dep.put("imgModel", 1);
+					dep.put("modelId", pu.getId());
+					pandImagesService.deletePandImagesObj(dep);
 					for (CardImage cardImage : ciList) {
 						if(cardImage.getType()==null || isBlank(cardImage.getBaseStr())){
 							continue;
@@ -218,6 +224,7 @@ public class PandUserWorkController {
 			oldObjById.setUserArea(pu.getUserArea());
 			oldObjById.setUserAddress(pu.getUserAddress());
 			oldObjById.setUserType(2);
+			oldObjById.setUserStatus(1);
 			oldObjById.setUserLat(pu.getUserLat());
 			oldObjById.setUserLng(pu.getUserLng());
 			pandUserService.savePandUser(oldObjById);
@@ -278,6 +285,68 @@ public class PandUserWorkController {
 			logger.error("图片保存异常"+e.getMessage(),e);
 		}
 		return httpStr;
+	}
+	
+	
+	
+	/**
+	 * 获取商户审核不通过原因
+	 * @param token      用户token
+	 * @param pandUserId 用户id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/panduser_shoper_audit")
+	public String shoperAudit(String token,String pandUserId) {
+		logger.info("商户审核不通过原因参数:"+token+",pandUserId:"+pandUserId);
+		try {
+			if(isBlank(token) || isBlank(pandUserId)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", pandUserId);
+			parameters.put("auditType", 3);
+			
+			PandAuditLog pal = pandUserService.getPandAuditLogObj(parameters);
+			
+			return PandResponseUtil.printJson("获取成功", pal);//返回不通过原因
+			
+		} catch (Exception e) {
+			logger.error("商户审核不通过原因"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	/**
+	 * 商户审核状态
+	 * @param token      用户token
+	 * @param pandUserId 用户id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/panduser_shoper_status")
+	public String shoperAuditSatus(String token,String pandUserId) {
+		logger.info("商户审核状态参数:"+token+",pandUserId:"+pandUserId);
+		try {
+			if(isBlank(token) || isBlank(pandUserId)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("id", pandUserId);
+			PandUser oldObjById = pandUserService.getPandUserObj(parameters);
+			
+			if(oldObjById == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
+			}
+			
+			return PandResponseUtil.printJson("获取成功", oldObjById.getUserStatus());
+			
+		} catch (Exception e) {
+			logger.error("商户审核状态"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
 	}
 	
 	

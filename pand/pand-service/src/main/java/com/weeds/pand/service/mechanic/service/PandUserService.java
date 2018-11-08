@@ -29,5 +29,7 @@ public interface PandUserService{
 	PageInfo<PandUser> selectAllForPage(PandUserQueryParam params);
 
 	List<PandAuditLog> selectPandAuditLogList(Map<String, Object> parameters);
+	
+	PandAuditLog getPandAuditLogObj(Map<String, Object> parameters);
 }
 
