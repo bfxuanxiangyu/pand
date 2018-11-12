@@ -161,7 +161,7 @@ public class PandUserWorkController {
 	@ResponseBody
 	@RequestMapping("/panduser_enter_shopper")
 	public String enterShopper(String token,PandUser pu,String imagesJson) {
-		logger.info("成为商家参数:"+token+",pandUser:"+pu.toString()+",imagesJson="+imagesJson);
+		logger.info("成为商家参数:"+token+",pandUser:"+pu.toString());
 		if(isBlank(token) || isBlank(pu.getId()) || isBlank(imagesJson)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
@@ -180,7 +180,7 @@ public class PandUserWorkController {
 			if(oldObjById == null){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
 			}
-			if(oldObjById.getUserType()==2){
+			if(oldObjById.getUserType()==2 && oldObjById.getUserStatus()==2){
 				return PandResponseUtil.printFailJson(PandResponseUtil.failed,"已经是商铺用户,请联系管理员", null);
 			}
 			

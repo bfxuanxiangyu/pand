@@ -105,7 +105,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 			if(!file.exists()){
 				file.mkdirs();
 			}
-			String fileName = PandDateUtils.dateToStr(new Date(), "yyyyMMddHHmmss")+".png";
+			String fileName = PandStringUtils.getUUID()+".png";
 			byte[] bytes = Base64Utils.decode(str.getBytes());
 			OutputStream out = new FileOutputStream(savePath+porderPath+fileName);
 			out.write(bytes);
