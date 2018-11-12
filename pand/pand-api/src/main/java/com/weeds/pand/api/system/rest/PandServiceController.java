@@ -71,8 +71,9 @@ public class PandServiceController {
 	 * @param serviceTilte   服务标题
 	 * @param serviceDes     服务描述
 	 * @param serviceInfo    服务须知
-	 * @param serviceCity    服务所属城市
-	 * @param serviceArea    服务所属区域
+	 * @param serviceAddress 服务所在地址
+	 * @param serviceLat     服务地址所在纬度
+	 * @param serviceLng     服务地址所在经度
 	 * @param servicePrice   服务价格
 	 * @param serviceScope   服务区间
 	 * @param serviceInvoice 是否开具发票
@@ -88,8 +89,7 @@ public class PandServiceController {
 		try {
 			if(isBlank(ps.getPandUserId()) || isBlank(ps.getServiceTypeId()) 
 				|| isBlank(ps.getServiceTilte()) || isBlank(ps.getServiceDes())
-				|| isBlank(ps.getServiceInfo()) || isBlank(ps.getServiceCity())
-				|| isBlank(ps.getServiceArea()) || isBlank(ps.getServicePrice())
+				|| isBlank(ps.getServiceAddress()) || isBlank(ps.getServicePrice())
 				|| isBlank(ps.getServiceScope()) || ps.getServiceInvoice()==null){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}

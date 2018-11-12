@@ -144,6 +144,7 @@ public class PandUserController {
 				//用户不存在   自动补充进去
 				user = new PandUser();
 				user.setUserPhone(userPhone);
+				user.setUserWeixin(userWeixin);
 				user.setUserNickname("pandid_"+PandStringUtils.getRandomStr(14));
 				user.setCreateTime(new Date());
 				user.setUserStatus(0);

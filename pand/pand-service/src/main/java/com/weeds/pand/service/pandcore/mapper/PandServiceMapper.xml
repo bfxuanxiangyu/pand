@@ -20,6 +20,9 @@
 		<result column="service_scope" jdbcType="VARCHAR" property="serviceScope" />
 		<result column="service_invoice" jdbcType="BIGINT" property="serviceInvoice" />
 		<result column="service_status" jdbcType="BIGINT" property="serviceStatus" />
+		<result column="service_address" jdbcType="VARCHAR" property="serviceAddress" />
+		<result column="service_lat" jdbcType="VARCHAR" property="serviceLat" />
+		<result column="service_lng" jdbcType="VARCHAR" property="serviceLng" />
 		
 		<collection property="images" column="{modelId=id}" 
 			select="com.weeds.pand.service.system.mapper.PandImagesMapper.getPandImagesList"></collection>
@@ -55,6 +58,7 @@
 		    	service_tilte like CONCAT(CONCAT('%', #{contents}), '%')
 		    	or service_des like CONCAT(CONCAT('%', #{contents}), '%')
 		    	or service_info like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or service_address like CONCAT(CONCAT('%', #{contents}), '%')
 	    		)
        </if>
        <if test="sortType==4"><!-- 4价格降序 -->
@@ -98,6 +102,7 @@
 		    	service_tilte like CONCAT(CONCAT('%', #{contents}), '%')
 		    	or service_des like CONCAT(CONCAT('%', #{contents}), '%')
 		    	or service_info like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or service_address like CONCAT(CONCAT('%', #{contents}), '%')
 	    		)
        </if>
        limit 1

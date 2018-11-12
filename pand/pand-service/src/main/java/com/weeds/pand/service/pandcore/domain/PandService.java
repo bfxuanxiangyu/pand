@@ -85,12 +85,28 @@ public class PandService {
 	*/ 
 	@Column(name="service_price")
 	private String servicePrice;
-
+	
 	/**
-	* 服务范围
-	*/ 
+	 * 服务范围
+	 */ 
 	@Column(name="service_scope")
 	private String serviceScope;
+
+	/**
+	 * 服务地址
+	 */ 
+	@Column(name="service_address")
+	private String serviceAddress;
+	/**
+	 * 服务地址纬度
+	 */ 
+	@Column(name="service_lat")
+	private String serviceLat;
+	/**
+	* 服务地址经度
+	*/ 
+	@Column(name="service_lng")
+	private String serviceLng;
 
 	/**
 	* 是否开具发票 0不开具   1开具   默认0
@@ -227,14 +243,38 @@ public class PandService {
 		this.images = images;
 	}
 
+	public String getServiceAddress() {
+		return serviceAddress;
+	}
+
+	public void setServiceAddress(String serviceAddress) {
+		this.serviceAddress = serviceAddress;
+	}
+
+	public String getServiceLat() {
+		return serviceLat;
+	}
+
+	public void setServiceLat(String serviceLat) {
+		this.serviceLat = serviceLat;
+	}
+
+	public String getServiceLng() {
+		return serviceLng;
+	}
+
+	public void setServiceLng(String serviceLng) {
+		this.serviceLng = serviceLng;
+	}
+
 	@Override
 	public String toString() {
 		return "PandService [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", pandUserId="
 				+ pandUserId + ", serviceTypeId=" + serviceTypeId + ", serviceTilte=" + serviceTilte + ", serviceDes="
 				+ serviceDes + ", serviceInfo=" + serviceInfo + ", serviceCity=" + serviceCity + ", serviceArea="
 				+ serviceArea + ", servicePrice=" + servicePrice + ", serviceScope=" + serviceScope
-				+ ", serviceInvoice=" + serviceInvoice + ", serviceStatus=" + serviceStatus 
-				+ "]";
+				+ ", serviceAddress=" + serviceAddress + ", serviceLat=" + serviceLat + ", serviceLng=" + serviceLng
+				+ ", serviceInvoice=" + serviceInvoice + ", serviceStatus=" + serviceStatus + "]";
 	}
 	
 	
