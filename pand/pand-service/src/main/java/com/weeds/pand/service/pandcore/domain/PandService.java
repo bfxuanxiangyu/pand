@@ -13,7 +13,9 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.weeds.pand.service.system.domain.PandImages; 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.weeds.pand.service.system.domain.PandImages;
+import com.weeds.pand.utils.jsonutil.CustomDoubleOneSerialize; 
 /**
  * pand_service 实体类
  * 服务表
@@ -122,6 +124,18 @@ public class PandService {
 	
 	@Transient
 	private List<PandImages> images;//服务图片集合
+	
+	@Transient
+	private Double serviceDistance;//服务距离
+	
+	@Transient
+	private Double serviceStar;//星级评分
+	
+	@Transient
+	private int serviceTotal;//售出总个数
+	
+	@Transient
+	private int serviceTimeLength;//到达时长
 
 	public String getId(){
 		return id;
@@ -276,8 +290,44 @@ public class PandService {
 				+ ", serviceAddress=" + serviceAddress + ", serviceLat=" + serviceLat + ", serviceLng=" + serviceLng
 				+ ", serviceInvoice=" + serviceInvoice + ", serviceStatus=" + serviceStatus + "]";
 	}
-	
-	
+	@JsonSerialize(using = CustomDoubleOneSerialize.class)
+	public Double getServiceDistance() {
+		if(serviceDistance==null){
+			serviceDistance=1.00;
+		}
+		return serviceDistance;
+	}
+
+	public void setServiceDistance(Double serviceDistance) {
+		this.serviceDistance = serviceDistance;
+	}
+	@JsonSerialize(using = CustomDoubleOneSerialize.class)
+	public Double getServiceStar() {
+		if(serviceStar==null){
+			serviceStar=1.00;
+		}
+		return serviceStar;
+	}
+
+	public void setServiceStar(Double serviceStar) {
+		this.serviceStar = serviceStar;
+	}
+
+	public int getServiceTotal() {
+		return serviceTotal;
+	}
+
+	public void setServiceTotal(int serviceTotal) {
+		this.serviceTotal = serviceTotal;
+	}
+
+	public int getServiceTimeLength() {
+		return serviceTimeLength;
+	}
+
+	public void setServiceTimeLength(int serviceTimeLength) {
+		this.serviceTimeLength = serviceTimeLength;
+	}
 
 }
 
