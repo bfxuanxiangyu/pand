@@ -20,6 +20,8 @@ public interface PandShopMapper {
 	List<PandShop>  getPandShopList(Map<String, Object> parameters);
 
 	PandShop  getPandShopObject(Map<String, Object> parameters);
+	
+	PandShop  getPandShopObjectByServiceId(String serviceId);
 
 	/**
 	* 根据条件获取所有PandShop总数

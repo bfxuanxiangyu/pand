@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Tue Nov 13 14:26:25 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.pandcore.mapper.PandOrderMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandOrder">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
+		<result column="service_id" jdbcType="VARCHAR" property="serviceId" />
+		<result column="shop_id" jdbcType="VARCHAR" property="shopId" />
+		<result column="pand_shoper_id" jdbcType="VARCHAR" property="pandShoperId" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="time_period" jdbcType="VARCHAR" property="timePeriod" />
+		<result column="service_count" jdbcType="BIGINT" property="serviceCount" />
+		<result column="message" jdbcType="VARCHAR" property="message" />
+		<result column="status" jdbcType="BIGINT" property="status" />
+		<result column="service_money" jdbcType="DOUBLE" property="serviceMoney" />
+		<result column="order_num" jdbcType="VARCHAR" property="orderNum" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandOrderList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_order where 1=1 
+       <if test="pandUserId != null">
+       		and pand_user_id = #{pandUserId}
+       </if>
+       <if test="orderNum != null">
+       		and order_num = #{orderNum}
+       </if>
+       <if test="status != null">
+       		and status = #{status}
+       </if>
+       <if test="serviceId != null">
+       		and service_id = #{serviceId}
+       </if>
+       <if test="shopId != null">
+       		and shop_id = #{shopId}
+       </if>
+       <if test="pandShoperId != null">
+       		and pand_shoper_id = #{pandShoperId}
+       </if>
+       order by create_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+       </if>
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandOrderCount" parameterType="map" resultType="int">
+       select count(1) from pand_order where 1=1 
+   </select>
+
+   <!-- 获取当天最大订单编号 -->
+   <select id="getMaxOrderNumNowDay" parameterType="string" resultType="long">
+       select max(order_num) from pand_order where date(create_time)=#{dateStr}
+   </select>
+
+
+</mapper>
+

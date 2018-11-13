@@ -48,6 +48,11 @@
        </if>
        limit 1
    </select>
+   
+   <!-- 查询单个对象 通过服务id查找 -->
+   <select id="getPandShopObjectByServiceId" parameterType="string" resultMap="BaseResultMap">
+       SELECT * from pand_shop where pand_user_id = (SELECT pand_user_id FROM pand_service where id=#{serviceId})
+   </select>
 
 
    <!-- 查询集合总数 -->

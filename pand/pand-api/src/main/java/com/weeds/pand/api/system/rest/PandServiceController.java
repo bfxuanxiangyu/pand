@@ -289,9 +289,9 @@ public class PandServiceController {
 	 * @param pageIndex     当前页 必填
 	 * @param pageSize      每页数量  默认为10 必填
 	 * @param token         用户token  必填
-	 * @param serviceTypeId 服务种类  技能列表中的各自id 必填
+	 * @param serviceTypeId 服务种类  技能列表中的各自id 选填
 	 * @param pandUserId    用户id  选填
-	 * @param searchType    查询类型  1综合查询 2销量  3上门速度 4筛选 必传
+	 * @param searchType    查询类型  1综合查询 2销量  3上门速度 4筛选 选填
 	 * @param sortType      综合筛选  1综合 2评分最高 3距离最近 4价格降序 5价格升序 选填
 	 * @param lat           当前纬度 (选择综合查询距离最近时lat lng必传) 选填
 	 * @param lng           当前经度 选填
@@ -301,6 +301,7 @@ public class PandServiceController {
 	 * @param serviceInvoice是否开具发票 0不开具   1开具 选填
 	 * @param orderType     是否下过单  0未下过   1下过 选填
 	 * @param shopType		商家类型 1新商家  2企业商家  选填
+	 * @param serviceStatus	商品状态 2出售中  4 已下架
 	 * @return
 	 */
 	@ResponseBody
@@ -308,13 +309,12 @@ public class PandServiceController {
 	public String pandServiceList(String pandUserId,String serviceTypeId,Integer searchType,
 								  Integer sortType,String lat,String lng,String contents,Integer startPrice,
 								  Integer endPrice,Integer serviceInvoice,Integer orderType,Integer shopType,
-								  Integer pageIndex, Integer pageSize) {
+								  Integer serviceStatus, Integer pageIndex, Integer pageSize) {
 		logger.info("编辑店铺参数 pandUserId="+pandUserId+",serviceTypeId:"+serviceTypeId+",searchType:"+searchType
 				+",sortType:"+sortType+",lat:"+lat+",lng:"+lng+",contents:"+contents
 				+",startPrice:"+startPrice+",endPrice:"+endPrice+",serviceInvoice:"+serviceInvoice
 				+",orderType:"+orderType+",shopType:"+shopType+",pageIndex:"+pageIndex+",pageSize:"+pageSize);
-		if(isBlank(serviceTypeId) || searchType==null
-				|| pageIndex==null || pageSize==null){
+		if(pageIndex==null || pageSize==null){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
 		try {
@@ -331,6 +331,9 @@ public class PandServiceController {
 				}
 			}
 			
+			if(serviceStatus != null){
+				parameters.put("serviceStatus", serviceStatus);
+			}
 			
 			List<PandService> serviceList = pandServiceService.getPandServiceList(parameters);
 			return PandResponseUtil.printJson("服务列表获取成功", serviceList);
