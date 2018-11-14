@@ -19,5 +19,7 @@ public interface PandServiceService{
 	
 	PandService getPandServiceObj(Map<String, Object> parameters);//获取服务详情
 	
+	PandService getPandServiceById(String id);//获取服务详情
+	
 }
 

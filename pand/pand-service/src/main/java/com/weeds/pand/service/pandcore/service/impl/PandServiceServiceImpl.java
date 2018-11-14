@@ -44,6 +44,11 @@ public class PandServiceServiceImpl implements PandServiceService{
 	public PandService getPandServiceObj(Map<String, Object> parameters) {
 		return pandServiceMapper.getPandServiceObject(parameters);
 	}
+
+	@Override
+	public PandService getPandServiceById(String id) {
+		return pandServiceJpaDao.findOne(id);
+	}
 	
 }
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Wed Nov 14 12:48:47 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.pandcore.mapper.PandUserAddressMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandUserAddress">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
+		<result column="status" jdbcType="BIGINT" property="status" />
+		<result column="person_name" jdbcType="VARCHAR" property="personName" />
+		<result column="person_phone" jdbcType="VARCHAR" property="personPhone" />
+		<result column="person_address" jdbcType="VARCHAR" property="personAddress" />
+		<result column="address_lat" jdbcType="VARCHAR" property="addressLat" />
+		<result column="address_lng" jdbcType="VARCHAR" property="addressLng" />
+		<result column="house_number" jdbcType="VARCHAR" property="houseNumber" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandUserAddressList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_user_address where 1=1 
+       <if test="pandUserId != null">
+       		and pand_user_id = #{pandUserId}
+       </if>
+       <if test="status != null">
+       		and status = #{status}
+       </if>
+       order by create_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+       </if>
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandUserAddressCount" parameterType="map" resultType="int">
+       select count(1) from pand_user_address where 1=1 
+   </select>
+
+
+</mapper>
+

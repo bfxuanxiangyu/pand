@@ -50,6 +50,9 @@
        <if test="serviceStatus != null">
        		and service_status = #{serviceStatus}
        </if>
+       <if test="serviceStatus == -1">
+       		and service_status != 5
+       </if>
        <if test="serviceInvoice != null">
        		and service_invoice = #{serviceInvoice}
        </if>

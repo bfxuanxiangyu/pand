@@ -113,6 +113,11 @@ public class PandServiceController {
 			ps.setServiceStatus(serviceStatus);//是否自动审核   用户提交状态
 			if(isBlank(ps.getId())){
 				ps.setCreateTime(new Date());
+			}else{
+				PandService psOld = pandServiceService.getPandServiceById(ps.getId());
+				if(psOld != null){
+					ps.setCreateTime(psOld.getCreateTime());
+				}
 			}
 			
 			pandServiceService.savePandService(ps);
@@ -123,6 +128,11 @@ public class PandServiceController {
 			try {
 				List<CardImage> ciList = JSON.parseArray(imagesJson, CardImage.class);
 				if(ciList!=null && !ciList.isEmpty()){
+					//首先删除改类型下的图片
+					Map<String, Object> dep = Maps.newConcurrentMap();
+					dep.put("imgModel", 3);
+					dep.put("modelId", ps.getId());//根据服务id进行删除原有图片
+					pandImagesService.deletePandImagesObj(dep);
 					if(ciList!=null && !ciList.isEmpty()){
 						List<String> baseStrList = null;
 						for (CardImage ci : ciList) {
@@ -148,9 +158,9 @@ public class PandServiceController {
 	}
 	
 	/**
-	 * 服务下架    快速上架
+	 * 服务下架    快速上架  删除
 	 * @param token   用户token
-	 * @param status  下架、快速上架状态值  4下架  2快速上架
+	 * @param status  下架、快速上架状态值  4下架  2快速上架 5删除
 	 * @param id      服务id
 	 * @return
 	 */
@@ -168,6 +178,8 @@ public class PandServiceController {
 			String info = "下架成功";
 			if(status==2){
 				info = "快速上架成功";
+			}if(status==5){
+				info = "删除成功";
 			}
 			Map<String, Object> parameters = Maps.newHashMap();
 			parameters.put("id", id);
@@ -192,9 +204,9 @@ public class PandServiceController {
 	 */
 	@ResponseBody
 	@RequestMapping("/shop_detail")
-	public String shopDetail(String token,String pandUserId) {
-		logger.info("店铺详情参数:"+token+",pandUserId:"+pandUserId);
-		if(isBlank(token) || isBlank(pandUserId)){
+	public String shopDetail(String pandUserId) {
+		logger.info("店铺详情参数:pandUserId:"+pandUserId);
+		if(isBlank(pandUserId)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
 		try {
@@ -333,6 +345,8 @@ public class PandServiceController {
 			
 			if(serviceStatus != null){
 				parameters.put("serviceStatus", serviceStatus);
+			}else{
+				parameters.put("serviceStatus", -1);
 			}
 			
 			List<PandService> serviceList = pandServiceService.getPandServiceList(parameters);
