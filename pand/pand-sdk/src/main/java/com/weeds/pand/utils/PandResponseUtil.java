@@ -75,6 +75,7 @@ public class PandResponseUtil {
 	public static final int no_shop = 1515;//店铺不存在
 	public static final int no_order = 1516;//订单不存在
 	public static final int no_address = 1517;//地址不存在
+	public static final int no_service = 1518;//服务不存在
 	
 	
 	/**

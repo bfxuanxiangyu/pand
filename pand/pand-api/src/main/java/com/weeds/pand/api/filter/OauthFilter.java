@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.api.token.domain.AccessToken;
 import com.weeds.pand.api.token.mapper.AccessTokenMapper;
-import com.weeds.pand.api.utils.HMac;
 import com.weeds.pand.service.device.domain.DeviceEntity;
 import com.weeds.pand.service.utils.DeviceFactoryUtil;
 import com.weeds.pand.utils.PandResponseUtil;
@@ -61,7 +60,7 @@ public class OauthFilter implements Filter {
 //		chain.doFilter(request, response);
 		logger.info("pand url :"+uri);
 		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/") || uri.contains("/api/pandwork/pand_service_list")
-				|| uri.contains("/api/pandwork/shop_detail")) {
+				|| uri.contains("/api/pandwork/shop_detail") || uri.contains("/api/pandwork/service_detail") ) {
 			chain.doFilter(request, response);
 			return;
 		}

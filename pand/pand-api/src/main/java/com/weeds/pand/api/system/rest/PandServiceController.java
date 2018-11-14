@@ -172,7 +172,7 @@ public class PandServiceController {
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
 		try{
-			if(status!=4 && status !=2){
+			if(status!=4 && status !=2 && status != 5){
 				return PandResponseUtil.printFailJson(PandResponseUtil.sold_out_error,"上下架状态异常", null);
 			}
 			String info = "下架成功";
@@ -192,6 +192,58 @@ public class PandServiceController {
 			return PandResponseUtil.printJson(info, null);
 		} catch (Exception e) {
 			logger.error("服务上下架异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	/**
+	 * 修改服务价格
+	 * @param token         用户token
+	 * @param servicePrice  服务价格
+	 * @param id            服务id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/service_update_price")
+	public String serviceUpdatePrice(String token,String servicePrice,String id) {
+		logger.info("快速修改服务价格参数:"+token+",servicePrice:"+servicePrice+",id:"+id);
+		if(isBlank(token) || isBlank(id) || isBlank(servicePrice)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try{
+			
+			PandService pand = pandServiceService.getPandServiceById(id);
+			if(pand == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_service,"服务不存在", null);
+			}
+			pand.setServicePrice(servicePrice);
+			pandServiceService.savePandService(pand);
+			return PandResponseUtil.printJson("修改成功", null);
+		} catch (Exception e) {
+			logger.error("快速修改服务价格异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	/**
+	 * 服务详情
+	 * @param id            服务id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/service_detail")
+	public String serviceUpdatePrice(String id) {
+		logger.info("服务详情参数id:"+id);
+		if( isBlank(id) ){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try{
+			
+			PandService pand = pandServiceService.getPandServiceById(id);
+			if(pand == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_service,"服务不存在", null);
+			}
+			return PandResponseUtil.printJson("获取成功", pand);
+		} catch (Exception e) {
+			logger.error("服务详情异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}
@@ -345,8 +397,6 @@ public class PandServiceController {
 			
 			if(serviceStatus != null){
 				parameters.put("serviceStatus", serviceStatus);
-			}else{
-				parameters.put("serviceStatus", -1);
 			}
 			
 			List<PandService> serviceList = pandServiceService.getPandServiceList(parameters);
