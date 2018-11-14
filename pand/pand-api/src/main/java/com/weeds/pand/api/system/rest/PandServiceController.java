@@ -322,7 +322,7 @@ public class PandServiceController {
 								  Integer sortType,String lat,String lng,String contents,Integer startPrice,
 								  Integer endPrice,Integer serviceInvoice,Integer orderType,Integer shopType,
 								  Integer serviceStatus, Integer pageIndex, Integer pageSize) {
-		logger.info("编辑店铺参数 pandUserId="+pandUserId+",serviceTypeId:"+serviceTypeId+",searchType:"+searchType
+		logger.info("服务列表参数 pandUserId="+pandUserId+",serviceTypeId:"+serviceTypeId+",searchType:"+searchType
 				+",sortType:"+sortType+",lat:"+lat+",lng:"+lng+",contents:"+contents
 				+",startPrice:"+startPrice+",endPrice:"+endPrice+",serviceInvoice:"+serviceInvoice
 				+",orderType:"+orderType+",shopType:"+shopType+",pageIndex:"+pageIndex+",pageSize:"+pageSize);
