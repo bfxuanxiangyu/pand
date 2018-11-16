@@ -26,11 +26,16 @@ import com.google.common.collect.Maps;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
 import com.weeds.pand.service.pandcore.domain.PandAuditLog;
+import com.weeds.pand.service.pandcore.domain.PandService;
 import com.weeds.pand.service.pandcore.domain.PandShop;
+import com.weeds.pand.service.pandcore.domain.PandUserCollection;
 import com.weeds.pand.service.pandcore.domain.PandUserComment;
+import com.weeds.pand.service.pandcore.service.PandServiceService;
 import com.weeds.pand.service.pandcore.service.PandShopService;
+import com.weeds.pand.service.pandcore.service.PandUserCollectionService;
 import com.weeds.pand.service.pandcore.service.PandUserCommentService;
 import com.weeds.pand.service.system.domain.CardImage;
+import com.weeds.pand.service.system.domain.Page;
 import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
@@ -54,7 +59,10 @@ public class PandUserWorkController {
 	private PandShopService pandShopService; 
 	@Resource
 	private PandUserCommentService pandUserCommentService;
-	
+	@Resource
+	private PandUserCollectionService pandUserCollectionService;
+	@Resource
+	private PandServiceService pandServiceService;
 	/**
 	 * 个人信息补全信息
 	 *   1、修改手机   userPhone、anthCode不能为空
@@ -422,7 +430,7 @@ public class PandUserWorkController {
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}
-
+	
 	/**
 	 * 删除评论
 	 * @param token
@@ -449,6 +457,121 @@ public class PandUserWorkController {
 			
 		} catch (Exception e) {
 			logger.error("删除评论异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	/**
+	 * 收藏列表
+	 * @param token          用户token 必填
+	 * @param pandUserId     用户id 必填
+	 * @param pageIndex      当前页 从1开始   必填
+	 * @param pageSize       每页数量  默认为10 必填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/collection_list")
+	public String collectioinList(String token,String pandUserId,Integer pageIndex,Integer pageSize) {
+		logger.info("收藏参数:"+token+",pandUserId:"+pandUserId);
+		try {
+			if(isBlank(token) || isBlank(pandUserId)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			//如果本人已经评论过  不进行再次评论
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters = Page.getPageMap(parameters, pageIndex, pageSize);
+			parameters.put("pandUserId", pandUserId);
+			parameters.put("status", 0);
+			
+			List<PandUserCollection> list = pandUserCollectionService.getPandUserCollectionList(parameters);
+			
+			if(list == null || list.isEmpty()){
+				return PandResponseUtil.printJson("列表获取成功", list);
+			}
+			List<String> serviceIdList = Lists.newArrayList();
+			for (PandUserCollection obj : list) {
+				serviceIdList.add(obj.getServiceId());
+			}
+			parameters.clear();
+			parameters.put("serviceIdList", serviceIdList);
+			parameters.put("serviceStatus", 2);
+			
+			List<PandService> pandServiceList = pandServiceService.getPandServiceList(parameters);
+			
+			return PandResponseUtil.printJson("收藏成功", pandServiceList);
+			
+		} catch (Exception e) {
+			logger.error("收藏异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	/**
+	 * 收藏
+	 * @param token          用户token 必填
+	 * @param pandUserId     用户id 必填
+	 * @param serviceId      服务id 必填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/collection_save")
+	public String collectioinSave(String token,PandUserCollection collection) {
+		logger.info("收藏参数:"+token+",collection:"+collection.toString());
+		try {
+			if(isBlank(token) || isBlank(collection.getPandUserId())  || isBlank(collection.getServiceId())){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			//如果本人已经评论过  不进行再次评论
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", collection.getPandUserId());
+			parameters.put("serviceId", collection.getServiceId());
+			parameters.put("status", 0);
+			
+			List<PandUserCollection> list = pandUserCollectionService.getPandUserCollectionList(parameters);
+			if(list!=null && !list.isEmpty()){
+				return PandResponseUtil.printFailJson(PandResponseUtil.comment_again,"不能重复收藏", null);
+			}
+			
+			collection.setCreateTime(new Date());
+			collection.setStatus(0);
+			
+			pandUserCollectionService.savePandUserCollection(collection);
+			
+			return PandResponseUtil.printJson("收藏成功", null);
+			
+		} catch (Exception e) {
+			logger.error("收藏异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+
+	/**
+	 * 删除收藏
+	 * @param token
+	 * @param id     评论id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/collection_delete")
+	public String collectionDelete(String token,String id) {
+		logger.info("删除收藏参数:"+token+",id:"+id);
+		try {
+			if(isBlank(token) || isBlank(id)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			PandUserCollection collection = pandUserCollectionService.getPandUserCollectionById(id);
+			
+			if(collection == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_comment,"未收藏", null);
+			}
+			collection.setStatus(1);
+			pandUserCollectionService.savePandUserCollection(collection);
+			return PandResponseUtil.printJson("取消成功", null);
+			
+		} catch (Exception e) {
+			logger.error("删除收藏异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

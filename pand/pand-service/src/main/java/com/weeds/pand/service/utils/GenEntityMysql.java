@@ -33,8 +33,8 @@ public class GenEntityMysql {
 
     private String packageOutPath = "com.weeds.pand.service.pandcore.domain";//指定实体生成所在包的路径
     private String authorName = "xuanxy";//作者名字
-    private String tablename = "pand_user_comment";//表名
-    private String className = "PandUserComment";//类名
+    private String tablename = "pand_user_collection";//表名
+    private String className = "PandUserCollection";//类名
     private String tableComment = null;//表注释
     private String javaFilePath = "./";
     private String[] colnames; // 列名数组	

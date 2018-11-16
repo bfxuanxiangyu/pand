@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Fri Nov 16 12:39:33 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.pandcore.mapper.PandUserCollectionMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandUserCollection">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
+		<result column="service_id" jdbcType="VARCHAR" property="serviceId" />
+		<result column="status" jdbcType="BIGINT" property="status" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandUserCollectionList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_user_collection where 1=1 
+       <if test="serviceId != null">
+       		and service_id = #{serviceId}
+       </if>
+       <if test="pandUserId != null">
+       		and pand_user_id = #{pandUserId}
+       </if>
+       <if test="status != null">
+       		and status = #{status}
+       </if>
+       order by create_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+
+       </if>
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandUserCollectionCount" parameterType="map" resultType="int">
+       select count(1) from pand_user_collection where 1=1 
+   </select>
+
+
+</mapper>
+

@@ -42,16 +42,22 @@
        		and service_tilte = #{serviceTilte}
        </if>
        <if test="startPrice != null">
-	    	and   service_price &gt;= #{startPrice}
+	    	and service_price &gt;= #{startPrice}
 	   </if>
        <if test="endPrice != null">
-	    	and   service_price &lt;= #{endPrice}
+	    	and service_price &lt;= #{endPrice}
 	   </if>
        <if test="serviceStatus != null">
        		and service_status = #{serviceStatus}
        </if>
        <if test="serviceStatus == null">
        		and service_status != 5
+       </if>
+       <if test="serviceIdList != null">
+       		and id in
+		    <foreach item="item" index="index" collection="serviceIdList" open="(" separator="," close=")">
+			 	#{item}
+			</foreach>
        </if>
        <if test="serviceInvoice != null">
        		and service_invoice = #{serviceInvoice}
