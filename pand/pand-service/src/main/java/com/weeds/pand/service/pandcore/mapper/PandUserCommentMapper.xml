@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--由GenEntityMysql类自动生成Thu Nov 15 12:31:50 CST 2018@xuanxy -->
+
+<mapper namespace="com.weeds.pand.service.pandcore.mapper.PandUserCommentMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandUserComment">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
+		<result column="service_id" jdbcType="VARCHAR" property="serviceId" />
+		<result column="status" jdbcType="BIGINT" property="status" />
+		<result column="skilled_score" jdbcType="DOUBLE" property="skilledScore" />
+		<result column="attitude_score" jdbcType="DOUBLE" property="attitudeScore" />
+		<result column="efficiency_score" jdbcType="DOUBLE" property="efficiencyScore" />
+		<result column="anonymous" jdbcType="BIGINT" property="anonymous" />
+		<result column="comment" jdbcType="VARCHAR" property="comment" />
+	</resultMap>
+
+
+   <!-- 查询集合 -->
+   <select id="getPandUserCommentList" parameterType="map" resultMap="BaseResultMap">
+       select * from pand_user_comment where 1=1 
+       <if test="serviceId != null">
+       		and service_id = #{serviceId}
+       </if>
+       <if test="pandUserId != null">
+       		and pand_user_id = #{pandUserId}
+       </if>
+       <if test="status != null">
+       		and status = #{status}
+       </if>
+       order by create_time desc 
+       <if test="begin != null">
+           limit #{begin},#{end}
+       </if>
+   </select>
+
+
+   <!-- 查询集合总数 -->
+   <select id="getPandUserCommentCount" parameterType="map" resultType="int">
+       select count(1) from pand_user_comment where 1=1 
+   </select>
+
+
+</mapper>
+

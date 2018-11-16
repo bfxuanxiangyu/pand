@@ -27,7 +27,9 @@ import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
 import com.weeds.pand.service.pandcore.domain.PandAuditLog;
 import com.weeds.pand.service.pandcore.domain.PandShop;
+import com.weeds.pand.service.pandcore.domain.PandUserComment;
 import com.weeds.pand.service.pandcore.service.PandShopService;
+import com.weeds.pand.service.pandcore.service.PandUserCommentService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandDateUtils;
@@ -50,6 +52,8 @@ public class PandUserWorkController {
 	private PandImagesService pandImagesService;
 	@Resource
 	private PandShopService pandShopService; 
+	@Resource
+	private PandUserCommentService pandUserCommentService;
 	
 	/**
 	 * 个人信息补全信息
@@ -345,6 +349,106 @@ public class PandUserWorkController {
 			
 		} catch (Exception e) {
 			logger.error("商户审核状态"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	
+	/**
+	 * 评论
+	 * @param token          用户token 必填
+	 * @param pandUserId     用户id 必填
+	 * @param serviceId      服务id 必填
+	 * @param skilledScore   技术熟练分数 必填
+	 * @param attitudeScore  服务态度分数 必填
+	 * @param efficiencyScore工作效率分数 必填
+	 * @param anonymous      是否匿名  0是  1否 必填
+	 * @param comment        评论内容 必填
+	 * @param imagesJson     服务照片baseStr是图片base64位后字符串  {[{"baseStr": "..."},{"baseStr": "..."},{"baseStr": "..."}]} 选填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/comment_save")
+	public String commentSave(String token,PandUserComment comment,String imagesJson) {
+		logger.info("评论参数:"+token+",comment:"+comment.toString());
+		try {
+			if(isBlank(token) || isBlank(comment.getPandUserId())  || isBlank(comment.getServiceId()) || comment.getSkilledScore() == null
+					|| comment.getAttitudeScore()==null || comment.getEfficiencyScore()==null ||comment.getAnonymous()==null
+					|| isBlank(comment.getComment())){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			//如果本人已经评论过  不进行再次评论
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", comment.getPandUserId());
+			parameters.put("serviceId", comment.getServiceId());
+			parameters.put("status", 0);
+			
+			List<PandUserComment> commentList = pandUserCommentService.getPandUserCommentList(parameters);
+			if(commentList!=null && !commentList.isEmpty()){
+				return PandResponseUtil.printFailJson(PandResponseUtil.comment_again,"不能重复评论", null);
+			}
+			
+			comment.setCreateTime(new Date());
+			comment.setStatus(0);
+			
+			pandUserCommentService.savePandUserComment(comment);
+			
+			if(isNotBlank(imagesJson)){
+				try {
+					List<CardImage> ciList = JSON.parseArray(imagesJson, CardImage.class);
+					if(ciList!=null && !ciList.isEmpty()){
+						if(ciList!=null && !ciList.isEmpty()){
+							List<String> baseStrList = null;
+							for (CardImage ci : ciList) {
+								if(isBlank(ci.getBaseStr())){
+									continue;
+								}
+								baseStrList = Lists.newArrayList();
+								baseStrList.add(ci.getBaseStr());
+							}
+							pandImagesService.savePandImages(0,2, comment.getId(), baseStrList);
+						}
+					}
+				} catch (Exception e) {
+					logger.error("服务照片上传异常"+e.getMessage(),e);
+				}
+			}
+			
+			return PandResponseUtil.printJson("评论成功", comment);
+			
+		} catch (Exception e) {
+			logger.error("评论异常原因"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+
+	/**
+	 * 删除评论
+	 * @param token
+	 * @param id     评论id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/comment_delete")
+	public String commentDelete(String token,String id) {
+		logger.info("删除评论参数:"+token+",id:"+id);
+		try {
+			if(isBlank(token) || isBlank(id)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			PandUserComment comment = pandUserCommentService.getPandUserCommentById(id);
+			
+			if(comment == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_comment,"评论不存在", null);
+			}
+			comment.setStatus(1);
+			pandUserCommentService.savePandUserComment(comment);
+			return PandResponseUtil.printJson("删除成功", null);
+			
+		} catch (Exception e) {
+			logger.error("删除评论异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

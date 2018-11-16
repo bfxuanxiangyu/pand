@@ -1,5 +1,7 @@
 package com.weeds.pand.service.system.domain;
 
+import java.util.Map;
+
 public class Page {
 	private int pageIndex = 1;// 页码
 	private int pageSize = 20;// 每页长度
@@ -125,6 +127,25 @@ public class Page {
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+	
+	
+	/**
+	 * 获取分页参数
+	 * @param parameters
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
+	public static Map<String, Object> getPageMap(Map<String, Object> parameters,Integer pageIndex,Integer pageSize){
+		if(pageIndex<=1){
+			pageIndex = 0;
+		}else{
+			pageIndex = pageIndex-1;
+		}
+		parameters.put("begin", pageIndex * pageSize);
+		parameters.put("end", pageSize);
+		return parameters;
 	}
 
 }

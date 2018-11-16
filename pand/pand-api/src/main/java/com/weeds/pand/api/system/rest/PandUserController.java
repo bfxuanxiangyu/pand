@@ -19,6 +19,9 @@ import com.weeds.pand.api.token.domain.AccessToken;
 import com.weeds.pand.api.token.service.AccessTokenService;
 import com.weeds.pand.service.mechanic.domain.PandUser;
 import com.weeds.pand.service.mechanic.service.PandUserService;
+import com.weeds.pand.service.pandcore.domain.PandUserComment;
+import com.weeds.pand.service.pandcore.service.PandUserCommentService;
+import com.weeds.pand.service.system.domain.Page;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.PandValidationUtils;
@@ -35,6 +38,11 @@ public class PandUserController {
 	private PasswordMatcher passwordMatcher;
 	@Resource
 	private AccessTokenService accessTokenService;
+	@Resource
+	private PandUserCommentService pandUserCommentService;
+	
+	
+	
 	@Value("${img.imgUrl}")
 	private String imgUrl;
 	/**
@@ -213,5 +221,41 @@ public class PandUserController {
 		}
 		return token;
 	}
+	
+	
+	/**
+	 * 评论查询 支持服务id和评论者查询  支持分页
+	 * @param pageIndex     当前页 从1开始   必填
+	 * @param pageSize      每页数量  默认为10 必填
+	 * @param serviceId     服务id 必填
+	 * @param pandUserId    评论者id 选填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/comment_list")
+	public String commentList(String serviceId,String pandUserId,Integer pageIndex,Integer pageSize) {
+		logger.info("评论查询参数serviceId:"+serviceId+",pandUser:"+pandUserId+",pageIndex="+pageIndex+",pageSize="+pageSize);
+		if(pageIndex == null || pageSize==null){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters = Page.getPageMap(parameters, pageIndex, pageSize);
+			parameters.put("status", 0);
+			if(PandStringUtils.isNotBlank(serviceId)){
+				parameters.put("serviceId", serviceId);
+			}
+			if(PandStringUtils.isNotBlank(pandUserId)){
+				parameters.put("pandUserId", pandUserId);
+			}
+			List<PandUserComment> list = pandUserCommentService.getPandUserCommentList(parameters);
+			return PandResponseUtil.printJson("评论列表获取成功", list);
+		} catch (Exception e) {
+			logger.error("评论查询异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+		
+	}
+	
 	
 }

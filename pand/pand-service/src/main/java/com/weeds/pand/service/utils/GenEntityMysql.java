@@ -33,8 +33,8 @@ public class GenEntityMysql {
 
     private String packageOutPath = "com.weeds.pand.service.pandcore.domain";//指定实体生成所在包的路径
     private String authorName = "xuanxy";//作者名字
-    private String tablename = "pand_user_address";//表名
-    private String className = "PandUserAddress";//类名
+    private String tablename = "pand_user_comment";//表名
+    private String className = "PandUserComment";//类名
     private String tableComment = null;//表注释
     private String javaFilePath = "./";
     private String[] colnames; // 列名数组	
@@ -89,6 +89,7 @@ public class GenEntityMysql {
     	gem.genService();
     	gem.genServiceImpl();
     }
+    
     /*
      * 构造函数
      */
@@ -291,6 +292,11 @@ public class GenEntityMysql {
     	sb.append("package " + serviceOutputPath + ";\r\n");
     	sb.append("\r\n");
     	sb.append("\r\n");
+    	sb.append("import java.util.List;\r\n");
+    	sb.append("import java.util.Map;\r\n");
+    	sb.append("\r\n");
+    	sb.append("import " + packageOutPath + "."+className+";\r\n");
+    	sb.append("\r\n");
     	
     	//注释部分
     	sb.append("/**\r\n");
@@ -304,6 +310,13 @@ public class GenEntityMysql {
     	//接口部分
     	//类名稍微改造 ,去掉第一个单词
     	sb.append("public interface " + serviceClassName +"{\r\n\r\n");
+    	sb.append("\r\n");
+    	sb.append("      List<"+className+"> get"+className+"List(Map<String, Object> parameters);\r\n");
+    	sb.append("\r\n");
+    	sb.append("      "+className+" get"+className+"ById(String id);\r\n");
+    	sb.append("\r\n");
+    	sb.append("      void save"+className+"("+className+" obj);\r\n");
+    	sb.append("\r\n");
     	sb.append("}\r\n");
     	
     	return sb.toString();
@@ -319,9 +332,20 @@ public class GenEntityMysql {
     	sb.append("package " + serviceImplOutputPath + ";\r\n");
     	sb.append("\r\n");
     	sb.append("\r\n");
+    	sb.append("import java.util.Date;\r\n");
+    	sb.append("import java.util.List;\r\n");
+    	sb.append("import java.util.Map;\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	sb.append("import javax.annotation.Resource;\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
     	sb.append("import org.springframework.stereotype.Service;\r\n");
     	sb.append("\r\n");
     	sb.append("import "+serviceOutputPath+"."+serviceClassName+"; \r\n");
+    	sb.append("import " + packageOutPath + "."+className+";\r\n");
+    	sb.append("import " + mapperPackageOutPath + "."+mapperClassName+";\r\n");
+     	sb.append("import " + mapperPackageOutPath + "."+jpaImplClassName+";\r\n");
     	sb.append("\r\n");
     	sb.append("\r\n");
     	//注释部分
@@ -337,6 +361,32 @@ public class GenEntityMysql {
     	//类名稍微改造 ,去掉第一个单词
     	sb.append("@Service\r\n");
     	sb.append("public class " + serviceImplClassName +" implements "+ serviceClassName + "{\r\n\r\n");
+    	sb.append("\r\n");
+    	sb.append("      @Resource\r\n");
+    	sb.append("      private "+jpaImplClassName+" "+ getAliasName(jpaImplClassName) +";\r\n");
+    	sb.append("      @Resource\r\n");
+    	sb.append("      private "+mapperClassName+" "+ getAliasName(mapperClassName) +";\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	sb.append("      @Override\r\n");
+    	sb.append("      public List<"+className+"> get"+className+"List(Map<String, Object> parameters) {\r\n");
+    	sb.append("      		return "+ getAliasName(mapperClassName) +".get"+ className +"List(parameters);\r\n");
+    	sb.append("      }\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	sb.append("      @Override\r\n");
+    	sb.append("      public "+className+" get"+className+"ById(String id) {\r\n");
+    	sb.append("      		return "+ getAliasName(jpaImplClassName) +".findOne(id);\r\n");
+    	sb.append("      }\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
+    	sb.append("      @Override\r\n");
+    	sb.append("      public void save"+className+"("+className+" obj) {\r\n");
+    	sb.append("      		obj.setUpdateTime(new Date());\r\n");
+    	sb.append("      		"+ getAliasName(jpaImplClassName) +".save(obj);\r\n");
+    	sb.append("      }\r\n");
+    	sb.append("\r\n");
+    	sb.append("\r\n");
     	sb.append("}\r\n");
     	
     	return sb.toString();
@@ -719,6 +769,14 @@ public class GenEntityMysql {
             return "byte[]";
         }
         return null;
+    }
+    
+    
+    private String getAliasName(String name){
+    	String zex = name.substring(1);
+    	String head = name.substring(0, 1);
+    	head = head.toLowerCase();
+    	return head+zex;
     }
 
 

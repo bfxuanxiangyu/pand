@@ -76,6 +76,8 @@ public class PandResponseUtil {
 	public static final int no_order = 1516;//订单不存在
 	public static final int no_address = 1517;//地址不存在
 	public static final int no_service = 1518;//服务不存在
+	public static final int comment_again = 1519;//重复评论
+	public static final int no_comment = 1520;//评论不存在
 	
 	
 	/**

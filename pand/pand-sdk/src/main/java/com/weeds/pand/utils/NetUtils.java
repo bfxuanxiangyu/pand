@@ -197,14 +197,46 @@ public class NetUtils {
     			}
     		}
     		address = addbuffer.toString();
-		} catch (Exception e) {
-		}
+    	} catch (Exception e) {
+    	}
     	map.put("address", address);
     	return map;
     }
     
+    /**
+     * 获取http://2018.ip138.com/ic.asp下本机外网ip
+     * @param ip
+     * @return
+     */
+    public static String getWanIp(){
+    	String wanIp = null;
+    	try {
+    		URL url = new URL("http://2018.ip138.com/ic.asp");
+    		URLConnection con = url.openConnection();
+    		InputStream is = con.getInputStream();
+    		InputStreamReader isr = new InputStreamReader(is,"gbk");
+    		BufferedReader br = new BufferedReader(isr);
+    		StringBuffer buffer = new StringBuffer();
+    		String line =null;
+    		while(null != (line = br.readLine()))
+    		{
+    			buffer.append(line);
+    		}
+    		br.close();
+    		isr.close();
+    		is.close();
+    		String wStr = buffer.toString();
+    		if(wStr.contains("[") && wStr.contains("]")){
+    			wanIp = wStr.substring(wStr.indexOf("[")+1,wStr.indexOf("]"));
+    		}
+		} catch (Exception e) {
+		}
+    	return wanIp;
+    }
+    
     public static void main(String[] args) {
-    	System.out.println(getIpInfoParse("61.129.57.240"));
+    	//http://2018.ip138.com/ic.asp
+    	System.out.println(getWanIp());
 	}
 
 }
