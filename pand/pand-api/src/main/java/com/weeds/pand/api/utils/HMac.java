@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.springframework.util.Base64Utils;
+
 import com.google.common.collect.Maps;
 import com.weeds.pand.common.Constants;
-
-import sun.misc.BASE64Encoder;
 
 /*
  * @author Wayne
@@ -101,8 +101,7 @@ public class HMac {
 			messageDigest.reset();
 			messageDigest.update(secretKey.getBytes(Constants.ENCODING));
 			final byte[] byteArray = messageDigest.digest();
-			final BASE64Encoder b64Encoder = new BASE64Encoder();
-			return b64Encoder.encode(byteArray);
+			return Base64Utils.encodeToString(byteArray);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
