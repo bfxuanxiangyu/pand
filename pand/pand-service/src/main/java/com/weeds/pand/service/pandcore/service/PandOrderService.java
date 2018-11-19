@@ -3,8 +3,10 @@ package com.weeds.pand.service.pandcore.service;
 import java.util.List;
 import java.util.Map;
 
+import com.github.pagehelper.PageInfo;
 import com.weeds.pand.service.pandcore.domain.PandOrder;
 import com.weeds.pand.service.pandcore.domain.PandShop;
+import com.weeds.pand.service.pandcore.pagevo.PandOrderQueryParam;
 
 /**
  * service接口
@@ -23,6 +25,8 @@ public interface PandOrderService{
 	PandOrder getPandOrderById(String id);
 	
 	Long getMaxPandOrder(String nowDay);//获取当前日期下最大值
+	
+	PageInfo<PandOrder> selectAllForPage(PandOrderQueryParam params);
 
 }
 

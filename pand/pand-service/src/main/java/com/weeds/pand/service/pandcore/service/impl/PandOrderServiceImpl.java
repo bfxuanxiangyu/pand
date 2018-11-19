@@ -9,11 +9,14 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.weeds.pand.service.pandcore.domain.PandOrder;
 import com.weeds.pand.service.pandcore.domain.PandShop;
 import com.weeds.pand.service.pandcore.mapper.PandOrderJpaDao;
 import com.weeds.pand.service.pandcore.mapper.PandOrderMapper;
 import com.weeds.pand.service.pandcore.mapper.PandShopMapper;
+import com.weeds.pand.service.pandcore.pagevo.PandOrderQueryParam;
 import com.weeds.pand.service.pandcore.service.PandOrderService; 
 
 
@@ -57,6 +60,14 @@ public class PandOrderServiceImpl implements PandOrderService{
 	@Override
 	public Long getMaxPandOrder(String dateStr) {
 		return pandOrderMapper.getMaxOrderNumNowDay(dateStr);
+	}
+
+	@Override
+	public PageInfo<PandOrder> selectAllForPage(PandOrderQueryParam params) {
+		PageHelper.offsetPage(params.getStart(), params.getLength());
+		List<PandOrder> list = pandOrderMapper.getPandOrderListPage(params);
+		PageInfo<PandOrder> page = new PageInfo<PandOrder>(list);
+		return page;
 	}
 
 }

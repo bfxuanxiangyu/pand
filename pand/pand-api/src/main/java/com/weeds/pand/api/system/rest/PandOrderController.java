@@ -50,6 +50,8 @@ public class PandOrderController {
 	 * serviceCount 需要服务的数量 必传
 	 * serviceMoney 需要服务的价格 必传
 	 * message      服务留言 选填
+	 * contactName  联系人姓名
+	 * contactPhone 联系人手机
 	 * @return
 	 */
 	@ResponseBody

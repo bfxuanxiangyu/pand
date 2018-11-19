@@ -2,9 +2,11 @@ package com.weeds.pand.service.pandcore.mapper;
 
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.annotations.Mapper; 
 
-import com.weeds.pand.service.pandcore.domain.PandOrder; 
+import org.apache.ibatis.annotations.Mapper;
+
+import com.weeds.pand.service.pandcore.domain.PandOrder;
+import com.weeds.pand.service.pandcore.pagevo.PandOrderQueryParam; 
 /**
  * mapper接口公共接口
  * 由GenEntityMysql类自动生成
@@ -19,6 +21,7 @@ public interface PandOrderMapper {
 	*/ 
 	List<PandOrder>  getPandOrderList(Map<String, Object> parameters);
 
+	List<PandOrder>  getPandOrderListPage(PandOrderQueryParam params);
 
 	/**
 	* 根据条件获取所有PandOrder总数

@@ -53,6 +53,18 @@ public class PandOrder {
 	*/ 
 	@Column(name="pand_shoper_id")
 	private String pandShoperId;
+	
+	/**
+	 * 联系人姓名
+	 */ 
+	@Column(name="contact_name")
+	private String contactName;
+
+	/**
+	* 联系人手机
+	*/ 
+	@Column(name="contact_phone")
+	private String contactPhone;
 
 	/**
 	* 服务地址
@@ -95,6 +107,11 @@ public class PandOrder {
 	*/ 
 	@Column(name="order_num")
 	private String orderNum;
+	
+	@Transient
+	private String userNickname;
+	@Transient
+	private String serviceTitle;
 
 
 	public String getId(){
@@ -216,6 +233,38 @@ public class PandOrder {
 				+ ", address=" + address + ", timePeriod=" + timePeriod + ", serviceCount=" + serviceCount
 				+ ", message=" + message + ", status=" + status + ", serviceMoney=" + serviceMoney + ", orderNum="
 				+ orderNum + "]";
+	}
+
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public String getContactPhone() {
+		return contactPhone;
+	}
+
+	public void setContactPhone(String contactPhone) {
+		this.contactPhone = contactPhone;
+	}
+
+	public String getUserNickname() {
+		return userNickname;
+	}
+
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+
+	public String getServiceTitle() {
+		return serviceTitle;
+	}
+
+	public void setServiceTitle(String serviceTitle) {
+		this.serviceTitle = serviceTitle;
 	}
 	
 	
