@@ -23,23 +23,7 @@
 		<result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
 		<result column="contact_name" jdbcType="VARCHAR" property="contactName" />
 	</resultMap>
-	<resultMap id="pageBaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandOrder">
-		<id column="id" jdbcType="VARCHAR" property="id" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
-		<result column="service_id" jdbcType="VARCHAR" property="serviceId" />
-		<result column="shop_id" jdbcType="VARCHAR" property="shopId" />
-		<result column="pand_shoper_id" jdbcType="VARCHAR" property="pandShoperId" />
-		<result column="address" jdbcType="VARCHAR" property="address" />
-		<result column="time_period" jdbcType="VARCHAR" property="timePeriod" />
-		<result column="service_count" jdbcType="BIGINT" property="serviceCount" />
-		<result column="message" jdbcType="VARCHAR" property="message" />
-		<result column="status" jdbcType="BIGINT" property="status" />
-		<result column="service_money" jdbcType="DOUBLE" property="serviceMoney" />
-		<result column="order_num" jdbcType="VARCHAR" property="orderNum" />
-		<result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
-		<result column="contact_name" jdbcType="VARCHAR" property="contactName" />
+	<resultMap id="pageBaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandOrder" extends="BaseResultMap">
 		<result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
 		<result column="service_tilte" jdbcType="VARCHAR" property="serviceTitle" />
 	</resultMap>
@@ -77,13 +61,13 @@
 		left JOIN pand_user pu on pu.id = po.pand_user_id
 		left join pand_service ps on ps.id = po.service_id 
 		where 1=1 
-       <if test="pandUserId != null">
+       <if test="pandUserId != null and pandUserId != ''">
        		and po.pand_user_id = #{pandUserId}
        </if>
-       <if test="status != null">
+       <if test="status != null and status != ''">
        		and po.status = #{status}
        </if>
-       <if test="serviceId != null">
+       <if test="serviceId != null and serviceId != ''">
        		and po.service_id = #{serviceId}
        </if>
        <if test="contents != null and contents !=''">

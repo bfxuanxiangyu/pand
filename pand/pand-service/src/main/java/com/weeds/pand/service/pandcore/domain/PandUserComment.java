@@ -82,6 +82,11 @@ public class PandUserComment {
 	*/ 
 	@Column(name="comment")
 	private String comment;
+	
+	@Transient
+	private String userNickname;
+	@Transient
+	private String serviceTitle;
 
 
 	public String getId(){
@@ -178,6 +183,22 @@ public class PandUserComment {
 				+ ", pandUserId=" + pandUserId + ", serviceId=" + serviceId + ", status=" + status + ", skilledScore="
 				+ skilledScore + ", attitudeScore=" + attitudeScore + ", efficiencyScore=" + efficiencyScore
 				+ ", anonymous=" + anonymous + ", comment=" + comment + "]";
+	}
+
+	public String getUserNickname() {
+		return userNickname;
+	}
+
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+
+	public String getServiceTitle() {
+		return serviceTitle;
+	}
+
+	public void setServiceTitle(String serviceTitle) {
+		this.serviceTitle = serviceTitle;
 	}
 	
 }

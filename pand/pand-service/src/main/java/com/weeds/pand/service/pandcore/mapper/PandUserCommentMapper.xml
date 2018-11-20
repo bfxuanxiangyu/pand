@@ -18,6 +18,11 @@
 		<result column="anonymous" jdbcType="BIGINT" property="anonymous" />
 		<result column="comment" jdbcType="VARCHAR" property="comment" />
 	</resultMap>
+	
+	<resultMap id="pageBaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandUserComment" extends="BaseResultMap">
+		<result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
+		<result column="service_tilte" jdbcType="VARCHAR" property="serviceTitle" />
+	</resultMap>
 
 
    <!-- 查询集合 -->
@@ -36,6 +41,32 @@
        <if test="begin != null">
            limit #{begin},#{end}
        </if>
+   </select>
+   <select id="getPandCommentListPage" parameterType="com.weeds.pand.service.pandcore.pagevo.PandOrderQueryParam" 
+   					resultMap="pageBaseResultMap">
+       select po.*,pu.user_nickname,ps.service_tilte from pand_user_comment po 
+		left JOIN pand_user pu on pu.id = po.pand_user_id
+		left join pand_service ps on ps.id = po.service_id 
+		where 1=1 
+       <if test="pandUserId != null and pandUserId != ''">
+       		and po.pand_user_id = #{pandUserId}
+       </if>
+       <if test="status != null and status != ''">
+       		and po.status = #{status}
+       </if>
+       <if test="serviceId != null and serviceId != ''">
+       		and po.service_id = #{serviceId}
+       </if>
+       <if test="contents != null and contents !=''">
+       		and  po.comment like CONCAT(CONCAT('%', #{contents}), '%')
+       </if>
+       <if test="startTime != null and startTime!=''">
+	    	and  po.create_time &gt;= #{startTime}
+	    </if>
+	    <if test="endTime != null and endTime!=''">
+	    	and po.create_time &lt;#{endTime}
+	    </if>
+       order by po.create_time desc
    </select>
 
 

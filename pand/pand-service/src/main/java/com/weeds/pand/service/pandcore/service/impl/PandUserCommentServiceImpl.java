@@ -5,16 +5,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.annotation.Resource;
-
 
 import org.springframework.stereotype.Service;
 
-import com.weeds.pand.service.pandcore.service.PandUserCommentService; 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.weeds.pand.service.pandcore.domain.PandUserComment;
-import com.weeds.pand.service.pandcore.mapper.PandUserCommentMapper;
 import com.weeds.pand.service.pandcore.mapper.PandUserCommentJpaDao;
+import com.weeds.pand.service.pandcore.mapper.PandUserCommentMapper;
+import com.weeds.pand.service.pandcore.pagevo.PandCommentQueryParam;
+import com.weeds.pand.service.pandcore.service.PandUserCommentService;
 
 
 /**
@@ -49,6 +50,15 @@ public class PandUserCommentServiceImpl implements PandUserCommentService{
       		obj.setUpdateTime(new Date());
       		pandUserCommentJpaDao.save(obj);
       }
+
+
+	@Override
+	public PageInfo<PandUserComment> selectAllForPage(PandCommentQueryParam params) {
+		PageHelper.offsetPage(params.getStart(), params.getLength());
+		List<PandUserComment> list = pandUserCommentMapper.getPandCommentListPage(params);
+		PageInfo<PandUserComment> page = new PageInfo<PandUserComment>(list);
+		return page;
+	}
 
 
 }

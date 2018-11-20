@@ -11,6 +11,8 @@
 package com.weeds.pand.auth.user.web;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -21,9 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import com.weeds.pand.auth.log.OperateLog;
 import com.weeds.pand.auth.log.OperateType;
 import com.weeds.pand.core.web.DataTablesResult;
+import com.weeds.pand.service.mechanic.domain.PandUser;
+import com.weeds.pand.service.mechanic.service.PandUserService;
 import com.weeds.pand.service.pandcore.domain.PandOrder;
 import com.weeds.pand.service.pandcore.pagevo.PandOrderQueryParam;
 import com.weeds.pand.service.pandcore.service.PandOrderService;
@@ -40,16 +45,17 @@ public class PandManagerController {
 	
 	@Resource
 	private PandOrderService pandOrderService;
+	@Resource
+	private PandUserService pandUserService;
 	
 	@RequestMapping("/pandorderlist")
 	@OperateLog(desc="查询PAND订单", type=OperateType.QUERY,moudle="订单管理",menu="ordermanager")
 	public ModelAndView userList (){
 		ModelAndView view = new ModelAndView();
 		
-		/*Map<String, Object> parameters = Maps.newHashMap();
-		parameters.put("userType", 1);
+		Map<String, Object> parameters = Maps.newHashMap();
 		List<PandUser> pandUserList = pandUserService.selectAll(parameters);
-		view.addObject("pandUserList",pandUserList);*/
+		view.addObject("pandUserList",pandUserList);
 		Date startTime = DateTime.now().minusMonths(12).toDate();
 		Date endTime = new Date();
 		view.addObject("startTime", startTime);

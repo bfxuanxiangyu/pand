@@ -4,7 +4,9 @@ package com.weeds.pand.service.pandcore.service;
 import java.util.List;
 import java.util.Map;
 
+import com.github.pagehelper.PageInfo;
 import com.weeds.pand.service.pandcore.domain.PandUserComment;
+import com.weeds.pand.service.pandcore.pagevo.PandCommentQueryParam;
 
 /**
  * service接口
@@ -21,5 +23,6 @@ public interface PandUserCommentService{
 
       void savePandUserComment(PandUserComment obj);
 
+      PageInfo<PandUserComment> selectAllForPage(PandCommentQueryParam params);
 }
 

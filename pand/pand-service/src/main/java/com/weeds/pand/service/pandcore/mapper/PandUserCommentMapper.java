@@ -2,9 +2,11 @@ package com.weeds.pand.service.pandcore.mapper;
 
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.annotations.Mapper; 
 
-import com.weeds.pand.service.pandcore.domain.PandUserComment; 
+import org.apache.ibatis.annotations.Mapper;
+
+import com.weeds.pand.service.pandcore.domain.PandUserComment;
+import com.weeds.pand.service.pandcore.pagevo.PandCommentQueryParam; 
 /**
  * mapper接口公共接口
  * 由GenEntityMysql类自动生成
@@ -19,6 +21,7 @@ public interface PandUserCommentMapper {
 	*/ 
 	List<PandUserComment>  getPandUserCommentList(Map<String, Object> parameters);
 
+	List<PandUserComment>  getPandCommentListPage(PandCommentQueryParam params);
 
 	/**
 	* 根据条件获取所有PandUserComment总数
