@@ -356,7 +356,7 @@ public class PandServiceController {
 	 * @param serviceTypeId 服务种类  技能列表中的各自id 选填
 	 * @param pandUserId    用户id  选填
 	 * @param searchType    查询类型  1综合查询 2销量  3上门速度 4筛选 选填
-	 * @param sortType      综合筛选  1综合 2评分最高 3距离最近 4价格降序 5价格升序 选填
+	 * @param sortType      综合筛选  1综合 2评分最高 3距离最近 4价格降序 5价格升序 6首页地图附近10公里  选填
 	 * @param lat           当前纬度 (选择综合查询距离最近时lat lng必传) 选填
 	 * @param lng           当前经度 选填
 	 * @param contents      关键字 选填
@@ -399,7 +399,18 @@ public class PandServiceController {
 				parameters.put("serviceLat", serviceLat);
 				parameters.put("serviceLng", serviceLng);
 				parameters.put("sortType", 3);
-				
+			}else if(sortType==6){//首页地图附近10公里内
+				if(isBlank(lat) || isBlank(lng)){
+					return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少当前经纬度参数", null);
+				}
+				Double serviceLat = Double.valueOf(lat);
+				Double serviceLng = Double.valueOf(lng);
+				parameters.put("distanceSelect", "select");
+				parameters.put("serviceLat", serviceLat);
+				parameters.put("serviceLng", serviceLng);
+				parameters.put("sortType", 6);
+				parameters.put("begin", 0);
+				parameters.put("end", 50);
 			}
 			
 			if(serviceStatus != null){

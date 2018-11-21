@@ -27,9 +27,15 @@
 		
 		<collection property="images" column="{modelId=id}" 
 			select="com.weeds.pand.service.system.mapper.PandImagesMapper.getPandImagesList"></collection>
+			
+		<collection property="issuser" column="{pandUserId=pand_user_id}" 
+			select="getPandUserIssusObj"></collection>
 		
 	</resultMap>
-
+	
+   <select id="getPandUserIssusObj" parameterType="map" resultType="com.weeds.pand.service.mechanic.domain.PandUserJson">
+		select user_nickname userNickname,user_headpng userHeadpng from pand_user where id=#{pandUserId}
+	</select>
    <!-- 查询集合 -->
    <select id="getPandServiceList" parameterType="map" resultMap="BaseResultMap">
        select ps.*
@@ -83,8 +89,8 @@
        <if test="sortType==3"><!-- 距离排序 由近到远 -->
 	       order by service_distance  
        </if>
-       <if test="distaceNear != null"><!-- 搜索附件  10公里以内 -->
-	       HAVING distance &lt;= 10
+       <if test="sortType==6"><!-- 搜索附件  10公里以内 -->
+	       HAVING service_distance &lt;= 10
        </if>
        <if test="begin != null">
            limit #{begin},#{end}
