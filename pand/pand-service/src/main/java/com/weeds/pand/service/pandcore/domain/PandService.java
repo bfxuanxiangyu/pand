@@ -14,6 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.weeds.pand.service.mechanic.domain.PandUserJson;
 import com.weeds.pand.service.system.domain.PandImages;
 import com.weeds.pand.utils.jsonutil.CustomDoubleOneSerialize; 
 /**
@@ -136,6 +137,8 @@ public class PandService {
 	
 	@Transient
 	private int serviceTimeLength;//到达时长
+	@Transient
+	private PandUserJson issuser;
 
 	public String getId(){
 		return id;
@@ -327,6 +330,14 @@ public class PandService {
 
 	public void setServiceTimeLength(int serviceTimeLength) {
 		this.serviceTimeLength = serviceTimeLength;
+	}
+
+	public PandUserJson getIssuser() {
+		return issuser;
+	}
+
+	public void setIssuser(PandUserJson issuser) {
+		this.issuser = issuser;
 	}
 
 }
