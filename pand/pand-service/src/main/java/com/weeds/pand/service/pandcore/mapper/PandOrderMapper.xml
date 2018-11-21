@@ -41,6 +41,9 @@
        <if test="status != null">
        		and status = #{status}
        </if>
+       <if test="status == null">
+       		and status != 2
+       </if>
        <if test="serviceId != null">
        		and service_id = #{serviceId}
        </if>

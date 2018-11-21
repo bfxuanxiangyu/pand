@@ -138,7 +138,9 @@ public class PandOrderController {
 			Map<String, Object> parameters = Maps.newHashMap();
 			parameters.put("pandUserId", pandUserId);
 			parameters.put("shoperId", shoperId);
-			parameters.put("status", status);
+			if(status!=null){
+				parameters.put("status", status);
+			}
 			
 			//分页
 			if(pageIndex<=1){
