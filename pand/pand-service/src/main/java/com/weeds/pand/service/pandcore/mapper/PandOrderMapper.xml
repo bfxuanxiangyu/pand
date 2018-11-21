@@ -30,30 +30,33 @@
 
 
    <!-- 查询集合 -->
-   <select id="getPandOrderList" parameterType="map" resultMap="BaseResultMap">
-       select * from pand_order where 1=1 
+   <select id="getPandOrderList" parameterType="map" resultMap="pageBaseResultMap">
+       select po.*,pu.user_nickname,ps.service_tilte from pand_order po 
+	   left JOIN pand_user pu on pu.id = po.pand_user_id
+	   left join pand_service ps on ps.id = po.service_id 
+	   where 1=1
        <if test="pandUserId != null">
-       		and pand_user_id = #{pandUserId}
+       		and po.pand_user_id = #{pandUserId}
        </if>
        <if test="orderNum != null">
-       		and order_num = #{orderNum}
+       		and po.order_num = #{orderNum}
        </if>
        <if test="status != null">
-       		and status = #{status}
+       		and po.status = #{status}
        </if>
        <if test="status == null">
-       		and status != 2
+       		and po.status != 2
        </if>
        <if test="serviceId != null">
-       		and service_id = #{serviceId}
+       		and po.service_id = #{serviceId}
        </if>
        <if test="shopId != null">
-       		and shop_id = #{shopId}
+       		and po.shop_id = #{shopId}
        </if>
        <if test="pandShoperId != null">
-       		and pand_shoper_id = #{pandShoperId}
+       		and po.pand_shoper_id = #{pandShoperId}
        </if>
-       order by create_time desc 
+       order by po.create_time desc 
        <if test="begin != null">
            limit #{begin},#{end}
        </if>
