@@ -25,13 +25,14 @@
 	</resultMap>
 	<resultMap id="pageBaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandOrder" extends="BaseResultMap">
 		<result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
+		<result column="shop_user_head" jdbcType="VARCHAR" property="shopUserHead" />
 		<result column="service_tilte" jdbcType="VARCHAR" property="serviceTitle" />
 	</resultMap>
 
 
    <!-- 查询集合 -->
    <select id="getPandOrderList" parameterType="map" resultMap="pageBaseResultMap">
-       select po.*,pu.user_nickname,ps.service_tilte from pand_order po 
+       select po.*,pu.user_nickname,pu.user_headpng shop_user_head,ps.service_tilte from pand_order po 
 	   left JOIN pand_user pu on pu.id = po.pand_user_id
 	   left join pand_service ps on ps.id = po.service_id 
 	   where 1=1

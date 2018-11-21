@@ -112,7 +112,8 @@ public class PandOrder {
 	private String userNickname;
 	@Transient
 	private String serviceTitle;
-
+	@Transient
+	private String shopUserHead;
 
 	public String getId(){
 		return id;
@@ -265,6 +266,14 @@ public class PandOrder {
 
 	public void setServiceTitle(String serviceTitle) {
 		this.serviceTitle = serviceTitle;
+	}
+
+	public String getShopUserHead() {
+		return shopUserHead;
+	}
+
+	public void setShopUserHead(String shopUserHead) {
+		this.shopUserHead = shopUserHead;
 	}
 	
 	
