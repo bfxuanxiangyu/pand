@@ -23,6 +23,7 @@
 		<result column="service_address" jdbcType="VARCHAR" property="serviceAddress" />
 		<result column="service_lat" jdbcType="VARCHAR" property="serviceLat" />
 		<result column="service_lng" jdbcType="VARCHAR" property="serviceLng" />
+		<result column="service_distance" jdbcType="VARCHAR" property="serviceDistance" />
 		
 		<collection property="images" column="{modelId=id}" 
 			select="com.weeds.pand.service.system.mapper.PandImagesMapper.getPandImagesList"></collection>
@@ -31,53 +32,59 @@
 
    <!-- 查询集合 -->
    <select id="getPandServiceList" parameterType="map" resultMap="BaseResultMap">
-       select * from pand_service where 1=1 
+       select ps.*
+       <if test="distanceSelect != null">
+       		,truncate((st_distance (point (service_lng, service_lat),point(#{serviceLng},#{serviceLat}) ) / 0.0111),2) AS service_distance 
+       </if>
+       from pand_service ps where 1=1 
        <if test="pandUserId != null">
-       		and pand_user_id = #{pandUserId}
+       		and ps.pand_user_id = #{pandUserId}
        </if>
        <if test="serviceTypeId != null">
-       		and service_type_id = #{serviceTypeId}
+       		and ps.service_type_id = #{serviceTypeId}
        </if>
        <if test="serviceTilte != null">
-       		and service_tilte = #{serviceTilte}
+       		and ps.service_tilte = #{serviceTilte}
        </if>
        <if test="startPrice != null">
-	    	and service_price &gt;= #{startPrice}
+	    	and ps.service_price &gt;= #{startPrice}
 	   </if>
        <if test="endPrice != null">
-	    	and service_price &lt;= #{endPrice}
+	    	and ps.service_price &lt;= #{endPrice}
 	   </if>
        <if test="serviceStatus != null">
-       		and service_status = #{serviceStatus}
+       		and ps.service_status = #{serviceStatus}
        </if>
        <if test="serviceStatus == null">
-       		and service_status != 5
+       		and ps.service_status != 5
        </if>
        <if test="serviceIdList != null">
-       		and id in
+       		and ps.id in
 		    <foreach item="item" index="index" collection="serviceIdList" open="(" separator="," close=")">
 			 	#{item}
 			</foreach>
        </if>
        <if test="serviceInvoice != null">
-       		and service_invoice = #{serviceInvoice}
+       		and ps.service_invoice = #{serviceInvoice}
        </if>
        <if test="contents != null">
-       		and  (
-		    	service_tilte like CONCAT(CONCAT('%', #{contents}), '%')
-		    	or service_des like CONCAT(CONCAT('%', #{contents}), '%')
-		    	or service_info like CONCAT(CONCAT('%', #{contents}), '%')
-		    	or service_address like CONCAT(CONCAT('%', #{contents}), '%')
-	    		)
+       		and concat(ps.service_tilte,ps.service_des,ps.service_info,ps.service_address) 
+       		like CONCAT(CONCAT('%', #{contents}), '%')
        </if>
        <if test="sortType==4"><!-- 4价格降序 -->
-       		order by service_price desc
+       		order by ps.service_price desc
        </if>
        <if test="sortType==5"><!-- 5价格升序 -->
-       		order by service_price 
+       		order by ps.service_price 
        </if>
        <if test="sortType==0"><!-- 时间降序 -->
-	       order by update_time desc 
+	       order by ps.update_time desc 
+       </if>
+       <if test="sortType==3"><!-- 距离排序 由近到远 -->
+	       order by service_distance  
+       </if>
+       <if test="distaceNear != null"><!-- 搜索附件  10公里以内 -->
+	       HAVING distance &lt;= 10
        </if>
        <if test="begin != null">
            limit #{begin},#{end}

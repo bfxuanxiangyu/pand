@@ -393,6 +393,13 @@ public class PandServiceController {
 				if(isBlank(lat) || isBlank(lng)){
 					return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少当前经纬度参数", null);
 				}
+				Double serviceLat = Double.valueOf(lat);
+				Double serviceLng = Double.valueOf(lng);
+				parameters.put("distanceSelect", "select");
+				parameters.put("serviceLat", serviceLat);
+				parameters.put("serviceLng", serviceLng);
+				parameters.put("sortType", 3);
+				
 			}
 			
 			if(serviceStatus != null){

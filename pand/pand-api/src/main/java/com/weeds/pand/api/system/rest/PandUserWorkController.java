@@ -575,6 +575,43 @@ public class PandUserWorkController {
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}
+	/**
+	 * 多条件删除收藏
+	 * @param token
+	 * @param pandUserId    发布服务者id
+	 * @param serviceId     服务id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/collection_delete_manyOrder")
+	public String collectionDeleteManyOrder(String token,String pandUserId,String serviceId) {
+		logger.info("删除收藏参数:"+token+",pandUserId:"+pandUserId+",serviceId:"+serviceId);
+		try {
+			if(isBlank(token) || isBlank(pandUserId)|| isBlank(serviceId)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", pandUserId);
+			parameters.put("serviceId", serviceId);
+			parameters.put("status", 0);
+			
+			List<PandUserCollection> list = pandUserCollectionService.getPandUserCollectionList(parameters);
+			if(list==null || list.isEmpty()){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_comment,"未收藏", null);
+			}
+			
+			PandUserCollection collection = pandUserCollectionService.getPandUserCollectionById(list.get(0).getId());
+			
+			collection.setStatus(1);
+			pandUserCollectionService.savePandUserCollection(collection);
+			return PandResponseUtil.printJson("取消成功", null);
+			
+		} catch (Exception e) {
+			logger.error("删除收藏异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
 
 	/**
 	 * 检测是否收藏   在未登录的情况下不进行检测
@@ -591,7 +628,6 @@ public class PandUserWorkController {
 			if(isBlank(token) || isBlank(serviceId) || isBlank(pandUserId)){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}
-			boolean flag = false;
 			Map<String, Object> parameters = Maps.newHashMap();
 			parameters.put("pandUserId", pandUserId);
 			parameters.put("serviceId", serviceId);
@@ -599,9 +635,9 @@ public class PandUserWorkController {
 			
 			List<PandUserCollection> list = pandUserCollectionService.getPandUserCollectionList(parameters);
 			if(list!=null && !list.isEmpty()){
-				flag = true;
+				return PandResponseUtil.printJson("检测成功", list.get(0).getId());
 			}
-			return PandResponseUtil.printJson("检测成功", flag);
+			return PandResponseUtil.printFailJson(PandResponseUtil.no_comment,"未收藏", null);
 			
 		} catch (Exception e) {
 			logger.error("检测收藏异常"+e.getMessage(),e);
