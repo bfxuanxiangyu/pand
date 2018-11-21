@@ -522,7 +522,7 @@ public class PandUserWorkController {
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}
 			
-			//如果本人已经评论过  不进行再次评论
+			//如果本人已经收藏过  不进行再次评论
 			Map<String, Object> parameters = Maps.newHashMap();
 			parameters.put("pandUserId", collection.getPandUserId());
 			parameters.put("serviceId", collection.getServiceId());
@@ -545,7 +545,7 @@ public class PandUserWorkController {
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}
-
+	
 	/**
 	 * 删除收藏
 	 * @param token
@@ -572,6 +572,39 @@ public class PandUserWorkController {
 			
 		} catch (Exception e) {
 			logger.error("删除收藏异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+
+	/**
+	 * 检测是否收藏   在未登录的情况下不进行检测
+	 * @param token
+	 * @param pandUserId  用户id
+	 * @param serviceId   服务id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/collection_flag")
+	public String collectionDelete(String token,String pandUserId,String serviceId) {
+		logger.info("检测是否收藏参数:"+token+",pandUserId:"+pandUserId+",serviceId:"+serviceId);
+		try {
+			if(isBlank(token) || isBlank(serviceId) || isBlank(pandUserId)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			boolean flag = false;
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", pandUserId);
+			parameters.put("serviceId", serviceId);
+			parameters.put("status", 0);
+			
+			List<PandUserCollection> list = pandUserCollectionService.getPandUserCollectionList(parameters);
+			if(list!=null && !list.isEmpty()){
+				flag = true;
+			}
+			return PandResponseUtil.printJson("检测成功", flag);
+			
+		} catch (Exception e) {
+			logger.error("检测收藏异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +26,7 @@ import com.weeds.pand.service.system.mapper.SkillsMapper;
 import com.weeds.pand.service.system.service.SystemVersionInfoService;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
+import com.weeds.pand.utils.TencentMapUtils;
 
 @Controller
 @RequestMapping("/api/system")
@@ -42,6 +44,9 @@ public class SystemController {
 	
 	@Resource
 	private AreaService areaService;
+	
+	@Value("${tecent.key}")
+	private String key;
 	
 	@ResponseBody
 	@RequestMapping("/skills_list")
@@ -94,6 +99,15 @@ public class SystemController {
 		SystemVersionInfo systemVersionInfo = systemVersionInfoService.getSystemVersionInfoObj("402889ea6055620f0160556252f40000");
 		
 		return PandResponseUtil.printJson("版本号获取成功", systemVersionInfo);
+	}
+	@ResponseBody
+	@RequestMapping("/getLocation")
+	public String getLocation(String location) {
+		if(PandStringUtils.isBlank(location)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		String address = TencentMapUtils.getAddress(location,key);
+		return PandResponseUtil.printJson("地址获取成功", address);
 	}
 	
 	@ResponseBody
