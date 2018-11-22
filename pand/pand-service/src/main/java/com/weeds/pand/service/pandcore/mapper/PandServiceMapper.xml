@@ -101,6 +101,11 @@
        select count(1) from pand_service where 1=1 
    </select>
    
+   <delete id="deleteCollectService" parameterType="string">
+	    delete from pand_user_collection 
+	    where service_id = #{serviceId}
+   </delete>
+   
    <!-- 查询单个对象 -->
    <select id="getPandServiceObject" parameterType="map" resultMap="BaseResultMap">
        select * from pand_service where 1=1 

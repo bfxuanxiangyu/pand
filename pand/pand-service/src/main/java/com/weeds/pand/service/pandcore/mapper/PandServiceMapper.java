@@ -25,5 +25,7 @@ public interface PandServiceMapper {
 	* 根据条件获取所有PandService总数
 	*/ 
 	int  getPandServiceCount(Map<String, Object> parameters);
+	
+	void deleteCollectService(String serviceId);
 }
 

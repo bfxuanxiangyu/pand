@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.weeds.pand.service.pandcore.domain.PandService;
@@ -24,6 +26,7 @@ import com.weeds.pand.service.pandcore.service.PandServiceService;
 @Service
 public class PandServiceServiceImpl implements PandServiceService{
 
+	private Logger logger = LoggerFactory.getLogger(PandServiceServiceImpl.class);
 	@Resource
 	private PandServiceJpaDao pandServiceJpaDao;
 	@Resource
@@ -33,6 +36,15 @@ public class PandServiceServiceImpl implements PandServiceService{
 	public void savePandService(PandService ps) {
 		ps.setUpdateTime(new Date());
 		pandServiceJpaDao.save(ps);
+		
+		try {
+			if(ps.getServiceStatus()==4 || ps.getServiceStatus()==5){
+				pandServiceMapper.deleteCollectService(ps.getId());
+			}
+		} catch (Exception e) {
+			logger.error("删除已经被收藏的服务异常"+e.getMessage(),e);
+		}
+		
 	}
 
 	@Override
