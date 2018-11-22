@@ -44,12 +44,18 @@ public class PandUserComment {
 	*/ 
 	@Column(name="pand_user_id")
 	private String pandUserId;
-
+	
 	/**
-	* 服务id
-	*/ 
+	 * 服务id
+	 */ 
 	@Column(name="service_id")
 	private String serviceId;
+
+	/**
+	* 订单id
+	*/ 
+	@Column(name="order_id")
+	private String orderId;
 
 	/**
 	* 是否可用 0可用 1不可用  默认0
@@ -222,6 +228,14 @@ public class PandUserComment {
 
 	public void setIssuser(PandUserJson issuser) {
 		this.issuser = issuser;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 	
 }

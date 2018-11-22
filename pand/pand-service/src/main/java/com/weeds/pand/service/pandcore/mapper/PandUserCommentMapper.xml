@@ -11,6 +11,7 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="pand_user_id" jdbcType="VARCHAR" property="pandUserId" />
 		<result column="service_id" jdbcType="VARCHAR" property="serviceId" />
+		<result column="order_id" jdbcType="VARCHAR" property="orderId" />
 		<result column="status" jdbcType="BIGINT" property="status" />
 		<result column="skilled_score" jdbcType="DOUBLE" property="skilledScore" />
 		<result column="attitude_score" jdbcType="DOUBLE" property="attitudeScore" />

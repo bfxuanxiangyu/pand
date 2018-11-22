@@ -58,8 +58,8 @@
        		and po.pand_shoper_id = #{pandShoperId}
        </if>
        <if test="filterComment != null">
-       		and po.service_id not in 
-		 	(select service_id from pand_user_comment where pand_user_id = #{pandUserId} and status=0) 
+       		and po.id not in 
+		 	(select order_id from pand_user_comment where pand_user_id = #{pandUserId} and status=0) 
        </if>
        
        order by po.create_time desc 

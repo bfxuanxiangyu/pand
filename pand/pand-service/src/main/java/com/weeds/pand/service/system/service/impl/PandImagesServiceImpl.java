@@ -74,9 +74,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 		String str;
 		for (int i = 0; i < imagesList.size(); i++) {
 			str = imagesList.get(i);
-			logger.info("");
 			String imgUrl = saveImages(str, porder,i);
-			logger.info("保存本次服务照片serviceId="+modelId+",路径："+imgUrl);
 			//保存base64照片流
 			if(PandStringUtils.isBlank(imgUrl)){
 				continue ;

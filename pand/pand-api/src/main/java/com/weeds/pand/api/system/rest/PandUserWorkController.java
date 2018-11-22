@@ -367,6 +367,7 @@ public class PandUserWorkController {
 	 * @param token          用户token 必填
 	 * @param pandUserId     用户id 必填
 	 * @param serviceId      服务id 必填
+	 * @param orderId        订单id 必填
 	 * @param skilledScore   技术熟练分数 必填
 	 * @param attitudeScore  服务态度分数 必填
 	 * @param efficiencyScore工作效率分数 必填
@@ -382,14 +383,14 @@ public class PandUserWorkController {
 		try {
 			if(isBlank(token) || isBlank(comment.getPandUserId())  || isBlank(comment.getServiceId()) || comment.getSkilledScore() == null
 					|| comment.getAttitudeScore()==null || comment.getEfficiencyScore()==null ||comment.getAnonymous()==null
-					|| isBlank(comment.getComment())){
+					|| isBlank(comment.getComment()) || isBlank(comment.getOrderId())){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}
 			
 			//如果本人已经评论过  不进行再次评论
 			Map<String, Object> parameters = Maps.newHashMap();
 			parameters.put("pandUserId", comment.getPandUserId());
-			parameters.put("serviceId", comment.getServiceId());
+			parameters.put("orderId", comment.getOrderId());
 			parameters.put("status", 0);
 			
 			List<PandUserComment> commentList = pandUserCommentService.getPandUserCommentList(parameters);
