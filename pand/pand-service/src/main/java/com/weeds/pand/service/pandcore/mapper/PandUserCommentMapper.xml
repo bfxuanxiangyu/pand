@@ -17,6 +17,12 @@
 		<result column="efficiency_score" jdbcType="DOUBLE" property="efficiencyScore" />
 		<result column="anonymous" jdbcType="BIGINT" property="anonymous" />
 		<result column="comment" jdbcType="VARCHAR" property="comment" />
+		
+		<collection property="images" column="{modelId=id}" 
+			select="com.weeds.pand.service.system.mapper.PandImagesMapper.getPandImagesList"></collection>
+			
+		<collection property="issuser" column="{pandUserId=pand_user_id}" 
+			select="com.weeds.pand.service.pandcore.mapper.PandServiceMapper.getPandUserIssusObj"></collection>
 	</resultMap>
 	
 	<resultMap id="pageBaseResultMap" type="com.weeds.pand.service.pandcore.domain.PandUserComment" extends="BaseResultMap">
@@ -28,6 +34,9 @@
    <!-- 查询集合 -->
    <select id="getPandUserCommentList" parameterType="map" resultMap="BaseResultMap">
        select * from pand_user_comment where 1=1 
+       <if test="id != null">
+       		and id = #{id}
+       </if>
        <if test="serviceId != null">
        		and service_id = #{serviceId}
        </if>

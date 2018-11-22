@@ -256,6 +256,27 @@ public class PandUserController {
 		}
 		
 	}
+	/**
+	 * 评论详情
+	 * @param id  评论id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/comment_detail")
+	public String commentList(String id) {
+		logger.info("评论查询参数id:"+id);
+		if(PandStringUtils.isBlank(id)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			PandUserComment comment = pandUserCommentService.getPandUserCommentById(id);
+			return PandResponseUtil.printJson("评论详情获取成功", comment);
+		} catch (Exception e) {
+			logger.error("评论详情查询异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+		
+	}
 	
 	
 }

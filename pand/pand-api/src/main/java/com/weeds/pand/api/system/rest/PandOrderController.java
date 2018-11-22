@@ -139,6 +139,9 @@ public class PandOrderController {
 			parameters.put("pandUserId", pandUserId);
 			parameters.put("shoperId", shoperId);
 			if(status!=null){
+				if(status==4){
+					parameters.put("filterComment", "filter");//在待评价状态下  如果已经评论过的不进行评论
+				}
 				parameters.put("status", status);
 			}
 			

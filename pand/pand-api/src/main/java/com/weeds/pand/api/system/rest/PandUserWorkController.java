@@ -419,7 +419,7 @@ public class PandUserWorkController {
 						}
 					}
 				} catch (Exception e) {
-					logger.error("服务照片上传异常"+e.getMessage(),e);
+					logger.error("评价照片上传异常"+e.getMessage(),e);
 				}
 			}
 			

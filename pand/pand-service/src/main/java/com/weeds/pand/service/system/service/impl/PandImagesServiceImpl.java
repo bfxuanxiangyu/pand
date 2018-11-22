@@ -62,10 +62,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 			return ;
 		}
 		
-		PandImages vo = new PandImages();
-		vo.setImgType(imageCardType);
-		vo.setImgModel(imgModel);
-		vo.setModelId(modelId);
+		PandImages vo;
 		String porder = "common/";
 		if(imgModel==1){
 			porder = "user/";
@@ -85,6 +82,10 @@ public class PandImagesServiceImpl implements PandImagesService{
 				continue ;
 			}
 			try {
+				vo = new PandImages();
+				vo.setImgType(imageCardType);
+				vo.setImgModel(imgModel);
+				vo.setModelId(modelId);
 				vo.setCreateTime(new Date());
 				vo.setImgUrl(imgUrl);
 				vo.setImgStatus(0);

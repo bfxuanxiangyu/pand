@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import com.weeds.pand.service.pandcore.domain.PandUserComment;
 import com.weeds.pand.service.pandcore.mapper.PandUserCommentJpaDao;
 import com.weeds.pand.service.pandcore.mapper.PandUserCommentMapper;
@@ -41,7 +42,13 @@ public class PandUserCommentServiceImpl implements PandUserCommentService{
 
       @Override
       public PandUserComment getPandUserCommentById(String id) {
-      		return pandUserCommentJpaDao.findOne(id);
+    	  	Map<String, Object> parameters = Maps.newHashMap();
+    	  	parameters.put("id", id);
+    	  	List<PandUserComment> list = pandUserCommentMapper.getPandUserCommentList(parameters);
+    	  	if(list == null || list.isEmpty()){
+    	  		return null;
+    	  	}
+      		return list.get(0);
       }
 
 

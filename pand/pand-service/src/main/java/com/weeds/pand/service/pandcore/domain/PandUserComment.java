@@ -1,11 +1,15 @@
 package com.weeds.pand.service.pandcore.domain;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonFormat; 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.weeds.pand.service.mechanic.domain.PandUserJson;
+import com.weeds.pand.service.system.domain.PandImages; 
 /**
  * pand_user_comment 实体类
  * 由GenEntityMysql类自动生成
@@ -87,7 +91,10 @@ public class PandUserComment {
 	private String userNickname;
 	@Transient
 	private String serviceTitle;
-
+	@Transient
+	private List<PandImages> images;//评论图片集合
+	@Transient
+	private PandUserJson issuser;
 
 	public String getId(){
 		return id;
@@ -199,6 +206,22 @@ public class PandUserComment {
 
 	public void setServiceTitle(String serviceTitle) {
 		this.serviceTitle = serviceTitle;
+	}
+
+	public List<PandImages> getImages() {
+		return images;
+	}
+
+	public void setImages(List<PandImages> images) {
+		this.images = images;
+	}
+
+	public PandUserJson getIssuser() {
+		return issuser;
+	}
+
+	public void setIssuser(PandUserJson issuser) {
+		this.issuser = issuser;
 	}
 	
 }
