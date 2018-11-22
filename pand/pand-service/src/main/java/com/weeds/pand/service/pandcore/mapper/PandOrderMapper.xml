@@ -27,9 +27,14 @@
 		<result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
 		<result column="shop_user_head" jdbcType="VARCHAR" property="shopUserHead" />
 		<result column="service_tilte" jdbcType="VARCHAR" property="serviceTitle" />
+		
+		<collection property="commentId" column="{pandUserId=pand_user_id,orderId=id}" 
+			select="getPandUserCommentId"></collection>
 	</resultMap>
 
-
+	<select id="getPandUserCommentId" parameterType="map" resultType="string">
+		select id as commentId from pand_user_comment where pand_user_id=#{pandUserId} and order_id=#{orderId}
+	</select>
    <!-- 查询集合 -->
    <select id="getPandOrderList" parameterType="map" resultMap="pageBaseResultMap">
        select po.*,pu.user_nickname,pu.user_headpng shop_user_head,ps.service_tilte from pand_order po 

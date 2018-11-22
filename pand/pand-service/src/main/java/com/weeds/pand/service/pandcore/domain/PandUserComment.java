@@ -195,7 +195,7 @@ public class PandUserComment {
 		return "PandUserComment [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime
 				+ ", pandUserId=" + pandUserId + ", serviceId=" + serviceId + ", status=" + status + ", skilledScore="
 				+ skilledScore + ", attitudeScore=" + attitudeScore + ", efficiencyScore=" + efficiencyScore
-				+ ", anonymous=" + anonymous + ", comment=" + comment + "]";
+				+ ", anonymous=" + anonymous + ", comment=" + comment + ", orderId=" + orderId + "]";
 	}
 
 	public String getUserNickname() {

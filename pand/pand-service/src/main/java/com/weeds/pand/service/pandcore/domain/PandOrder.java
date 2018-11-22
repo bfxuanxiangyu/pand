@@ -114,6 +114,8 @@ public class PandOrder {
 	private String serviceTitle;
 	@Transient
 	private String shopUserHead;
+	@Transient
+	private String commentId;//评论id
 
 	public String getId(){
 		return id;
@@ -274,6 +276,14 @@ public class PandOrder {
 
 	public void setShopUserHead(String shopUserHead) {
 		this.shopUserHead = shopUserHead;
+	}
+
+	public String getCommentId() {
+		return commentId;
+	}
+
+	public void setCommentId(String commentId) {
+		this.commentId = commentId;
 	}
 	
 	
