@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Maps;
 import com.weeds.pand.service.pandcore.domain.PandService;
 import com.weeds.pand.service.pandcore.mapper.PandServiceJpaDao;
 import com.weeds.pand.service.pandcore.mapper.PandServiceMapper;
@@ -59,7 +60,9 @@ public class PandServiceServiceImpl implements PandServiceService{
 
 	@Override
 	public PandService getPandServiceById(String id) {
-		return pandServiceJpaDao.findOne(id);
+		Map<String, Object> parameters = Maps.newHashMap();
+		parameters.put("id", id);
+		return pandServiceMapper.getPandServiceObject(parameters);
 	}
 	
 }

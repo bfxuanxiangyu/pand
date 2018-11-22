@@ -82,7 +82,7 @@ public class PandServiceController {
 	@ResponseBody
 	@RequestMapping("/pand_issue")
 	public String enterShopper(String token,PandService ps,String imagesJson) {
-		logger.info("发布服务参数:"+token+",对象:"+ps.toString()+",图片:"+imagesJson);
+		logger.info("发布服务参数:"+token+",对象:"+ps.toString());
 		if(isBlank(token) || isBlank(ps.getPandUserId()) || isBlank(imagesJson)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
@@ -135,11 +135,11 @@ public class PandServiceController {
 					pandImagesService.deletePandImagesObj(dep);
 					if(ciList!=null && !ciList.isEmpty()){
 						List<String> baseStrList = null;
+						baseStrList = Lists.newArrayList();
 						for (CardImage ci : ciList) {
 							if(isBlank(ci.getBaseStr())){
 								continue;
 							}
-							baseStrList = Lists.newArrayList();
 							baseStrList.add(ci.getBaseStr());
 						}
 						pandImagesService.savePandImages(0,3, ps.getId(), baseStrList);

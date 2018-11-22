@@ -74,8 +74,12 @@ public class PandImagesServiceImpl implements PandImagesService{
 		}else if(imgModel==3){
 			porder = "service/";
 		}
-		for (String str : imagesList) {
-			String imgUrl = saveImages(str, porder);
+		String str;
+		for (int i = 0; i < imagesList.size(); i++) {
+			str = imagesList.get(i);
+			logger.info("");
+			String imgUrl = saveImages(str, porder,i);
+			logger.info("保存本次服务照片serviceId="+modelId+",路径："+imgUrl);
 			//保存base64照片流
 			if(PandStringUtils.isBlank(imgUrl)){
 				continue ;
@@ -97,7 +101,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 	 * @param porder
 	 * @return
 	 */
-	private String saveImages(String str,String porder){
+	private String saveImages(String str,String porder,int index){
 		String httpStr = null;
 		try {
 			String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
@@ -105,7 +109,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 			if(!file.exists()){
 				file.mkdirs();
 			}
-			String fileName = PandStringUtils.getUUID()+".png";
+			String fileName = PandStringUtils.getUUID()+"_"+index+".png";
 			byte[] bytes = Base64Utils.decode(str.getBytes());
 			OutputStream out = new FileOutputStream(savePath+porderPath+fileName);
 			out.write(bytes);
