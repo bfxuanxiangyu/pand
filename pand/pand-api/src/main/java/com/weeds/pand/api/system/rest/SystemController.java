@@ -108,7 +108,7 @@ public class SystemController {
 		if(PandStringUtils.isBlank(location)){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
-		String address = TencentMapUtils.getAddress(location,key);
+		Map<String, Object> address = TencentMapUtils.getAddress(location,key);
 		return PandResponseUtil.printJson("地址获取成功", address);
 	}
 	
@@ -173,6 +173,7 @@ public class SystemController {
 //            urlPath.append(String.format("&js_code=%s", code));
 //            urlPath.append(String.format("&grant_type=%s", "authorization_code")); // 固定值
             String data = HttpUtils.doPost(urlPath.toString(), params);// java的网络请求，这里是我自己封装的一个工具包，返回字符串
+            logger.info("微信授权获取数据：data="+data);
             if(PandStringUtils.isBlank(data)){
             	return PandResponseUtil.printFailJson(PandResponseUtil.failed,"无法获取openId", null);
             }

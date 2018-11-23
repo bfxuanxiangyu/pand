@@ -1,9 +1,12 @@
 package com.weeds.pand.utils;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 
 /**
  * 腾讯地图类
@@ -19,8 +22,8 @@ public class TencentMapUtils {
 	public static void main(String[] args) {
 	}
 	
-	public static String getAddress(String location,String key){
-		String address = null;
+	public static Map<String,Object> getAddress(String location,String key){
+		Map<String,Object> map = Maps.newHashMap();
 		try {
 			String httpUrl = url+key+"&location="+location;
 			String resultStr = HttpUtils.doGet(httpUrl);
@@ -29,15 +32,16 @@ public class TencentMapUtils {
 		        JSONObject jsonObject = JSONObject.parseObject(resultStr).getJSONObject("result");
 		        // 获取地址（行政区划信息） 包含有国籍，省份，城市
 		        JSONObject adcInfo = jsonObject.getJSONObject("address_component");
-		        String district = (String) adcInfo.get("district");
-		        address = (String) adcInfo.get("street");
-		        if(PandStringUtils.isBlank(address)){
-		        	address = district;
-		        }
+		        map.put("address", jsonObject.get("address"));
+		        map.put("nation", adcInfo.get("nation"));
+		        map.put("city", adcInfo.get("city"));
+		        map.put("district", adcInfo.get("district"));
+		        map.put("street", adcInfo.get("street"));
+		        map.put("street_number", adcInfo.get("street_number"));
 			}
 		} catch (Exception e) {
 			logger.error("根据经纬度获取地址异常"+e.getMessage(),e);
 		}
-		return address;
+		return map;
 	}
 }
