@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.auth.user.domain.Area;
@@ -24,6 +25,7 @@ import com.weeds.pand.service.system.domain.SystemVersionInfo;
 import com.weeds.pand.service.system.mapper.BannerMapper;
 import com.weeds.pand.service.system.mapper.SkillsMapper;
 import com.weeds.pand.service.system.service.SystemVersionInfoService;
+import com.weeds.pand.utils.HttpUtils;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.TencentMapUtils;
@@ -146,4 +148,46 @@ public class SystemController {
 		return PandStringUtils.getJsonObj("success");
     }
 
+	
+	@Value("${weixin.app_id}") // spring配置文件配置了appID
+    private String appId;
+    
+    @Value("${weixin.app_secret}") // spring配置文件配置了secret
+    private String secret;
+    
+    @ResponseBody
+    @RequestMapping("/openId")
+    public String openId(String code){ // 小程序端获取的CODE
+        Map<String, Object> params = Maps.newHashMap();
+        try {
+        	if(PandStringUtils.isBlank(code)){
+    			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+    		}
+            StringBuilder urlPath = new StringBuilder("https://api.weixin.qq.com/sns/jscode2session"); // 微信提供的API，这里最好也放在配置文件
+            params.put("appid", appId);
+            params.put("secret", secret);
+            params.put("js_code", code);
+            params.put("grant_type", "authorization_code");
+//            urlPath.append(String.format("?appid=%s", appId));
+//            urlPath.append(String.format("&secret=%s", secret));
+//            urlPath.append(String.format("&js_code=%s", code));
+//            urlPath.append(String.format("&grant_type=%s", "authorization_code")); // 固定值
+            String data = HttpUtils.doPost(urlPath.toString(), params);// java的网络请求，这里是我自己封装的一个工具包，返回字符串
+            if(PandStringUtils.isBlank(data)){
+            	return PandResponseUtil.printFailJson(PandResponseUtil.failed,"无法获取openId", null);
+            }
+            JSONObject object = JSONObject.parseObject(data);
+            String openid = object.getString("openid");
+            String sessionKey = object.getString("openid");
+            Map<String, Object> returnMaps = Maps.newHashMap();
+            returnMaps.put("openid", openid);
+            returnMaps.put("sessionKey", sessionKey);
+            
+            return PandResponseUtil.printJson("获取微信登录信息成功", returnMaps);
+            
+        } catch (Exception e) {
+        	logger.error("openid获取异常"+e.getMessage(),e);
+        	return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+        }
+    }
 }
