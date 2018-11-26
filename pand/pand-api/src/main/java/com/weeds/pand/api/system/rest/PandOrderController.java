@@ -77,7 +77,9 @@ public class PandOrderController {
 			order.setStatus(0);
 			pandOrderService.savePandOrder(order);
 			
-			return PandResponseUtil.printJson("下单成功",order);
+			PandOrder dbOrder = pandOrderService.getPandOrderById(order.getId());
+			
+			return PandResponseUtil.printJson("下单成功",dbOrder);
 		} catch (Exception e) {
 			logger.error("下单异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
@@ -111,6 +113,31 @@ public class PandOrderController {
 			return PandResponseUtil.printJson("成功",null);
 		} catch (Exception e) {
 			logger.error("下单异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	
+	/**
+	 * 订单详情
+	 * token     用户token
+	 * id        订单id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/order_detail")
+	public String detail(String token,String id) {
+		logger.info("订单详情参数:"+token+",id:"+id);
+		if(isBlank(token) || isBlank(id)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try{
+			PandOrder dbOrder = pandOrderService.getPandOrderById(id);
+			if(dbOrder==null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_order,"订单不存在", null);
+			}
+			return PandResponseUtil.printJson("成功",dbOrder);
+		} catch (Exception e) {
+			logger.error("获取订单详情异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

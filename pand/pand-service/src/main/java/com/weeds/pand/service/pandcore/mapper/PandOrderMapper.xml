@@ -41,6 +41,9 @@
 	   left JOIN pand_user pu on pu.id = po.pand_user_id
 	   left join pand_service ps on ps.id = po.service_id 
 	   where 1=1
+       <if test="id != null">
+       		and po.id = #{id}
+       </if>
        <if test="pandUserId != null">
        		and po.pand_user_id = #{pandUserId}
        </if>

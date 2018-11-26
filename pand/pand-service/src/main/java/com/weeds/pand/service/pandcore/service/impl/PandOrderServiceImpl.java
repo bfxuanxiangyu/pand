@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import com.weeds.pand.service.pandcore.domain.PandOrder;
 import com.weeds.pand.service.pandcore.domain.PandShop;
 import com.weeds.pand.service.pandcore.mapper.PandOrderJpaDao;
@@ -54,7 +55,13 @@ public class PandOrderServiceImpl implements PandOrderService{
 
 	@Override
 	public PandOrder getPandOrderById(String id) {
-		return pandOrderJpaDao.findOne(id);
+		Map<String, Object> parameters = Maps.newHashMap();
+		parameters.put("id", id);
+		List<PandOrder> list = pandOrderMapper.getPandOrderList(parameters);
+		if(list != null){
+			return list.get(0);
+		}
+		return null;
 	}
 
 	@Override
