@@ -269,6 +269,32 @@ public class PandServiceController {
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}
+	/**
+	 * 普通用户获取店铺详情
+	 * @param token      用户token
+	 * @param pandUserId 用户id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/shop_detail_common")
+	public String shopDetailCommon(String pandUserId) {
+		logger.info("店铺详情参数:pandUserId:"+pandUserId);
+		if(isBlank(pandUserId)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("pandUserId", pandUserId);
+			PandShop oldPs = pandShopService.getPandShopObject(parameters);
+			if(oldPs==null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_shop,"店铺不存在", null);
+			}
+			return PandResponseUtil.printJson("店铺信息获取成功", oldPs);
+		} catch (Exception e) {
+			logger.error("店铺获取异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
 	
 	/**
 	 * 编辑店铺    可以更新店铺头像、名称、描述、联系方式、服务时间段

@@ -10,6 +10,8 @@ import com.weeds.pand.service.system.domain.Skills;
 @Mapper
 public interface SkillsMapper {
 
-    List<Skills> selectAll(Map<String, Object> parameters);
+	List<Skills> selectAll(Map<String, Object> parameters);
+	
+    List<Skills> selectAllByShopIds(Map<String, Object> parameters);
 
 }

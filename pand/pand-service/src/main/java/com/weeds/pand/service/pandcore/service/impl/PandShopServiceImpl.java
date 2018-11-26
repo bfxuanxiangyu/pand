@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import com.weeds.pand.service.pandcore.domain.PandShop;
 import com.weeds.pand.service.pandcore.mapper.PandShopJpaDao;
 import com.weeds.pand.service.pandcore.mapper.PandShopMapper;
-import com.weeds.pand.service.pandcore.service.PandShopService; 
+import com.weeds.pand.service.pandcore.service.PandShopService;
+import com.weeds.pand.service.system.domain.Skills;
+import com.weeds.pand.service.system.mapper.SkillsMapper; 
 
 
 /**
@@ -29,6 +31,8 @@ public class PandShopServiceImpl implements PandShopService{
 	
 	@Resource
 	private PandShopMapper pandShopMapper; 
+	@Resource
+	private SkillsMapper skillsMapper;
 
 	@Override
 	public void savePandShop(PandShop pandShop) {
@@ -43,7 +47,18 @@ public class PandShopServiceImpl implements PandShopService{
 
 	@Override
 	public PandShop getPandShopObject(Map<String, Object> parameters) {
-		return pandShopMapper.getPandShopObject(parameters);
+		
+		PandShop object = pandShopMapper.getPandShopObject(parameters);
+		//获取技能列表
+		if(object != null){
+			List<Skills> skills = skillsMapper.selectAllByShopIds(parameters);
+			if(skills!= null){
+				object.setSkills(skills);
+			}
+		}
+		
+		
+		return object;
 	}
 
 }

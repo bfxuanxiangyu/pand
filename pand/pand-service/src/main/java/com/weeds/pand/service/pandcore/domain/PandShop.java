@@ -1,16 +1,19 @@
 package com.weeds.pand.service.pandcore.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonFormat; 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.weeds.pand.service.system.domain.Skills; 
 /**
  * pand_shop 实体类
  * 由GenEntityMysql类自动生成
@@ -75,7 +78,13 @@ public class PandShop {
 	*/ 
 	@Column(name="shop_status")
 	private Integer shopStatus;
-
+	
+	@Transient
+	private int orderTotal;//接单数量
+	@Transient
+	private String totalScore;//综合评分
+	@Transient
+	private List<Skills> skills;//服务技能列表
 
 	public String getId(){
 		return id;
@@ -162,6 +171,30 @@ public class PandShop {
 		return "PandShop [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", pandUserId="
 				+ pandUserId + ", shopTel=" + shopTel + ", shopName=" + shopName + ", shopDes=" + shopDes
 				+ ", shopTime=" + shopTime + ", shopImg=" + shopImg + ", shopStatus=" + shopStatus + "]";
+	}
+
+	public int getOrderTotal() {
+		return orderTotal;
+	}
+
+	public void setOrderTotal(int orderTotal) {
+		this.orderTotal = orderTotal;
+	}
+
+	public List<Skills> getSkills() {
+		return skills;
+	}
+
+	public void setSkills(List<Skills> skills) {
+		this.skills = skills;
+	}
+
+	public String getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(String totalScore) {
+		this.totalScore = totalScore;
 	}
 
 }

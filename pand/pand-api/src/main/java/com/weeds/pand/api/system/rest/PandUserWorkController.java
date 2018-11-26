@@ -403,12 +403,11 @@ public class PandUserWorkController {
 					List<CardImage> ciList = JSON.parseArray(imagesJson, CardImage.class);
 					if(ciList!=null && !ciList.isEmpty()){
 						if(ciList!=null && !ciList.isEmpty()){
-							List<String> baseStrList = null;
+							List<String> baseStrList = Lists.newArrayList();;
 							for (CardImage ci : ciList) {
 								if(isBlank(ci.getBaseStr())){
 									continue;
 								}
-								baseStrList = Lists.newArrayList();
 								baseStrList.add(ci.getBaseStr());
 							}
 							pandImagesService.savePandImages(0,2, comment.getId(), baseStrList);

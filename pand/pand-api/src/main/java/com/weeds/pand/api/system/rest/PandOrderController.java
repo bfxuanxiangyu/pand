@@ -255,6 +255,30 @@ public class PandOrderController {
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}
+	/**
+	 * 地址详情
+	 * token        用户token   必填
+	 * id           地址id   必填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/address_detail")
+	public String addressDetail(String token,String id) {
+		logger.info("地址详情参数:"+token+",id:"+id);
+		if(isBlank(token) || isBlank(id)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try{
+			PandUserAddress pua = pandUserAddressService.getPandUserAddressById(id);
+			if(pua == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.no_address,"地址不存在", null);
+			}
+			return PandResponseUtil.printJson("删除成功",pua);
+		} catch (Exception e) {
+			logger.error("地址详情异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
 	
 	private String getOrderNum(){
 		String orderStr = PandStringUtils.getUUID();

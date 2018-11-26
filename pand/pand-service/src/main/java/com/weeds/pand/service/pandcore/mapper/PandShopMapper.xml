@@ -16,9 +16,27 @@
 		<result column="shop_time" jdbcType="VARCHAR" property="shopTime" />
 		<result column="shop_img" jdbcType="VARCHAR" property="shopImg" />
 		<result column="shop_status" jdbcType="BIGINT" property="shopStatus" />
+		
+		<collection property="orderTotal" column="{shopId=id}" 
+			select="getPandOrderByshopIdCount"></collection>
+		<collection property="totalScore" column="{pandUserId=pand_user_id}" 
+			select="getShopTotalScore"></collection>
+		
 	</resultMap>
-
-
+	<!-- 获取接单数量 -->
+	<select id="getPandOrderByshopIdCount" parameterType="map" resultType="int">
+		select count(1) from pand_order where shop_id=#{shopId} and (status=3 or status=4)
+	</select>
+	<!-- 获取综合评分 -->
+	<select id="getShopTotalScore" parameterType="map" resultType="string">
+		SELECT ROUND(SUM(tmp.skilledScore+tmp.attitudeScore+tmp.efficiencyScore)/3,1) totalScore from 
+		(
+			select ROUND(AVG(skilled_score),1) skilledScore,
+				   ROUND(AVG(attitude_score),1) attitudeScore,
+				   ROUND(AVG(efficiency_score),1) efficiencyScore 
+			from pand_user_comment where pand_user_id=#{pandUserId} and status =0
+		) tmp
+	</select>
    <!-- 查询集合 -->
    <select id="getPandShopList" parameterType="map" resultMap="BaseResultMap">
        select * from pand_shop where 1=1 

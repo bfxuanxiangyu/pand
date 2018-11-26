@@ -19,4 +19,10 @@
     </if>
     order by icon_order
   </select>
+  
+  <select id="selectAllByShopIds" parameterType="map" resultMap="BaseResultMap">
+    select id, create_time, update_time, status, icon_url, icon_order,content,title 
+    from skills where status=1 and  id in (select service_type_id from pand_service where pand_user_id=#{pandUserId} and service_status=2 GROUP BY service_type_id)
+    order by icon_order
+  </select>
 </mapper>
