@@ -65,6 +65,9 @@ public class SkillsController {
 	}
 	@RequestMapping("/skills_status")
 	public ModelAndView skillsStatus(String id,Integer status) {
+		if(id.equals("skill_all")){
+			return skillsList();
+		}
 		Skills skills = skillsJpaDao.findOne(id);
 		skills.setStatus(status);
 		skills.setUpdateTime(new Date());
