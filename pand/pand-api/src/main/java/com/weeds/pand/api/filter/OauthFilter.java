@@ -75,7 +75,7 @@ public class OauthFilter implements Filter {
 			response.getWriter().println(PandResponseUtil.printFailJson(PandResponseUtil.no_token,"no token",null));
 			return;
 		}
-		if(System.currentTimeMillis()-at.getExpiresIn()> (1000*60*60*24)){//24小时过期
+		if(System.currentTimeMillis()-at.getExpiresIn()> (1000*60*60*24*30)){//24小时过期
 			response.getWriter().println(PandResponseUtil.printFailJson(PandResponseUtil.no_token,"token overdue",null));
 			return;
 		}else{

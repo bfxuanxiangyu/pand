@@ -74,8 +74,12 @@
        		and ps.service_invoice = #{serviceInvoice}
        </if>
        <if test="contents != null">
-       		and concat(ps.service_tilte,ps.service_des,ps.service_info,ps.service_address) 
-       		like CONCAT(CONCAT('%', #{contents}), '%')
+       		and  (
+		    	ps.service_tilte like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or ps.service_des like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or ps.service_info like CONCAT(CONCAT('%', #{contents}), '%')
+		    	or ps.service_address like CONCAT(CONCAT('%', #{contents}), '%')
+	    		)
        </if>
        <if test="sortType==4"><!-- 4价格降序 -->
        		order by ps.service_price desc

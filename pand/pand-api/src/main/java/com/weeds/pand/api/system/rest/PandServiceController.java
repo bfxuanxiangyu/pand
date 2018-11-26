@@ -3,9 +3,6 @@ package com.weeds.pand.api.system.rest;
 import static com.weeds.pand.utils.PandStringUtils.isBlank;
 import static com.weeds.pand.utils.PandStringUtils.isNotBlank;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -31,7 +27,6 @@ import com.weeds.pand.service.pandcore.service.PandServiceService;
 import com.weeds.pand.service.pandcore.service.PandShopService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.service.PandImagesService;
-import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
 
 /**
@@ -303,8 +298,8 @@ public class PandServiceController {
 			}
 			//编辑店铺头像
 			if(isNotBlank(ps.getShopImg())){
-				String httpStr = uploadShopImg(ps.getShopImg());
-				oldPs.setShopImg(httpStr);
+//				String httpStr = uploadShopImg(ps.getShopImg());
+				oldPs.setShopImg(ps.getShopImg());
 			}
 			
 			//更新店铺信息
@@ -326,7 +321,7 @@ public class PandServiceController {
 	 * @param baseStr
 	 * @return
 	 */
-	private String uploadShopImg(String baseStr){
+	/*private String uploadShopImg(String baseStr){
 		String httpStr = null;
 		try {
 			String porderPath = "shopImg/"+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
@@ -346,7 +341,7 @@ public class PandServiceController {
 			logger.error("图片保存异常"+e.getMessage(),e);
 		}
 		return httpStr;
-	}
+	}*/
 	
 	/**
 	 * 服务列表   支持综合、销量、上门速度、高级筛选选择，支持分页  请仔细阅读以下参数
@@ -440,8 +435,9 @@ public class PandServiceController {
 		}
 		parameters.put("begin", pageIndex * pageSize);
 		parameters.put("end", pageSize);
-		
-		parameters.put("serviceTypeId", serviceTypeId);//服务种类
+		if(!isBlank(serviceTypeId)){
+			parameters.put("serviceTypeId", serviceTypeId);//服务种类
+		}
 		//价格区间查询
 		if(startPrice != null){	parameters.put("startPrice", startPrice);}
 		if(endPrice != null){	parameters.put("endPrice", endPrice);}

@@ -3,9 +3,6 @@ package com.weeds.pand.api.system.rest;
 import static com.weeds.pand.utils.PandStringUtils.isBlank;
 import static com.weeds.pand.utils.PandStringUtils.isNotBlank;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -37,7 +33,6 @@ import com.weeds.pand.service.pandcore.service.PandUserCommentService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.domain.Page;
 import com.weeds.pand.service.system.service.PandImagesService;
-import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
 
 @Controller
@@ -68,7 +63,7 @@ public class PandUserWorkController {
 	 *   1、修改手机   userPhone、anthCode不能为空
 	 *   2、修改昵称  userNickname不能为空
 	 *   3、绑定微信 userWeixin不能为空
-	 *   4、编辑头像 userHeadpng   不能为空，base64字符串上传
+	 *   4、编辑头像 userHeadpng   不能为空，url上传
 	 * @param token
 	 * @param pandUser
 	 * @param authCode
@@ -138,8 +133,8 @@ public class PandUserWorkController {
 			}
 			//上传头像
 			if(isNotBlank(pandUser.getUserHeadpng())){
-				String httpStr = uploadHeadPng(pandUser.getUserHeadpng());
-				oldObjById.setUserHeadpng(httpStr);
+//				String httpStr = uploadHeadPng(pandUser.getUserHeadpng());
+				oldObjById.setUserHeadpng(pandUser.getUserHeadpng());
 			}
 			
 			oldObjById.setUpdateTime(new Date());
@@ -277,7 +272,7 @@ public class PandUserWorkController {
 	 * @param baseStr
 	 * @return
 	 */
-	private String uploadHeadPng(String baseStr){
+	/*private String uploadHeadPng(String baseStr){
 		String httpStr = null;
 		try {
 			String porderPath = "headPng/"+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
@@ -297,7 +292,7 @@ public class PandUserWorkController {
 			logger.error("图片保存异常"+e.getMessage(),e);
 		}
 		return httpStr;
-	}
+	}*/
 	
 	
 	
@@ -539,7 +534,7 @@ public class PandUserWorkController {
 			
 			pandUserCollectionService.savePandUserCollection(collection);
 			
-			return PandResponseUtil.printJson("收藏成功", null);
+			return PandResponseUtil.printJson("收藏成功", collection.getId());
 			
 		} catch (Exception e) {
 			logger.error("收藏异常"+e.getMessage(),e);

@@ -2,9 +2,7 @@ package com.weeds.pand.service.system.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,6 @@ import com.weeds.pand.service.system.domain.PandImages;
 import com.weeds.pand.service.system.mapper.PandImagesJpaDao;
 import com.weeds.pand.service.system.mapper.PandImagesMapper;
 import com.weeds.pand.service.system.service.PandImagesService;
-import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandStringUtils;
 
 @Service
@@ -63,7 +60,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 		}
 		
 		PandImages vo;
-		String porder = "common/";
+		/*String porder = "common/";
 		if(imgModel==1){
 			porder = "user/";
 		}else if(imgModel==2){
@@ -71,10 +68,12 @@ public class PandImagesServiceImpl implements PandImagesService{
 		}else if(imgModel==3){
 			porder = "service/";
 		}
-		String str;
+		String str;*/
 		for (int i = 0; i < imagesList.size(); i++) {
-			str = imagesList.get(i);
-			String imgUrl = saveImages(str, porder,i);
+//			str = imagesList.get(i);
+//			String imgUrl = saveImages(str, porder,i);
+			String imgUrl  = imagesList.get(i);
+			logger.info("图片上传路径:"+imgUrl);
 			//保存base64照片流
 			if(PandStringUtils.isBlank(imgUrl)){
 				continue ;
@@ -100,7 +99,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 	 * @param porder
 	 * @return
 	 */
-	private String saveImages(String str,String porder,int index){
+	/*private String saveImages(String str,String porder,int index){
 		String httpStr = null;
 		try {
 			String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
@@ -120,7 +119,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 			logger.error("图片保存异常"+e.getMessage(),e);
 		}
 		return httpStr;
-	}
+	}*/
 	
 	public static void main(String[] args) {
 		try {
