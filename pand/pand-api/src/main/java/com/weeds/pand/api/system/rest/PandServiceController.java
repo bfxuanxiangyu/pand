@@ -461,7 +461,7 @@ public class PandServiceController {
 		}
 		parameters.put("begin", pageIndex * pageSize);
 		parameters.put("end", pageSize);
-		if(!isBlank(serviceTypeId)){
+		if(!isBlank(serviceTypeId) && !serviceTypeId.equals("skill_all")){
 			parameters.put("serviceTypeId", serviceTypeId);//服务种类
 		}
 		//价格区间查询

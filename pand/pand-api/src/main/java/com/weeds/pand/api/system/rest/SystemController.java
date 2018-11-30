@@ -81,6 +81,9 @@ public class SystemController {
 				dataList.add(dataMap);
 			}
 		}
+		//删除list最后一条数据
+		list.remove(list.size()-1);
+		map.put("fullList", list);
 		map.put("dataArray", dataMap);
 		return PandResponseUtil.printJson("技能列表获取成功", map);
 	}

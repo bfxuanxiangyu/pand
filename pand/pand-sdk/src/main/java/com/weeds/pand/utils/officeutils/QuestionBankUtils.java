@@ -76,7 +76,7 @@ public class QuestionBankUtils {
 						id = map.get("id");
 						answer = map.get("answer");
 						question = map.get("question");
-						questionSql = "insert into question_bank (id,content,test_type) values ('"+id+"','"+question+"',"+1+");";
+						questionSql = "insert into question_bank (id,content,test_type) values ('"+id+"','"+question+"',"+2+");";
 						bwq.write(questionSql);
 						bwq.newLine();
 						System.out.println(question+",答案："+answer+",sql="+questionSql);
