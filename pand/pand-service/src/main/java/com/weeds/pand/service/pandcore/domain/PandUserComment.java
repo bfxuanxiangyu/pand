@@ -74,18 +74,30 @@ public class PandUserComment {
 	*/ 
 	@Column(name="attitude_score")
 	private Double attitudeScore;
-
+	
 	/**
-	* 工作效率分数
-	*/ 
+	 * 工作效率分数
+	 */ 
 	@Column(name="efficiency_score")
 	private Double efficiencyScore;
 
 	/**
-	* 是否匿名  0是  1否
+	* 综合评分
 	*/ 
+	@Column(name="comprehensive_score")
+	private Double comprehensiveScore;
+	
+	/**
+	 * 是否匿名  0是  1否
+	 */ 
 	@Column(name="anonymous")
 	private Integer anonymous;
+
+	/**
+	* 评论类型：1普通用户评论 2商户评论
+	*/ 
+	@Column(name="comment_type")
+	private Integer commentType;
 
 	/**
 	* 评论内容
@@ -236,6 +248,22 @@ public class PandUserComment {
 
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
+	}
+
+	public Double getComprehensiveScore() {
+		return comprehensiveScore;
+	}
+
+	public void setComprehensiveScore(Double comprehensiveScore) {
+		this.comprehensiveScore = comprehensiveScore;
+	}
+
+	public Integer getCommentType() {
+		return commentType;
+	}
+
+	public void setCommentType(Integer commentType) {
+		this.commentType = commentType;
 	}
 	
 }

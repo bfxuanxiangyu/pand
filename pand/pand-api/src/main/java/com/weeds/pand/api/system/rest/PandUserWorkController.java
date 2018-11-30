@@ -366,8 +366,10 @@ public class PandUserWorkController {
 	 * @param skilledScore   技术熟练分数 必填
 	 * @param attitudeScore  服务态度分数 必填
 	 * @param efficiencyScore工作效率分数 必填
+	 * @param comprehensiveScore综合分数 选填
 	 * @param anonymous      是否匿名  0是  1否 必填
 	 * @param comment        评论内容 必填
+	 * @param commentType    评论类型：1普通用户评论 2商户评论 必填
 	 * @param imagesJson     服务照片baseStr是图片base64位后字符串  {[{"baseStr": "..."},{"baseStr": "..."},{"baseStr": "..."}]} 选填
 	 * @return
 	 */

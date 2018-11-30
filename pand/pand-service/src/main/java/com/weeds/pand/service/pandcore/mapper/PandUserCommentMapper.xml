@@ -16,7 +16,9 @@
 		<result column="skilled_score" jdbcType="DOUBLE" property="skilledScore" />
 		<result column="attitude_score" jdbcType="DOUBLE" property="attitudeScore" />
 		<result column="efficiency_score" jdbcType="DOUBLE" property="efficiencyScore" />
+		<result column="comprehensive_score" jdbcType="DOUBLE" property="comprehensiveScore" />
 		<result column="anonymous" jdbcType="BIGINT" property="anonymous" />
+		<result column="comment_type" jdbcType="BIGINT" property="commentType" />
 		<result column="comment" jdbcType="VARCHAR" property="comment" />
 		
 		<collection property="images" column="{modelId=id}" 
