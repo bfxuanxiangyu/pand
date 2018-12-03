@@ -16,6 +16,9 @@
 		<result column="shop_time" jdbcType="VARCHAR" property="shopTime" />
 		<result column="shop_img" jdbcType="VARCHAR" property="shopImg" />
 		<result column="shop_status" jdbcType="BIGINT" property="shopStatus" />
+		<result column="shop_lat" jdbcType="VARCHAR" property="shopLat" />
+		<result column="shop_lng" jdbcType="VARCHAR" property="shopLng" />
+		<result column="service_distance" jdbcType="DOUBLE" property="serviceDistance" />
 		
 		<collection property="orderTotal" column="{shopId=id}" 
 			select="getPandOrderByshopIdCount"></collection>
@@ -39,14 +42,22 @@
 	</select>
    <!-- 查询集合 -->
    <select id="getPandShopList" parameterType="map" resultMap="BaseResultMap">
-       select * from pand_shop where 1=1 
+       select ps.*,pu.user_lat shop_lat,pu.user_lng shop_lng 
+       <if test="distanceSelect != null">
+       		,truncate((st_distance (point (pu.user_lng, pu.user_lat),point(#{lng},#{lat}) ) / 0.0111),2) AS service_distance 
+       </if> 
+       from pand_shop ps 
+       left join pand_user pu on pu.id=ps.pand_user_id where 1=1 
        <if test="pandUserId != null">
-        	and pand_user_id = #{pandUserId}
+        	and ps.pand_user_id = #{pandUserId}
        </if>
        <if test="shopStatus != null">
-        	and shop_status = #{shopStatus}
+        	and ps.shop_status = #{shopStatus}
        </if>
-       order by create_time desc 
+       <if test="distanceSelect != null">
+       		HAVING service_distance &lt;= #{distance}
+       </if>
+       order by ps.create_time desc 
        <if test="begin != null">
            limit #{begin},#{end}
        </if>

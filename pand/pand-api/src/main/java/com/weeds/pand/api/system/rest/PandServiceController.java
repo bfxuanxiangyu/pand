@@ -392,9 +392,9 @@ public class PandServiceController {
 	@ResponseBody
 	@RequestMapping("/pand_service_list")
 	public String pandServiceList(String pandUserId,String serviceTypeId,Integer searchType,
-								  Integer sortType,String lat,String lng,String contents,Integer startPrice,
-								  Integer endPrice,Integer serviceInvoice,Integer orderType,Integer shopType,
-								  Integer serviceStatus, Integer pageIndex, Integer pageSize) {
+			Integer sortType,String lat,String lng,String contents,Integer startPrice,
+			Integer endPrice,Integer serviceInvoice,Integer orderType,Integer shopType,
+			Integer serviceStatus, Integer pageIndex, Integer pageSize) {
 		logger.info("服务列表参数 pandUserId="+pandUserId+",serviceTypeId:"+serviceTypeId+",searchType:"+searchType
 				+",sortType:"+sortType+",lat:"+lat+",lng:"+lng+",contents:"+contents
 				+",startPrice:"+startPrice+",endPrice:"+endPrice+",serviceInvoice:"+serviceInvoice
@@ -442,6 +442,43 @@ public class PandServiceController {
 			return PandResponseUtil.printJson("服务列表获取成功", serviceList);
 		} catch (Exception e) {
 			logger.error("服务列表获取异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	/**
+	 * 首页地图
+	 * @param lat           当前纬度 必填
+	 * @param lng           当前经度 必填
+	 * @param distance      附近公里数 默认10公里 选填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/home_map_list")
+	public String homeMapList(Integer distance,String lat,String lng) {
+		logger.info("首页地图参数 distance="+",lat:"+lat+",lng:"+lng);
+		if(isBlank(lat) || isBlank(lng)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		try {
+			if(distance==null){
+				distance = 10;
+			}
+			Map<String, Object> parameters = Maps.newHashMap();
+			Double serviceLat = Double.valueOf(lat);
+			Double serviceLng = Double.valueOf(lng);
+			parameters.put("distanceSelect", "select");
+			parameters.put("lat", serviceLat);
+			parameters.put("lng", serviceLng);
+			parameters.put("distance", distance);
+			parameters.put("begin", 0);
+			parameters.put("end", 50);
+			if(serviceStatus != null){
+				parameters.put("serviceStatus", serviceStatus);
+			}
+			List<PandShop> pandShopList = pandShopService.getPandShopList(parameters);
+			return PandResponseUtil.printJson("首页地图获取附近商家成功", pandShopList);
+		} catch (Exception e) {
+			logger.error("首页地图获取附近商家异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

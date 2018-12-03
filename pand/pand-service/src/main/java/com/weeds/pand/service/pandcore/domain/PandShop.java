@@ -85,6 +85,12 @@ public class PandShop {
 	private String totalScore;//综合评分
 	@Transient
 	private List<Skills> skills;//服务技能列表
+	@Transient
+	private Double serviceDistance;//服务距离
+	@Transient
+	private String shopLat;//店铺所在纬度
+	@Transient
+	private String shopLng; //店铺所在经度
 
 	public String getId(){
 		return id;
@@ -195,6 +201,30 @@ public class PandShop {
 
 	public void setTotalScore(String totalScore) {
 		this.totalScore = totalScore;
+	}
+
+	public Double getServiceDistance() {
+		return serviceDistance;
+	}
+
+	public void setServiceDistance(Double serviceDistance) {
+		this.serviceDistance = serviceDistance;
+	}
+
+	public String getShopLat() {
+		return shopLat;
+	}
+
+	public void setShopLat(String shopLat) {
+		this.shopLat = shopLat;
+	}
+
+	public String getShopLng() {
+		return shopLng;
+	}
+
+	public void setShopLng(String shopLng) {
+		this.shopLng = shopLng;
 	}
 
 }

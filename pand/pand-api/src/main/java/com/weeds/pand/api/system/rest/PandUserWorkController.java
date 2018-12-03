@@ -380,10 +380,9 @@ public class PandUserWorkController {
 		try {
 			if(isBlank(token) || isBlank(comment.getPandUserId())  || isBlank(comment.getServiceId()) || comment.getSkilledScore() == null
 					|| comment.getAttitudeScore()==null || comment.getEfficiencyScore()==null ||comment.getAnonymous()==null
-					|| isBlank(comment.getComment()) || isBlank(comment.getOrderId())){
+					|| isBlank(comment.getComment()) || isBlank(comment.getOrderId()) || comment.getCommentType()==null){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 			}
-			
 			//如果本人已经评论过  不进行再次评论
 			Map<String, Object> parameters = Maps.newHashMap();
 			parameters.put("pandUserId", comment.getPandUserId());
