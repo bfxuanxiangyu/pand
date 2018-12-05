@@ -20,6 +20,7 @@
 		<result column="service_scope" jdbcType="VARCHAR" property="serviceScope" />
 		<result column="service_invoice" jdbcType="BIGINT" property="serviceInvoice" />
 		<result column="service_status" jdbcType="BIGINT" property="serviceStatus" />
+		<result column="qr_url" jdbcType="VARCHAR" property="qrUrl" />
 		<result column="service_address" jdbcType="VARCHAR" property="serviceAddress" />
 		<result column="service_lat" jdbcType="VARCHAR" property="serviceLat" />
 		<result column="service_lng" jdbcType="VARCHAR" property="serviceLng" />

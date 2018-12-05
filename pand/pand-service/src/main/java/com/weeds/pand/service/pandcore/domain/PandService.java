@@ -122,6 +122,11 @@ public class PandService {
 	*/ 
 	@Column(name="service_status")
 	private Integer serviceStatus;
+	/**
+	* 二维码分析地址
+	*/ 
+	@Column(name="qr_url")
+	private String qrUrl;
 	
 	@Transient
 	private List<PandImages> images;//服务图片集合
@@ -338,6 +343,14 @@ public class PandService {
 
 	public void setIssuser(PandUserJson issuser) {
 		this.issuser = issuser;
+	}
+
+	public String getQrUrl() {
+		return qrUrl;
+	}
+
+	public void setQrUrl(String qrUrl) {
+		this.qrUrl = qrUrl;
 	}
 
 }

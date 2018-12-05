@@ -1,5 +1,6 @@
 package com.weeds.pand.api.system.rest;
 
+import java.io.File;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.auth.user.domain.Area;
 import com.weeds.pand.auth.user.service.AreaService;
+import com.weeds.pand.service.pandcore.domain.PandService;
+import com.weeds.pand.service.pandcore.service.PandServiceService;
 import com.weeds.pand.service.system.domain.Banner;
 import com.weeds.pand.service.system.domain.Skills;
 import com.weeds.pand.service.system.domain.SystemVersionInfo;
@@ -26,9 +29,11 @@ import com.weeds.pand.service.system.mapper.BannerMapper;
 import com.weeds.pand.service.system.mapper.SkillsMapper;
 import com.weeds.pand.service.system.service.SystemVersionInfoService;
 import com.weeds.pand.utils.HttpUtils;
+import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.TencentMapUtils;
+import com.weeds.pand.utils.weixin.GetWeixinInfoUtils;
 
 @Controller
 @RequestMapping("/api/system")
@@ -46,9 +51,16 @@ public class SystemController {
 	
 	@Resource
 	private AreaService areaService;
+	@Resource
+	private PandServiceService pandServiceService;
 	
 	@Value("${tecent.key}")
 	private String key;
+	
+	@Value("${img.savePath}")
+	private String savePath;
+	@Value("${img.imgUrl}")
+	private String imgUrl;
 	
 	@ResponseBody
 	@RequestMapping("/skills_list")
@@ -194,4 +206,59 @@ public class SystemController {
         	return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
         }
     }
+    
+    /**
+     * 获取分析二维码
+     * @param serviceId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/share_service_qr")
+    public String shareService(String serviceId){
+    	logger.info("获取分析二维码serviceId="+serviceId);
+        try {
+        	if(PandStringUtils.isBlank(serviceId)){
+    			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+    		}
+        	PandService obj = pandServiceService.getPandServiceById(serviceId);
+        	if(obj==null){
+        		return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"服务不存在", null);
+        	}
+        	if(PandStringUtils.isNotBlank(obj.getQrUrl())){
+        		return PandResponseUtil.printJson("获取分析二维码成功", obj.getQrUrl());
+        	}
+        	
+        	String accessToken = GetWeixinInfoUtils.getAccessToken(appId, secret);
+        	if(PandStringUtils.isBlank(accessToken)){
+        		logger.info("获取分析token="+accessToken);
+        		return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号不匹配", null);
+        	}
+        	String porder = "qrcode/";
+        	String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
+        	File imgFile = new File(savePath+porderPath);
+			if(!imgFile.exists()){
+				imgFile.mkdirs();
+			}
+			String path = "pages/service/servicedetails/servicedetails?id="+serviceId;
+			
+        	String fileName = PandStringUtils.getUUID()+".png";
+            boolean qrCodeUrl = GetWeixinInfoUtils.getQrCodeUrl(accessToken, path, 430, savePath+porderPath, fileName);
+            if(!qrCodeUrl){
+            	return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号异常", null);
+            }
+            String qrUrl = imgUrl+porderPath+fileName;
+            obj.setQrUrl(qrUrl);
+            try {
+				pandServiceService.savePandService(obj);
+			} catch (Exception e) {
+				logger.error("二维码路径持久化异常"+e.getMessage(),e);
+			}
+            logger.info("二维码路径="+qrUrl);
+            return PandResponseUtil.printJson("获取分析二维码成功", qrUrl);
+        } catch (Exception e) {
+        	logger.error("分析二维码获取异常"+e.getMessage(),e);
+        	return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+        }
+    }
+    
 }

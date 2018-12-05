@@ -1,8 +1,12 @@
 package com.weeds.pand.utils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -20,12 +24,16 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HttpUtils {
 	
@@ -126,13 +134,60 @@ public class HttpUtils {
 		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);// 创建httpPost   
+		httpPost.setHeader("Accept", "application/json"); 
+		httpPost.setHeader("Content-Type", "application/json");
+		String charSet = "UTF-8";
+		StringEntity entity = new StringEntity(params, charSet);
+		httpPost.setEntity(entity);        
+		CloseableHttpResponse response = null;
+		
+		try {
+			
+			response = httpclient.execute(httpPost);
+			StatusLine status = response.getStatusLine();
+			int state = status.getStatusCode();
+			if (state == HttpStatus.SC_OK) {
+				HttpEntity responseEntity = response.getEntity();
+				String jsonString = EntityUtils.toString(responseEntity);
+				return jsonString;
+			}
+			else{
+				logger.error("请求返回:"+state+"("+url+")");
+			}
+		}
+		finally {
+			if (response != null) {
+				try {
+					response.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	/**
+	 * post请求（用于请求json格式的参数）
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public static boolean doPostForFormat(String url, String params,String savePath,String fileName) throws Exception {
+		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);// 创建httpPost   
     	httpPost.setHeader("Accept", "application/json"); 
     	httpPost.setHeader("Content-Type", "application/json");
     	String charSet = "UTF-8";
     	StringEntity entity = new StringEntity(params, charSet);
     	httpPost.setEntity(entity);        
         CloseableHttpResponse response = null;
-        
+        boolean flag = false;
         try {
         	
         	response = httpclient.execute(httpPost);
@@ -140,14 +195,29 @@ public class HttpUtils {
             int state = status.getStatusCode();
             if (state == HttpStatus.SC_OK) {
             	HttpEntity responseEntity = response.getEntity();
-            	String jsonString = EntityUtils.toString(responseEntity);
-            	return jsonString;
-            }
-            else{
+            	boolean ifJson = false;
+            	if (responseEntity != null) {
+            		byte[] responseBytes = getData(responseEntity);
+            		try {
+        			 	JSONObject.parseObject(new String(responseBytes));
+        	            ifJson=true;
+        	        } catch (Exception e) {
+        	        }
+            		 if(ifJson){
+            			 System.out.println(new String(responseBytes));
+            			 return false;
+            		 }
+                    if(responseBytes != null){
+                    	//流保存
+                    	writeLocal(responseBytes, savePath, fileName);
+                    	flag = true;
+                    }
+                }
+            	return flag;
+            }else{
 				 logger.error("请求返回:"+state+"("+url+")");
 			}
-        }
-        finally {
+        }finally {
             if (response != null) {
                 try {
                     response.close();
@@ -161,7 +231,34 @@ public class HttpUtils {
 				e.printStackTrace();
 			}
         }
-        return null;
+        return flag;
 	}
+	
+	/**
+     * 获取Entity中数据
+     * @param httpEntity
+     * @return
+     * @throws Exception
+     */
+    public static byte[] getData(HttpEntity httpEntity) throws Exception{
+
+        BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(httpEntity);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bufferedHttpEntity.writeTo(byteArrayOutputStream);
+        byte[] responseBytes = byteArrayOutputStream.toByteArray();
+        return responseBytes;
+    }
+    
+    private static void writeLocal(byte[] data,String savePath,String fileName){
+    	String imagUrl = null;
+    	try {
+    		OutputStream out = new FileOutputStream(new File(savePath+fileName));
+    		out.write(data);
+    		out.flush();
+    		out.close();
+		} catch (Exception e) {
+			logger.error("获取字节流图片保存异常"+e.getMessage(),e);
+		}
+    }
 
 }
