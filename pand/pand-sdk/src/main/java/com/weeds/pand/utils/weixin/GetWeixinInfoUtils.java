@@ -17,6 +17,7 @@ public class GetWeixinInfoUtils {
 	
 	private static String token_url= "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
 	private static String qrcode_url= "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=";
+//	private static String qrcode_url= "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=";
 	
 	
 	public static String getAccessToken(String appid,String secret){
