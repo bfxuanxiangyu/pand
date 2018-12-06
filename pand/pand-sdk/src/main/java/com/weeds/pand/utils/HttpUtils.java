@@ -33,7 +33,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HttpUtils {
 	
@@ -179,18 +178,18 @@ public class HttpUtils {
 	 */
 	public static boolean doPostForFormat(String url, String params,String savePath,String fileName) throws Exception {
 		
-		CloseableHttpClient httpclient = HttpClients.createDefault();
+		
+		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);// 创建httpPost   
     	httpPost.setHeader("Accept", "application/json"); 
     	httpPost.setHeader("Content-Type", "application/json");
     	String charSet = "UTF-8";
     	StringEntity entity = new StringEntity(params, charSet);
     	httpPost.setEntity(entity);        
-        CloseableHttpResponse response = null;
+    	CloseableHttpResponse response = null;
         boolean flag = false;
         try {
-        	
-        	response = httpclient.execute(httpPost);
+        	response = httpClient.execute(httpPost);
             StatusLine status = response.getStatusLine();
             int state = status.getStatusCode();
             if (state == HttpStatus.SC_OK) {
@@ -226,7 +225,7 @@ public class HttpUtils {
                 }
             }
             try {
-				httpclient.close();
+				httpClient.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

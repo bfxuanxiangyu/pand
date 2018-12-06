@@ -15,6 +15,7 @@
 		<result column="shop_des" jdbcType="VARCHAR" property="shopDes" />
 		<result column="shop_time" jdbcType="VARCHAR" property="shopTime" />
 		<result column="shop_img" jdbcType="VARCHAR" property="shopImg" />
+		<result column="round_img" jdbcType="VARCHAR" property="roundImg" />
 		<result column="shop_status" jdbcType="BIGINT" property="shopStatus" />
 		<result column="shop_lat" jdbcType="VARCHAR" property="shopLat" />
 		<result column="shop_lng" jdbcType="VARCHAR" property="shopLng" />

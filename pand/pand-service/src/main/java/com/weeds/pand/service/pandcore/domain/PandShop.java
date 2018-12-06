@@ -66,12 +66,18 @@ public class PandShop {
 	*/ 
 	@Column(name="shop_time")
 	private String shopTime;
-
+	
 	/**
-	* 店铺形象图
-	*/ 
+	 * 店铺形象图
+	 */ 
 	@Column(name="shop_img")
 	private String shopImg;
+
+	/**
+	* 店铺形象图_圆角图片地址
+	*/ 
+	@Column(name="round_img")
+	private String roundImg;
 
 	/**
 	* 店铺状态 0可用  1不可用  默认0
@@ -225,6 +231,14 @@ public class PandShop {
 
 	public void setShopLng(String shopLng) {
 		this.shopLng = shopLng;
+	}
+
+	public String getRoundImg() {
+		return roundImg;
+	}
+
+	public void setRoundImg(String roundImg) {
+		this.roundImg = roundImg;
 	}
 
 }

@@ -228,11 +228,11 @@ public class SystemController {
         		return PandResponseUtil.printJson("获取分析二维码成功", obj.getQrUrl());
         	}
         	
-        	/*String accessToken = GetWeixinInfoUtils.isVailToken(appId, secret);
+        	String accessToken = GetWeixinInfoUtils.isVailToken(appId, secret);
         	logger.info("---获取微信token="+accessToken);
         	if(PandStringUtils.isBlank(accessToken)){
         		return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号不匹配", null);
-        	}*/
+        	}
         	String porder = "qrcode/";
         	String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
         	File imgFile = new File(savePath+porderPath);
@@ -242,7 +242,7 @@ public class SystemController {
 			String path = "pages/service/servicedetails/servicedetails?id="+serviceId;
 			
         	String fileName = PandStringUtils.getUUID()+".png";
-            boolean qrCodeUrl = GetWeixinInfoUtils.getQrCodeUrl(appId,secret, path, 430, savePath+porderPath, fileName);
+            boolean qrCodeUrl = GetWeixinInfoUtils.getQrCodeUrl(accessToken, path, 430, savePath+porderPath, fileName);
             if(!qrCodeUrl){
             	//token失效，更换token再取一次
             	return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号异常", null);

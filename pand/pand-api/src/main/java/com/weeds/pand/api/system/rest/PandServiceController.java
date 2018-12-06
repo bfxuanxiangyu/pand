@@ -3,6 +3,7 @@ package com.weeds.pand.api.system.rest;
 import static com.weeds.pand.utils.PandStringUtils.isBlank;
 import static com.weeds.pand.utils.PandStringUtils.isNotBlank;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import com.weeds.pand.service.pandcore.service.PandShopService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandResponseUtil;
+import com.weeds.pand.utils.tools.ImageTools;
 
 /**
  * @author user
@@ -325,7 +327,16 @@ public class PandServiceController {
 			//编辑店铺头像
 			if(isNotBlank(ps.getShopImg())){
 //				String httpStr = uploadShopImg(ps.getShopImg());
-				oldPs.setShopImg(ps.getShopImg());
+				//生成圆角图片
+				String httpStr = ps.getShopImg();
+				oldPs.setShopImg(httpStr);
+				String localPath = savePath+httpStr.substring(httpStr.indexOf("pand/img/")+9);
+				File file = new File(localPath);
+				if(file.exists()){
+					String makeCircularImg = ImageTools.makeCircularImg(localPath);
+					String roundImg = imgUrl+httpStr.substring(httpStr.indexOf("pand/img/")+9,httpStr.lastIndexOf("/"))+"/"+makeCircularImg;
+					oldPs.setRoundImg(roundImg);
+				}
 			}
 			
 			//更新店铺信息

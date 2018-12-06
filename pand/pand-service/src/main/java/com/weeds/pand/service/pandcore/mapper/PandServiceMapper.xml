@@ -37,6 +37,9 @@
    <select id="getPandUserIssusObj" parameterType="map" resultType="com.weeds.pand.service.mechanic.domain.PandUserJson">
 		select user_nickname userNickname,user_headpng userHeadpng from pand_user where id=#{pandUserId}
 	</select>
+   <select id="getPandServiceListQrNull" parameterType="map" resultMap="BaseResultMap">
+   		select * from pand_service where service_status != 5 and qr_url is null 
+   </select>
    <!-- 查询集合 -->
    <select id="getPandServiceList" parameterType="map" resultMap="BaseResultMap">
        select ps.*

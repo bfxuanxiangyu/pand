@@ -18,6 +18,7 @@ public interface PandServiceMapper {
 	* 根据条件获取所有PandService集合
 	*/ 
 	List<PandService>  getPandServiceList(Map<String, Object> parameters);
+	List<PandService>  getPandServiceListQrNull();
 
 	PandService  getPandServiceObject(Map<String, Object> parameters);
 

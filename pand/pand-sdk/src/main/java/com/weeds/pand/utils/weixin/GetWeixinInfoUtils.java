@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.weeds.pand.utils.HttpUtils;
-import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandStringUtils;
 
 public class GetWeixinInfoUtils {
@@ -31,7 +30,7 @@ public class GetWeixinInfoUtils {
 				return getAccessToken(appid, secret);
 			}
 			boolean vailetime = vailetime(tokenObj.getDate(), new Date());
-			if(!vailetime){//判断是否超过两小时，如果超过两小时则重新获取
+			if(!vailetime || PandStringUtils.isBlank(tokenObj.getAccessToken())){//判断是否超过两小时，如果超过两小时则重新获取
 				return getAccessToken(appid, secret);
 			}
 			return tokenObj.getAccessToken();
@@ -44,17 +43,20 @@ public class GetWeixinInfoUtils {
 	private static String getAccessToken(String appid,String secret){
 		String accessToken = null;
 		try {
-			token_url = token_url+"&appid="+appid+"&secret="+secret;
-			String res = HttpUtils.doGet(token_url);
+			String tokenUrl = token_url+"&appid="+appid+"&secret="+secret;
+			String res = HttpUtils.doGet(tokenUrl);
+			logger.info("httpUrl="+tokenUrl+",token info="+res);
 			JSONObject obj = JSON.parseObject(res);
 			if(obj==null){
 				return null;
 			}
 			accessToken = obj.getString("access_token");
+			if(PandStringUtils.isBlank(accessToken)){
+				return null;
+			}
 			tokenObj = new WeixinAccessTokenVo();
 			tokenObj.setAccessToken(accessToken);
 			tokenObj.setDate(new Date());
-			logger.info("获取微信成功token="+accessToken);
 		} catch (Exception e) {
 			logger.error("获取微信token异常"+e.getMessage(),e);
 		}
@@ -65,14 +67,13 @@ public class GetWeixinInfoUtils {
 		boolean getQrcodeUrl = false;
 		try {
 			String accessToken = getAccessToken(appid, secret);
-			logger.info("微信分享二维码token获取成功accessToken="+accessToken);
-			qrcode_url = qrcode_url+accessToken;
+			String qrcodeUrl = qrcode_url+accessToken;
 			Map<String, Object> params = Maps.newHashMap();
 			params.put("access_token", accessToken);
 			params.put("path", path);
 			params.put("width", width);
 			String paramsJson = PandStringUtils.getJsonObj(params);
-			getQrcodeUrl = HttpUtils.doPostForFormat(qrcode_url, paramsJson,savePath,fileName);
+			getQrcodeUrl = HttpUtils.doPostForFormat(qrcodeUrl, paramsJson,savePath,fileName);
 			logger.info("微信分享二维码获取结果"+getQrcodeUrl);
 		} catch (Exception e) {
 			logger.error("获取微信token异常"+e.getMessage(),e);
@@ -82,12 +83,12 @@ public class GetWeixinInfoUtils {
 	public static boolean getQrCodeUrl(String accessToken,String path,int width,String savePath,String fileName){
 		boolean getQrcodeUrl = false;
 		try {
-			qrcode_url = qrcode_url+accessToken;
+			String qrcodeUrl = qrcode_url+accessToken;
 			Map<String, Object> params = Maps.newHashMap();
 			params.put("path", path);
 			params.put("width", width);
 			String paramsJson = PandStringUtils.getJsonObj(params);
-			getQrcodeUrl = HttpUtils.doPostForFormat(qrcode_url, paramsJson,savePath,fileName);
+			getQrcodeUrl = HttpUtils.doPostForFormat(qrcodeUrl, paramsJson,savePath,fileName);
 			logger.info("微信分享二维码获取结果"+getQrcodeUrl);
 		} catch (Exception e) {
 			logger.error("获取微信token异常"+e.getMessage(),e);
@@ -100,7 +101,7 @@ public class GetWeixinInfoUtils {
 		try {
 			long cha = endDdate.getTime() - startDate.getTime();
 			double result = cha * 1.0 / (1000 * 60 * 60);
-			if(result>2){
+			if(result>1){
 				return false; //说明小于24小时
 			}else{
 				return true;
@@ -118,7 +119,7 @@ public class GetWeixinInfoUtils {
 		String savePath="d://opt//";
 		String fileName="qrcode1.jpg";
 //		getQrCodeUrl("wxcf96bc0f2160e79e","25631fbc0abfaf5986b08d83babad5d6", path, width,savePath,fileName);
-		getQrCodeUrl("wxcf96bc0f2160e79e","25631fbc0abfaf5986b08d83babad5d6", path, width,savePath,fileName);
+		getQrCodeUrl(accessToken, path, width,savePath,fileName);
 		
 		/*String s = "2018-12-06 08:08:45";
 		System.out.println(vailetime(PandDateUtils.parseStrToDate(s, "yyyy-MM-dd HH:mm:ss"), new Date()));*/
