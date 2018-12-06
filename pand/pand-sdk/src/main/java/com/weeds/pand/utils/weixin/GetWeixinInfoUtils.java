@@ -1,5 +1,6 @@
 package com.weeds.pand.utils.weixin;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.weeds.pand.utils.HttpUtils;
+import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandStringUtils;
 
 public class GetWeixinInfoUtils {
@@ -17,10 +19,29 @@ public class GetWeixinInfoUtils {
 	
 	private static String token_url= "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
 	private static String qrcode_url= "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=";
+	
+	public static WeixinAccessTokenVo tokenObj = null;
 //	private static String qrcode_url= "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=";
 	
+	public static String isVailToken(String appid,String secret){
+		String accessToken = null;
+		try {
+			
+			if(tokenObj == null){
+				return getAccessToken(appid, secret);
+			}
+			boolean vailetime = vailetime(tokenObj.getDate(), new Date());
+			if(!vailetime){//判断是否超过两小时，如果超过两小时则重新获取
+				return getAccessToken(appid, secret);
+			}
+			return tokenObj.getAccessToken();
+		} catch (Exception e) {
+			logger.error("token对象校验异常"+e.getMessage(),e);
+		}
+		return accessToken;
+	}
 	
-	public static String getAccessToken(String appid,String secret){
+	private static String getAccessToken(String appid,String secret){
 		String accessToken = null;
 		try {
 			token_url = token_url+"&appid="+appid+"&secret="+secret;
@@ -30,6 +51,9 @@ public class GetWeixinInfoUtils {
 				return null;
 			}
 			accessToken = obj.getString("access_token");
+			tokenObj = new WeixinAccessTokenVo();
+			tokenObj.setAccessToken(accessToken);
+			tokenObj.setDate(new Date());
 			logger.info("获取微信成功token="+accessToken);
 		} catch (Exception e) {
 			logger.error("获取微信token异常"+e.getMessage(),e);
@@ -37,6 +61,24 @@ public class GetWeixinInfoUtils {
 		return accessToken;
 	}
 	
+	public static boolean getQrCodeUrl(String appid,String secret,String path,int width,String savePath,String fileName){
+		boolean getQrcodeUrl = false;
+		try {
+			String accessToken = getAccessToken(appid, secret);
+			logger.info("微信分享二维码token获取成功accessToken="+accessToken);
+			qrcode_url = qrcode_url+accessToken;
+			Map<String, Object> params = Maps.newHashMap();
+			params.put("access_token", accessToken);
+			params.put("path", path);
+			params.put("width", width);
+			String paramsJson = PandStringUtils.getJsonObj(params);
+			getQrcodeUrl = HttpUtils.doPostForFormat(qrcode_url, paramsJson,savePath,fileName);
+			logger.info("微信分享二维码获取结果"+getQrcodeUrl);
+		} catch (Exception e) {
+			logger.error("获取微信token异常"+e.getMessage(),e);
+		}
+		return getQrcodeUrl;
+	}
 	public static boolean getQrCodeUrl(String accessToken,String path,int width,String savePath,String fileName){
 		boolean getQrcodeUrl = false;
 		try {
@@ -46,19 +88,40 @@ public class GetWeixinInfoUtils {
 			params.put("width", width);
 			String paramsJson = PandStringUtils.getJsonObj(params);
 			getQrcodeUrl = HttpUtils.doPostForFormat(qrcode_url, paramsJson,savePath,fileName);
-			System.out.println(getQrcodeUrl);
+			logger.info("微信分享二维码获取结果"+getQrcodeUrl);
 		} catch (Exception e) {
 			logger.error("获取微信token异常"+e.getMessage(),e);
 		}
 		return getQrcodeUrl;
 	}
-	/*public static void main(String[] args) {
-		String accessToken = "2316_wZ64ctiwog8qva4Nb_Zc7NUewgG7JCoAw67bFldvuEqLeDon1Ahwtz4lURPheUzOwihCyWDWaCuKJeFfusnpk7IjncbrIXL0JOcle6My30IuYvX292o_PZy3rOQLp0nu8FbxVyMfeXsPHI1MKBSeAAAPGX";
+	
+	private static boolean vailetime(Date startDate,Date endDdate){
+		boolean flag = false;
+		try {
+			long cha = endDdate.getTime() - startDate.getTime();
+			double result = cha * 1.0 / (1000 * 60 * 60);
+			if(result>2){
+				return false; //说明小于24小时
+			}else{
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error("日期校验异常"+e.getMessage(),e);
+		}
+		return flag;
+	}
+	
+	public static void main(String[] args) {
+		String accessToken = "16_dITSQGtgTSm54PHp0ncg55VwW-3eve4y6qeTxBbxw37ckcAIsabFw3qArGJ8xu0HEvO0i0IWmo-WBus3CQaoNDe25qPRPfjNPV8eKlYwCs4q77JBvT7kvMYWfD2FGko7j5wwzRJDNfrN_dvxGSXbAGAYKP";
 		String path="pages/service/servicedetails/servicedetails?id=ff808081674f602b016758c0fc3100a7";
 		int width = 430;
 		String savePath="d://opt//";
 		String fileName="qrcode1.jpg";
-		getQrCodeUrl(accessToken, path, width,savePath,fileName);
-	}*/
+//		getQrCodeUrl("wxcf96bc0f2160e79e","25631fbc0abfaf5986b08d83babad5d6", path, width,savePath,fileName);
+		getQrCodeUrl("wxcf96bc0f2160e79e","25631fbc0abfaf5986b08d83babad5d6", path, width,savePath,fileName);
+		
+		/*String s = "2018-12-06 08:08:45";
+		System.out.println(vailetime(PandDateUtils.parseStrToDate(s, "yyyy-MM-dd HH:mm:ss"), new Date()));*/
+	}
 
 }

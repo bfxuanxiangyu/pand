@@ -204,7 +204,7 @@ public class HttpUtils {
         	        } catch (Exception e) {
         	        }
             		 if(ifJson){
-            			 System.out.println(new String(responseBytes));
+            			 logger.info(new String(responseBytes));
             			 return false;
             		 }
                     if(responseBytes != null){
@@ -250,12 +250,12 @@ public class HttpUtils {
     }
     
     private static void writeLocal(byte[] data,String savePath,String fileName){
-    	String imagUrl = null;
     	try {
     		OutputStream out = new FileOutputStream(new File(savePath+fileName));
     		out.write(data);
     		out.flush();
     		out.close();
+    		logger.info("分享二维码写入本地成功fileName="+fileName);
 		} catch (Exception e) {
 			logger.error("获取字节流图片保存异常"+e.getMessage(),e);
 		}
