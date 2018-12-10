@@ -31,11 +31,16 @@
 			
 		<collection property="issuser" column="{pandUserId=pand_user_id}" 
 			select="getPandUserIssusObj"></collection>
+		<collection property="shoperInfo" column="{pandUserId=pand_user_id}" 
+			select="getPandShoperJsonObj"></collection>
 		
 	</resultMap>
 	
    <select id="getPandUserIssusObj" parameterType="map" resultType="com.weeds.pand.service.mechanic.domain.PandUserJson">
 		select user_nickname userNickname,user_headpng userHeadpng from pand_user where id=#{pandUserId}
+	</select>
+   <select id="getPandShoperJsonObj" parameterType="map" resultType="com.weeds.pand.service.mechanic.domain.PandShoperJson">
+		select shop_tel shopTel,shop_img shopImg ,shop_name shopName from pand_shop where pand_user_id=#{pandUserId}
 	</select>
    <select id="getPandServiceListQrNull" parameterType="map" resultMap="BaseResultMap">
    		select * from pand_service where service_status != 5 and qr_url is null 

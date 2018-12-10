@@ -3,6 +3,7 @@ package com.weeds.pand.api.system.rest;
 import static com.weeds.pand.utils.PandStringUtils.isBlank;
 import static com.weeds.pand.utils.PandStringUtils.isNotBlank;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.domain.Page;
 import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandResponseUtil;
+import com.weeds.pand.utils.tools.ImageTools;
 
 @Controller
 @RequestMapping("/api/panduser")
@@ -259,6 +261,23 @@ public class PandUserWorkController {
 		ps.setPandUserId(pu.getId());
 		ps.setShopDes("潘多菈授权荣誉店，旨在为您服务");
 		ps.setShopImg(pu.getUserHeadpng());
+		if(pu.getUserHeadpng().contains("pand_default_head")){
+			ps.setRoundImg(pu.getUserHeadpng());
+		}else{
+			//处理圆角图片
+			try {
+				String httpStr = pu.getUserHeadpng();
+				String localPath = savePath+httpStr.substring(httpStr.indexOf("pand/img/")+9);
+				File file = new File(localPath);
+				if(file.exists()){
+					String makeCircularImg = ImageTools.makeCircularImg(localPath);
+					String roundImg = imgUrl+httpStr.substring(httpStr.indexOf("pand/img/")+9,httpStr.lastIndexOf("/"))+"/"+makeCircularImg;
+					ps.setRoundImg(roundImg);
+				}
+			} catch (Exception e) {
+				ps.setRoundImg(pu.getUserHeadpng());
+			}
+		}
 		ps.setShopName(pu.getUserRealname()+"的店");
 		ps.setShopStatus(0);
 		ps.setShopTel(pu.getUserPhone());
