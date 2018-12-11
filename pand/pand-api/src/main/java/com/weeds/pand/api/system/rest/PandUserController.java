@@ -233,7 +233,7 @@ public class PandUserController {
 	 */
 	@ResponseBody
 	@RequestMapping("/comment_list")
-	public String commentList(String serviceId,String pandUserId,Integer pageIndex,Integer pageSize) {
+	public String commentList(String serviceId,String pandUserId,Integer pageIndex,Integer pageSize,Integer current) {
 		logger.info("评论查询参数serviceId:"+serviceId+",pandUser:"+pandUserId+",pageIndex="+pageIndex+",pageSize="+pageSize);
 		if(pageIndex == null || pageSize==null){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
@@ -247,6 +247,9 @@ public class PandUserController {
 			}
 			if(PandStringUtils.isNotBlank(pandUserId)){
 				parameters.put("pandUserId", pandUserId);
+			}
+			if(current != null && current==1){//只查询带图数据
+				parameters.put("haveImg", "haveImg");
 			}
 			List<PandUserComment> list = pandUserCommentService.getPandUserCommentList(parameters);
 			return PandResponseUtil.printJson("评论列表获取成功", list);

@@ -36,23 +36,26 @@
 
    <!-- 查询集合 -->
    <select id="getPandUserCommentList" parameterType="map" resultMap="BaseResultMap">
-       select * from pand_user_comment where 1=1 
+       select * from pand_user_comment puc where 1=1 
        <if test="id != null">
-       		and id = #{id}
+       		and puc.id = #{id}
        </if>
        <if test="serviceId != null">
-       		and service_id = #{serviceId}
+       		and puc.service_id = #{serviceId}
        </if>
        <if test="orderId != null">
-       		and order_id = #{orderId}
+       		and puc.order_id = #{orderId}
        </if>
        <if test="pandUserId != null">
-       		and pand_user_id = #{pandUserId}
+       		and puc.pand_user_id = #{pandUserId}
        </if>
        <if test="status != null">
-       		and status = #{status}
+       		and puc.status = #{status}
        </if>
-       order by create_time desc 
+       <if test="haveImg != null">
+       		and (select count(1) from pand_images pi where pi.model_id=puc.id) >0
+       </if>
+       order by puc.create_time desc 
        <if test="begin != null">
            limit #{begin},#{end}
        </if>
