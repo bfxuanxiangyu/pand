@@ -43,7 +43,7 @@ public class PandImageController {
 	@ResponseBody
 	@RequestMapping("/image_upload")
 	public String toBuy(String token,@RequestParam(value="file", required=false) MultipartFile file,Integer imgModel) {
-		logger.info("删除地址参数:"+token);
+		logger.info("图片上传参数:"+token);
 		if(isBlank(token) || file==null || file.isEmpty()){
 			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
 		}
