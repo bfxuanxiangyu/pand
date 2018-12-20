@@ -49,6 +49,9 @@ public class PandImageController {
 		}
 		String httpUrl = null;
 		try{
+			if(imgModel==null){
+				imgModel = -1;
+			}
 			String porder = "common/";
 			if(imgModel==1){
 				porder = "user/";
