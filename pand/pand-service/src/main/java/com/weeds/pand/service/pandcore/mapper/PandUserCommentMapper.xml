@@ -72,9 +72,6 @@
        <if test="status != null and status != ''">
        		and po.status = #{status}
        </if>
-       <if test="orderId != null">
-       		and po.order_id = #{orderId}
-       </if>
        <if test="serviceId != null and serviceId != ''">
        		and po.service_id = #{serviceId}
        </if>

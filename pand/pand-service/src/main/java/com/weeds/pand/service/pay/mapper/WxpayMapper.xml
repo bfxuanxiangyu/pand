@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weeds.pand.service.pay.mapper.WxpayMapper">
+
+	<resultMap id="BaseResultMap" type="com.weeds.pand.service.pay.domain.Wxpay">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="registration_id" jdbcType="VARCHAR" property="registrationId" />
+		<result column="my_total_fee" jdbcType="VARCHAR" property="myTotalFee" />
+		<result column="code_url" jdbcType="VARCHAR" property="codeUrl" />
+		<result column="appid" jdbcType="VARCHAR" property="appid" />
+		<result column="mch_id" jdbcType="VARCHAR" property="mchId" />
+		<result column="device_info" jdbcType="VARCHAR" property="deviceInfo" />
+		<result column="nonce_str" jdbcType="VARCHAR" property="nonceStr" />
+		<result column="sign" jdbcType="VARCHAR" property="sign" />
+		<result column="return_code" jdbcType="VARCHAR" property="returnCode" />
+		<result column="return_msg" jdbcType="VARCHAR" property="returnMsg" />
+		<result column="result_code" jdbcType="VARCHAR" property="resultCode" />
+		<result column="err_code" jdbcType="VARCHAR" property="errCode" />
+		<result column="err_code_des" jdbcType="VARCHAR" property="errCodeDes" />
+		<result column="openid" jdbcType="VARCHAR" property="openid" />
+		<result column="is_subscribe" jdbcType="VARCHAR" property="isSubscribe" />
+		<result column="trade_type" jdbcType="VARCHAR" property="tradeType" />
+		<result column="bank_type" jdbcType="VARCHAR" property="bankType" />
+		<result column="total_fee" jdbcType="VARCHAR" property="totalFee" />
+		<result column="settlement_total_fee" jdbcType="VARCHAR" property="settlementTotalFee" />
+		<result column="fee_type" jdbcType="VARCHAR" property="feeType" />
+		<result column="cash_fee" jdbcType="VARCHAR" property="cashFee" />
+		<result column="cash_fee_type" jdbcType="VARCHAR" property="cashFeeType" />
+		<result column="coupon_fee" jdbcType="VARCHAR" property="couponFee" />
+		<result column="coupon_count" jdbcType="VARCHAR" property="couponCount" />
+		<result column="coupon_type_n" jdbcType="VARCHAR" property="couponTypeN" />
+		<result column="coupon_id_n" jdbcType="VARCHAR" property="couponIdN" />
+		<result column="coupon_fee_n" jdbcType="VARCHAR" property="couponFeeN" />
+		<result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
+		<result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+		<result column="attach" jdbcType="VARCHAR" property="attach" />
+		<result column="time_end" jdbcType="VARCHAR" property="timeEnd" />
+		<result column="delete_flag" jdbcType="BIGINT" property="deleteFlag" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_by" jdbcType="VARCHAR" property="createBy" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+	</resultMap>
+
+    <select id="getWxpayList"  parameterType="map" resultMap="BaseResultMap">
+      select * from wxpay where 1=1 
+      <if test=" registrationId != null">
+	      and registration_id = #{registrationId}
+      </if>
+      <if test=" info != null">
+	      and appid like concat('%',#{info},'%')
+      </if>
+      order by create_time desc
+      <if test="begin != null">
+	       limit #{begin},#{end}
+       </if>
+    </select>
+
+    <select id="getWxpayCount" parameterType="map" resultType="int">
+        select count(1) from wxpay where 1=1 
+       <if test=" registrationId != null">
+	      and registration_id = #{registrationId}
+      </if>
+      <if test=" info != null">
+	      and appid like concat('%',#{info},'%')
+      </if>
+    </select>
+
+	<select id="getWxpayObject" parameterType="map" resultMap="BaseResultMap">
+      select * from wxpay where 1=1 
+      <if test=" registrationId != null">
+	      and registration_id = #{registrationId}
+      </if>
+      <if test=" outTradeNo != null">
+	      and out_trade_no = #{outTradeNo}
+      </if>
+       limit 1
+    </select>
+    
+    <select id="getMaxOutTradeNo" parameterType="map"  resultType="string">
+        select max(out_trade_no) from  wxpay where out_trade_no like #{prefixOrderNo} 
+    </select>
+
+</mapper>

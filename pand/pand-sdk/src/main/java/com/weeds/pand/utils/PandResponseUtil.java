@@ -79,6 +79,7 @@ public class PandResponseUtil {
 	public static final int comment_again = 1519;//重复评论
 	public static final int no_comment = 1520;//评论不存在
 	public static final int no_faceimg = 1521;//不是人脸照片
+	public static final int no_pay_wx = 1522;//无支付权限
 	
 	
 	/**
