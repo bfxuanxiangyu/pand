@@ -48,7 +48,7 @@ public class PandImagesServiceImpl implements PandImagesService{
 	/**
 	 * @param parameters
 	 * @param imageCardType  图片类型  0通用型 1身份证正面，2反面  3持证  4港澳台通行证 5护照 
-	 * @param imgModel  所属模块  1用户审核   2评论 3服务图片
+	 * @param imgModel  所属模块  1用户审核   2评论 3服务图片 4人脸比对照片
 	 * @param modelId
 	 * @param imagesList 图片流集合
 	 */

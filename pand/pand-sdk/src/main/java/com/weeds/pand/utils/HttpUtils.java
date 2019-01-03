@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,12 +22,15 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -258,6 +263,68 @@ public class HttpUtils {
 		} catch (Exception e) {
 			logger.error("获取字节流图片保存异常"+e.getMessage(),e);
 		}
+    }
+    
+    
+    /**
+	 * post提交带流参数的url
+	 * @param url
+	 * @param reqParam
+	 * @return
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 */
+	public static String postFileMultiPart(String url,Map<String,ContentBody> reqParam){
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        
+        try {
+            // 创建httpget.    
+            HttpPost httppost = new HttpPost(url);
+        	
+            //setConnectTimeout：设置连接超时时间，单位毫秒。setConnectionRequestTimeout：设置从connect Manager获取Connection 超时时间，单位毫秒。这个属性是新加的属性，因为目前版本是可以共享连接池的。setSocketTimeout：请求获取数据的超时时间，单位毫秒。 如果访问一个接口，多少时间内无法返回数据，就直接放弃此次调用。
+            RequestConfig defaultRequestConfig = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(5000).setSocketTimeout(15000).build();
+            httppost.setConfig(defaultRequestConfig);
+            
+            logger.info("executing request " + httppost.getURI());
+            
+            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+            for(Entry<String,ContentBody> param : reqParam.entrySet()){
+            	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
+            }
+            HttpEntity reqEntity = multipartEntityBuilder.build();
+            httppost.setEntity(reqEntity);
+            
+            // 执行post请求.    
+            CloseableHttpResponse response = null;
+            
+            try {  
+            	response = httpclient.execute(httppost);
+                // 获取响应实体    
+                HttpEntity entity = response.getEntity();  
+                if (entity != null) { 
+                	return EntityUtils.toString(entity,Charset.forName("UTF-8"));
+                }
+            }catch (Exception e) {
+				logger.error("流文件post上传异常"+e.getMessage(),e);
+			} finally {  
+                try {
+                	if(response != null){
+                		response.close();
+                	}
+				} catch (IOException e) {
+					logger.error(""+e.getMessage(),e);
+				}
+                
+            }
+        } finally {  
+            // 关闭连接,释放资源    
+            try {  
+                httpclient.close();  
+            } catch (IOException e) {  
+            	logger.error("流文件post上传异常"+e.getMessage(),e);
+            }  
+        }
+        return null;  
     }
 
 }
