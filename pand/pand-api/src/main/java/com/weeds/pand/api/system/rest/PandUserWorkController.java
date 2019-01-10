@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.domain.Page;
 import com.weeds.pand.service.system.service.PandImagesService;
 import com.weeds.pand.utils.PandResponseUtil;
+import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.tools.ImageTools;
 
 @Controller
@@ -60,6 +62,44 @@ public class PandUserWorkController {
 	private PandUserCollectionService pandUserCollectionService;
 	@Resource
 	private PandServiceService pandServiceService;
+	@Resource
+	private PasswordMatcher passwordMatcher;
+	
+	/**
+	 * 设置密码
+	 * @param token       登录用户token  必填
+	 * @param userId      登录用户id  必填
+	 * @param userPassword密码  必填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/panduser_setpasswd")
+	public String forgetpasswd(String userPassword,String userId,String token) {
+		try {
+			if(PandStringUtils.isBlank(userId) || PandStringUtils.isBlank(userPassword)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			
+			PandUser user = pandUserService.getPandUserObjById(userId);
+			if(user == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.INEXISTENCE,"人员不存在", null);
+			}
+			if(user.getUserStatus()==4){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"已永久封号", null);
+			}
+			if(PandStringUtils.isBlank(user.getUserPhone())){
+				return PandResponseUtil.printFailJson(PandResponseUtil.phone_nobind,"手机未绑定", null);
+			}
+			
+			user.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+
+			return PandResponseUtil.printJson("密码设置成功", null);//返回用户id
+			
+		} catch (Exception e) {
+			logger.error("密码设置异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
 	/**
 	 * 个人信息补全信息
 	 *   1、修改手机   userPhone、anthCode不能为空
@@ -112,6 +152,15 @@ public class PandUserWorkController {
 						oldObjById.setUserPhone(pandUser.getUserPhone());
 					}
 				}
+				
+				//修改手机号时候检测是否有用户名和密码   如果已存在把用户名改掉即可   密码保持不变
+				if(isNotBlank(oldObjById.getUserName())){
+					oldObjById.setUserName(pandUser.getUserPhone());
+				}else{
+					oldObjById.setUserName(pandUser.getUserPhone());
+					oldObjById.setUserPassword(passwordMatcher.getPasswordService().encryptPassword("123456"));
+				}
+				
 			}
 			//补全昵称
 			if(isNotBlank(pandUser.getUserNickname())){

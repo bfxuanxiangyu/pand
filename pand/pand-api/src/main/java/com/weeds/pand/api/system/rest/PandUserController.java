@@ -90,6 +90,9 @@ public class PandUserController {
 				parameters.put("userPhone", userPhone);
 				//验证码校验   暂留
 				pandUser.setUserPhone(userPhone);
+				//并把手机号作为用户名保存,默认密码为123456
+				pandUser.setUserName(userName);
+				pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword("123456"));
 			}
 			
 			PandUser user = pandUserService.getPandUserObj(parameters);
@@ -110,6 +113,38 @@ public class PandUserController {
 			
 		} catch (Exception e) {
 			logger.error("用户登录异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	/**
+	 * 忘记密码
+	 * @param userPhone   用户手机  必填
+	 * @param authCode    手机验证码  必填
+	 * @param userPassword密码  必填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/panduser_forgetpasswd")
+	public String forgetpasswd(String userPassword,String userPhone,String authCode) {
+		try {
+			if(PandStringUtils.isBlank(userPhone) || PandStringUtils.isBlank(userPassword) || PandStringUtils.isBlank(authCode)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			Map<String, Object> parameters = Maps.newHashMap();
+			parameters.put("userPhone", userPhone);
+			PandUser user = pandUserService.getPandUserObj(parameters);
+			if(user == null){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"未绑定手机", null);
+			}
+			if(user.getUserStatus()==4){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"已永久封号", null);
+			}
+			user.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+
+			return PandResponseUtil.printJson("密码修改成功", null);//返回用户id
+			
+		} catch (Exception e) {
+			logger.error("密码修改异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

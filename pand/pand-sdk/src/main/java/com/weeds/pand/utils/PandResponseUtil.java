@@ -80,6 +80,7 @@ public class PandResponseUtil {
 	public static final int no_comment = 1520;//评论不存在
 	public static final int no_faceimg = 1521;//不是人脸照片
 	public static final int no_pay_wx = 1522;//无支付权限
+	public static final int phone_nobind = 1523;//手机未绑定
 	
 	
 	/**
