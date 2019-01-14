@@ -49,6 +49,8 @@ public class PandUserWorkController {
 	private String savePath;
 	@Value("${img.imgUrl}")
 	private String imgUrl;
+	@Value("${img.save.size}")
+	private String imgSizeArray;
 	
 	@Resource
 	private PandUserService pandUserService;
@@ -319,7 +321,7 @@ public class PandUserWorkController {
 				String localPath = savePath+httpStr.substring(httpStr.indexOf("pand/img/")+9);
 				File file = new File(localPath);
 				if(file.exists()){
-					String makeCircularImg = ImageTools.makeCircularImg(localPath);
+					String makeCircularImg = ImageTools.makeCircularImg(localPath,imgSizeArray);
 					String roundImg = imgUrl+httpStr.substring(httpStr.indexOf("pand/img/")+9,httpStr.lastIndexOf("/"))+"/"+makeCircularImg;
 					ps.setRoundImg(roundImg);
 				}

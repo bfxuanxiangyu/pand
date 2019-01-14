@@ -58,6 +58,8 @@ public class PandServiceController {
 	private String savePath;
 	@Value("${img.imgUrl}")
 	private String imgUrl;
+	@Value("${img.save.size}")
+	private String imgSizeArray;
 	
 	/**
 	 * 发布服务 需要token 图片、发布者id、服务技能id、标题、描述、须知、所属城市、所属区域、价格、区间、是否开具发票
@@ -333,7 +335,7 @@ public class PandServiceController {
 				String localPath = savePath+httpStr.substring(httpStr.indexOf("pand/img/")+9);
 				File file = new File(localPath);
 				if(file.exists()){
-					String makeCircularImg = ImageTools.makeCircularImg(localPath);
+					String makeCircularImg = ImageTools.makeCircularImg(localPath,imgSizeArray);
 					String roundImg = imgUrl+httpStr.substring(httpStr.indexOf("pand/img/")+9,httpStr.lastIndexOf("/"))+"/"+makeCircularImg;
 					oldPs.setRoundImg(roundImg);
 				}

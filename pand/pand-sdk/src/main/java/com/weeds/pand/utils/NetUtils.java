@@ -211,7 +211,7 @@ public class NetUtils {
     public static String getWanIp(){
     	String wanIp = null;
     	try {
-    		URL url = new URL("http://2018.ip138.com/ic.asp");
+    		URL url = new URL("http://2019.ip138.com/ic.asp");
     		URLConnection con = url.openConnection();
     		InputStream is = con.getInputStream();
     		InputStreamReader isr = new InputStreamReader(is,"gbk");

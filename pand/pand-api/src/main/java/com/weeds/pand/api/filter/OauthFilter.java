@@ -58,7 +58,7 @@ public class OauthFilter implements Filter {
 		device.setVersion(version);
 		DeviceFactoryUtil.setDevice(device);
 //		chain.doFilter(request, response);
-		logger.info("pand url :"+uri);
+		logger.info("pand url :"+uri+",token="+token);
 		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/") || uri.contains("/api/pandwork/pand_service_list")
 				|| uri.contains("/api/pandwork/shop_detail") || uri.contains("/api/pandwork/service_detail") 
 				|| uri.contains("/api/pandwork/home_map_list")) {
