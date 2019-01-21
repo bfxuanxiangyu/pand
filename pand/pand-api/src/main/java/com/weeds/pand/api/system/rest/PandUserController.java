@@ -48,6 +48,9 @@ public class PandUserController {
 	
 	@Value("${img.imgUrl}")
 	private String imgUrl;
+	
+	@Value("${sms.key}")
+	private String smsKey;
 	/**
 	 * 用户注册   
 	 * @param regType 1提供微信注册   2用户名密码注册    3手机绑定
@@ -151,11 +154,45 @@ public class PandUserController {
 				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"已永久封号", null);
 			}
 			user.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
-
+			
 			return PandResponseUtil.printJson("密码修改成功", null);//返回用户id
 			
 		} catch (Exception e) {
 			logger.error("密码修改异常"+e.getMessage(),e);
+			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+		}
+	}
+	/**
+	 * 获取验证码
+	 * @param userPhone   用户手机  必填
+	 * @param key         秘钥  必填
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/panduser_send_authcode")
+	public String sendSms(String userPhone ,String key) {
+		try {
+			if(PandStringUtils.isBlank(userPhone) || PandStringUtils.isBlank(key)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+			}
+			if(!smsKey.equals(key)){
+				return PandResponseUtil.printFailJson(PandResponseUtil.failed,"key非法", null);
+			}
+			Map<String, String> parameters = Maps.newConcurrentMap();
+			String authCode = PandStringUtils.getRandomNum(6);
+			parameters.put("code", authCode);
+			
+			SmsSend obj = new SmsSend();
+			obj.setContent(authCode);
+			obj.setCreateTime(new Date());
+			obj.setPhone(userPhone);
+			obj.setType(1);
+			smsSendService.saveSmsSend(obj);
+
+			return PandResponseUtil.printJson("验证码发送成功", null);//返回用户id
+			
+		} catch (Exception e) {
+			logger.error("验证码发送异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
 	}

@@ -187,9 +187,7 @@ public class PandStringUtils {
     }
 	
 	public static void main(String[] args) throws Exception{
-		System.out.println(getRandomNum(5));
-		System.out.println(getRandomStr(15));
-		
+		System.out.println(getUUID());
 		setSysClipboardText("123213");
 	}
 }
