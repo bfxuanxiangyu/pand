@@ -34,7 +34,9 @@ import com.weeds.pand.service.pandcore.service.PandUserCollectionService;
 import com.weeds.pand.service.pandcore.service.PandUserCommentService;
 import com.weeds.pand.service.system.domain.CardImage;
 import com.weeds.pand.service.system.domain.Page;
+import com.weeds.pand.service.system.domain.SmsSend;
 import com.weeds.pand.service.system.service.PandImagesService;
+import com.weeds.pand.service.system.service.SmsSendService;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.tools.ImageTools;
@@ -66,6 +68,8 @@ public class PandUserWorkController {
 	private PandServiceService pandServiceService;
 	@Resource
 	private PasswordMatcher passwordMatcher;
+	@Resource
+	private SmsSendService smsSendService;
 	
 	/**
 	 * 设置密码
@@ -140,6 +144,14 @@ public class PandUserWorkController {
 					return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少手机绑定验证码", null);
 				}
 				//验证码校验
+				//验证码校验   暂留
+				SmsSend smsObj = smsSendService.getSmsSendByPhone(pandUser.getUserPhone());
+				if(smsObj==null){
+					return PandResponseUtil.printFailJson(PandResponseUtil.validateError,"验证码不匹配", null);
+				}
+				if(!smsSendService.verifySms(authCode, smsObj)){
+					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码已过期", null);
+				}
 				
 				//单独查询手机是否是独立用户
 				parameters.clear();

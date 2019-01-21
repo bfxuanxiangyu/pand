@@ -234,6 +234,47 @@ public class NetUtils {
     	return wanIp;
     }
     
+    /**
+     * 获取http://pv.sohu.com/cityjson下本机外网ip
+     * @param ip
+     * @return
+     */
+    public static String getWanIpSoHu(){
+    	String wanIp = null;
+    	try {
+//    		String year = DateUtils.dateToStr(new Date(),"yyyy");
+//    		URL url = new URL("http://"+year+".ip138.com/ic.asp");
+    		URL url = new URL("http://pv.sohu.com/cityjson");
+    		URLConnection con = url.openConnection();
+    		InputStream is = con.getInputStream();
+    		InputStreamReader isr = new InputStreamReader(is,"gbk");
+    		BufferedReader br = new BufferedReader(isr);
+    		StringBuffer buffer = new StringBuffer();
+    		String line =null;
+    		while(null != (line = br.readLine()))
+    		{
+    			buffer.append(line);
+    		}
+    		br.close();
+    		isr.close();
+    		is.close();
+    		String wStr = buffer.toString();
+    		/*if(wStr.contains("[") && wStr.contains("]")){
+    			wanIp = wStr.substring(wStr.indexOf("[")+1,wStr.indexOf("]"));
+    		}*/
+    		if(wStr.contains("\"cip\"")){
+    			wanIp = wStr.substring(wStr.indexOf("\"cip\"")+8);
+    			wanIp = wanIp.substring(0,wanIp.indexOf("\""));
+    		}
+		} catch (Exception e) {
+		}
+    	if(PandStringUtils.isBlank(wanIp)){
+    		wanIp= INTRANET_IP;
+    	}
+    	
+    	return wanIp;
+    }
+    
     public static void main(String[] args) {
     	//http://2018.ip138.com/ic.asp
     	System.out.println(getWanIp());

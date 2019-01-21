@@ -16,14 +16,14 @@ public class FaceToolTest {
 	
 	public static void main(String[] args) {
 		
-		   /*String url = "http://localhost:8989/api/pand_image_upload/face_upload";//注册接口
+		  /* String url = "http://localhost:8989/api/pand_image_upload/face_upload";//注册接口
 		   String httpRes = null;
-		   String localFileName = "d:opt/face/a.jpg";
+		   String localFileName = "d:opt/face/test.png";
 				
 		   Map<String,ContentBody> reqParam = new HashMap<String,ContentBody>();
 		   reqParam.put("file", new FileBody(new File(localFileName)));
 		   reqParam.put("userName", new StringBody("小泽", ContentType.APPLICATION_JSON));
-		   reqParam.put("token", new StringBody("2pWBg4oFjxIGtSxVLjbI2auqvFSmY6qz", ContentType.MULTIPART_FORM_DATA));
+		   reqParam.put("token", new StringBody("5PPdwX2qObDqnAZrwIiZYwChiqoVot8C", ContentType.MULTIPART_FORM_DATA));
 		   reqParam.put("userId", new StringBody("085ba5ec70ce4d71a5b8d2494843d17f", ContentType.MULTIPART_FORM_DATA));
 		   reqParam.put("imgModel", new StringBody("4", ContentType.MULTIPART_FORM_DATA));
 				
@@ -35,11 +35,11 @@ public class FaceToolTest {
 		   
 		   String url = "http://localhost:8989/api/pand_image_upload/face_compare";//人脸比对接口
 		   String httpRes = null;
-		   String localFileName = "d:opt/face/1.jpg";
+		   String localFileName = "d:opt/face/test.png";
 				
 		   Map<String,ContentBody> reqParam = new HashMap<String,ContentBody>();
 		   reqParam.put("file", new FileBody(new File(localFileName)));
-		   reqParam.put("token", new StringBody("2pWBg4oFjxIGtSxVLjbI2auqvFSmY6qz", ContentType.MULTIPART_FORM_DATA));
+		   reqParam.put("token", new StringBody("5PPdwX2qObDqnAZrwIiZYwChiqoVot8C", ContentType.MULTIPART_FORM_DATA));
 		   reqParam.put("userId", new StringBody("085ba5ec70ce4d71a5b8d2494843d17f", ContentType.MULTIPART_FORM_DATA));
 				
 		   httpRes = HttpUtils.postFileMultiPart(url,reqParam);

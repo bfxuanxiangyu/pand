@@ -22,6 +22,8 @@ import com.weeds.pand.service.mechanic.service.PandUserService;
 import com.weeds.pand.service.pandcore.domain.PandUserComment;
 import com.weeds.pand.service.pandcore.service.PandUserCommentService;
 import com.weeds.pand.service.system.domain.Page;
+import com.weeds.pand.service.system.domain.SmsSend;
+import com.weeds.pand.service.system.service.SmsSendService;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.PandValidationUtils;
@@ -40,7 +42,8 @@ public class PandUserController {
 	private AccessTokenService accessTokenService;
 	@Resource
 	private PandUserCommentService pandUserCommentService;
-	
+	@Resource
+	private SmsSendService smsSendService;
 	
 	
 	@Value("${img.imgUrl}")
@@ -89,6 +92,14 @@ public class PandUserController {
 				}
 				parameters.put("userPhone", userPhone);
 				//验证码校验   暂留
+				SmsSend smsObj = smsSendService.getSmsSendByPhone(userPhone);
+				if(smsObj==null){
+					return PandResponseUtil.printFailJson(PandResponseUtil.validateError,"验证码不匹配", null);
+				}
+				if(!smsSendService.verifySms(authCode, smsObj)){
+					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码已过期", null);
+				}
+				
 				pandUser.setUserPhone(userPhone);
 				//并把手机号作为用户名保存,默认密码为123456
 				pandUser.setUserName(userName);

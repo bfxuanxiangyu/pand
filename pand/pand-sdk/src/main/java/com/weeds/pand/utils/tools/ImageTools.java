@@ -27,7 +27,7 @@ public class ImageTools {
 	private static Logger logger = LoggerFactory.getLogger(ImageTools.class);
 	
 	public static void main(String[] args) {
-		makeCircularImg("d://opt/12.png","30x30;60x60;120x120");
+		makeCircularImg("d://opt/face/xuan.jpg","120x120,30x30");
 	}
 	
 	/***
@@ -59,12 +59,14 @@ public class ImageTools {
 			imgUrl = circularImgName;
 			
 			//再生产一套指定尺寸图片   Android 60X60
-			String[] sizeSplit = sizeArray.split(";");
-			for (int i = 0; i < sizeSplit.length; i++) {
-				String[] sa = sizeSplit[i].split("x");
-				int wv = Integer.valueOf(sa[0]);
-				int hv = Integer.valueOf(sa[1]);
-				saveSizeImg(srcFile.getParent()+"/"+circularImgName, srcFile.getParent(), circularImgName, wv, hv);
+			if(PandStringUtils.isNotBlank(sizeArray)){
+				String[] sizeSplit = sizeArray.split(";");
+				for (int i = 0; i < sizeSplit.length; i++) {
+					String[] sa = sizeSplit[i].split("x");
+					int wv = Integer.valueOf(sa[0]);
+					int hv = Integer.valueOf(sa[1]);
+					saveSizeImg(srcFile.getParent()+"/"+circularImgName, srcFile.getParent(), circularImgName, wv, hv);
+				}
 			}
 			
 		} catch (Exception e) {

@@ -2,6 +2,8 @@ package com.weeds.pand.api.system.rest;
 
 import static com.weeds.pand.utils.PandStringUtils.isBlank;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.content.ContentBody;
@@ -131,8 +134,16 @@ public class PandImageController {
 					if(!imgFile.exists()){
 						imgFile.mkdirs();
 					}
-					String fileName = PandStringUtils.getUUID()+".jpg";
+					String fileName = PandStringUtils.getUUID()+".png";
 					file.transferTo(new File(savePath+porderPath+fileName));
+					String jpgFileName = fileName.substring(0, fileName.indexOf("."))+".jpg";
+					//修改图片格式
+					boolean changJPG = changJpg(savePath+porderPath+fileName,savePath+porderPath+jpgFileName);
+					
+					if(changJPG){
+						fileName = jpgFileName;
+					}
+					
 					httpUrl = imgUrl+porderPath+fileName;
 					logger.info("保存本次照片imgModel="+imgModel+",路径："+httpUrl);
 					List<String> baseStrList = Lists.newArrayList();
@@ -152,6 +163,27 @@ public class PandImageController {
 			logger.error("人脸图片流上传异常"+e.getMessage(),e);
 			return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
 		}
+	}
+	
+	/**
+	 * 更换图片格式
+	 * @param fileName
+	 */
+	private boolean changJpg(String fileName,String jpgFileName){
+		try {
+			BufferedImage bufferedImage= ImageIO.read(new File(fileName));
+			BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(),
+	               bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+	        //TYPE_INT_RGB:创建一个RBG图像，24位深度，成功将32位图转化成24位
+	        newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+	        // write to jpeg file
+	        ImageIO.write(newBufferedImage, "jpg", new File(jpgFileName));
+	        logger.info("人脸注册照片图片格式更换成功");
+	        return true;
+		} catch (Exception e) {
+			logger.error("图片格式更换异常"+e.getMessage(),e);
+		}
+		return false;
 	}
 	
 	/**
@@ -248,8 +280,15 @@ public class PandImageController {
 					if(!imgFile.exists()){
 						imgFile.mkdirs();
 					}
-					String fileName = PandStringUtils.getUUID()+".jpg";
-					file.transferTo(new File(savePath+porderPath+fileName));
+					//整体业务逻辑：为了统一图片格式 先以png格式写入   然后强转为jpg格式  注册接口与其一致
+					String uuid = PandStringUtils.getUUID();
+					String fileName = uuid+".png";
+					file.transferTo(new File(savePath+porderPath+fileName));//保存进去png格式
+					
+					boolean changJPG = changJpg(savePath+porderPath+fileName,savePath+porderPath+uuid+".jpg");//修改图片格式
+					if(changJPG){
+						fileName = uuid+".jpg";
+					}
 					//照片数据比较
 					faceCompare = faceCompare(savePath+porderPath+fileName,userId);
 					if(faceCompare==null || faceCompare.isEmpty()){
