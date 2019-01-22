@@ -1,5 +1,7 @@
 package com.weeds.pand.utils.ali;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,8 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.google.common.collect.Maps;
+import com.weeds.pand.utils.PandStringUtils;
 
 /**
  * Created on 17/6/7.
@@ -31,10 +35,20 @@ public class AliSmsSendUtil {
     static final String domain = "dysmsapi.aliyuncs.com";
 
     // TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "yourAccessKeyId";
-    static final String accessKeySecret = "yourAccessKeySecret";
+    static final String accessKeyId = "LTAIUt7dEpePajjt";
+    static final String accessKeySecret = "IFZ4F0rYWj3F47bi590XssYkwinXJL";
+    
+    public static void main(String[] args) {
+		String phone = "18616521390";
+		String signName = "米米";
+		String tempLateCode = "SMS_156465904";
+		Map<String, Object> parameters = Maps.newConcurrentMap();
+		parameters.put("code", "1233");
+		String res = sendSms(phone, tempLateCode,signName, PandStringUtils.getJsonObj(parameters));
+		System.out.println(res);
+	}
 
-    public static SendSmsResponse sendSms(String phone,String tempLateCode,String jsonContent){
+    public static String sendSms(String phone,String tempLateCode,String signName,String jsonContent){
     	
     	try {
 			
@@ -52,7 +66,7 @@ public class AliSmsSendUtil {
     		//必填:待发送手机号
     		request.setPhoneNumbers(phone);
     		//必填:短信签名-可在短信控制台中找到
-    		request.setSignName("云通信");
+    		request.setSignName(signName);
     		//必填:短信模板-可在短信控制台中找到
     		request.setTemplateCode(tempLateCode);
     		//可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
@@ -66,8 +80,16 @@ public class AliSmsSendUtil {
     		
     		//hint 此处可能会抛出异常，注意catch
     		SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
-    		logger.info("短信发送成功,返回结果="+sendSmsResponse);
-    		return sendSmsResponse;
+    		String code = sendSmsResponse.getCode();
+    		String message = sendSmsResponse.getMessage();
+    		System.out.println("短信发送成功,返回结果="+message+",状态："+code);
+    		logger.info("短信发送成功,返回结果="+message+",状态："+code);
+    		if(code.equals("OK")){
+    			return code;
+    		}else{
+    			sendSmsResponse.getMessage();
+    			return null;
+    		}
 		} catch (Exception e) {
 			logger.error("短信发送异常"+e.getMessage(),e);
 			return null;

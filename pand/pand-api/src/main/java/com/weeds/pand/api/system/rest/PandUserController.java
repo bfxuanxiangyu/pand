@@ -52,6 +52,8 @@ public class PandUserController {
 	
 	@Value("${sms.key}")
 	private String smsKey;
+	@Value("${sms.flag}")
+	private String smsFlag;
 	/**
 	 * 用户注册   
 	 * @param regType 1提供微信注册   2用户名密码注册    3手机绑定
@@ -107,7 +109,11 @@ public class PandUserController {
 				pandUser.setUserPhone(userPhone);
 				//并把手机号作为用户名保存,默认密码为123456
 				pandUser.setUserName(userName);
-				pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword("123456"));
+				if(PandStringUtils.isNotBlank(userPassword)){
+					pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+				}else{
+					pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword("123456"));
+				}
 			}
 			
 			PandUser user = pandUserService.getPandUserObj(parameters);
@@ -191,9 +197,12 @@ public class PandUserController {
 			smsSendService.saveSmsSend(obj);
 			
 			//短信发送
-			AliSmsSendUtil.sendSms(userPhone, "123", PandStringUtils.getJsonObj(parameters));
-
-			return PandResponseUtil.printJson("验证码发送成功", null);//返回用户id
+			if(smsFlag.equals("true")){//发送短信
+				AliSmsSendUtil.sendSms(userPhone, "SMS_156465904","米米科技", PandStringUtils.getJsonObj(parameters));
+				return PandResponseUtil.printJson("验证码发送成功", null);//返回用户id
+			}else{
+				return PandResponseUtil.printJson("验证码发送成功", authCode);//返回用户id
+			}
 			
 		} catch (Exception e) {
 			logger.error("验证码发送异常"+e.getMessage(),e);

@@ -98,6 +98,8 @@ public class PandUserWorkController {
 			}
 			
 			user.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+			
+			pandUserService.savePandUser(user);
 
 			return PandResponseUtil.printJson("密码设置成功", null);//返回用户id
 			

@@ -65,7 +65,7 @@ public class SmsSendServiceImpl implements SmsSendService{
 			logger.info("验证码不匹配");
 			return false;
 		}
-		if((new Date().getTime() - obj.getCreateTime().getTime())>120000){
+		if((new Date().getTime() - obj.getCreateTime().getTime())>300000){
 			logger.info("验证码已过期");
 			return false;
 		}
