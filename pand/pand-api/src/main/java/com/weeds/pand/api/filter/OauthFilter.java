@@ -54,11 +54,12 @@ public class OauthFilter implements Filter {
 		String token = hsRequest.getParameter("token");
 		String devicetype = hsRequest.getParameter("devicetype");//androd、ios.pad
 		String version = hsRequest.getParameter("version");
+		String platForm = hsRequest.getParameter("plat_source");
 		device.setDevicetype(devicetype);
 		device.setVersion(version);
 		DeviceFactoryUtil.setDevice(device);
 //		chain.doFilter(request, response);
-		logger.info("pand url :"+uri+",token="+token);
+		logger.info("pand url :"+uri+",token="+token+",plat_source="+platForm);
 		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/") || uri.contains("/api/pandwork/pand_service_list")
 				|| uri.contains("/api/pandwork/shop_detail") || uri.contains("/api/pandwork/service_detail") 
 				|| uri.contains("/api/pandwork/home_map_list")) {

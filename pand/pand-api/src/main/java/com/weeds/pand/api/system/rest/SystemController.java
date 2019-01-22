@@ -126,6 +126,11 @@ public class SystemController {
 		
 		return PandResponseUtil.printJson("版本号获取成功", systemVersionInfo);
 	}
+	/**
+	 * 根据经纬度获取地址
+	 * @param location
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/getLocation")
 	public String getLocation(String location) {
@@ -134,6 +139,23 @@ public class SystemController {
 		}
 		Map<String, Object> address = TencentMapUtils.getAddress(location,key);
 		return PandResponseUtil.printJson("地址获取成功", address);
+	}
+	/**
+	 * 根据经纬度获取附近地址列表
+	 * @param location
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/getLocation_pois")
+	public String getLocationPOIS(String location) {
+		if(PandStringUtils.isBlank(location)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+		}
+		String pois = TencentMapUtils.getAddressPOI(location,key);
+		if(PandStringUtils.isBlank(pois)){
+			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"地址解析失败", null);
+		}
+		return pois;
 	}
 	
 	@ResponseBody
