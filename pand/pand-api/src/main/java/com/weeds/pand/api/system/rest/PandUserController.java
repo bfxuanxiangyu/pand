@@ -27,6 +27,7 @@ import com.weeds.pand.service.system.service.SmsSendService;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.PandValidationUtils;
+import com.weeds.pand.utils.ali.AliSmsSendUtil;
 
 @Controller
 @RequestMapping("/api/freeuser")
@@ -100,7 +101,7 @@ public class PandUserController {
 					return PandResponseUtil.printFailJson(PandResponseUtil.validateError,"验证码不匹配", null);
 				}
 				if(!smsSendService.verifySms(authCode, smsObj)){
-					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码已过期", null);
+					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码无效", null);
 				}
 				
 				pandUser.setUserPhone(userPhone);
@@ -188,6 +189,9 @@ public class PandUserController {
 			obj.setPhone(userPhone);
 			obj.setType(1);
 			smsSendService.saveSmsSend(obj);
+			
+			//短信发送
+			AliSmsSendUtil.sendSms(userPhone, "123", PandStringUtils.getJsonObj(parameters));
 
 			return PandResponseUtil.printJson("验证码发送成功", null);//返回用户id
 			
@@ -228,6 +232,13 @@ public class PandUserController {
 				}
 				parameters.put("userPhone", userPhone);
 				//验证码校验   暂留
+				SmsSend smsObj = smsSendService.getSmsSendByPhone(userPhone);
+				if(smsObj==null){
+					return PandResponseUtil.printFailJson(PandResponseUtil.validateError,"验证码不匹配", null);
+				}
+				if(!smsSendService.verifySms(authCode, smsObj)){
+					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码无效", null);
+				}
 				
 			} 
 			PandUser user = pandUserService.getPandUserObj(parameters);

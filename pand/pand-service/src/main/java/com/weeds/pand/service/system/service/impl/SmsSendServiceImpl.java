@@ -61,7 +61,7 @@ public class SmsSendServiceImpl implements SmsSendService{
 
 	@Override
 	public boolean verifySms(String authCode,SmsSend obj) {
-		if(!authCode.equals(obj.getPhone())){
+		if(!authCode.equals(obj.getContent())){
 			logger.info("验证码不匹配");
 			return false;
 		}
@@ -69,8 +69,7 @@ public class SmsSendServiceImpl implements SmsSendService{
 			logger.info("验证码已过期");
 			return false;
 		}
-		obj.getPhone();
-		return false;
+		return true;
 	}
 
 

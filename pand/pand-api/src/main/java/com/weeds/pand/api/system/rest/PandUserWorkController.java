@@ -150,7 +150,7 @@ public class PandUserWorkController {
 					return PandResponseUtil.printFailJson(PandResponseUtil.validateError,"验证码不匹配", null);
 				}
 				if(!smsSendService.verifySms(authCode, smsObj)){
-					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码已过期", null);
+					return PandResponseUtil.printFailJson(PandResponseUtil.auth_code_already,"验证码失效", null);
 				}
 				
 				//单独查询手机是否是独立用户
