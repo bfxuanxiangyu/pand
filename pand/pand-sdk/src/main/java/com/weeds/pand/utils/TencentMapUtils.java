@@ -28,8 +28,7 @@ public class TencentMapUtils {
 		try {
 			String httpUrl = url+key+"&location="+location;
 			String resultStr = HttpUtils.doGet(httpUrl);
-			System.out.println("腾讯地图返回结果集:"+resultStr);
-			logger.info("腾讯地图返回结果集:"+resultStr);
+//			logger.info("腾讯地图返回结果集:"+resultStr);
 			if(PandStringUtils.isNotBlank(resultStr)){
 				// 转JSON格式
 				JSONObject jsonObject = JSONObject.parseObject(resultStr).getJSONObject("result");
