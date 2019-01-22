@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.shiro.authc.credential.PasswordMatcher;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +37,6 @@ public class PandUserController {
 	
 	@Resource
 	private PandUserService pandUserService;
-	@Resource
-	private PasswordMatcher passwordMatcher;
 	@Resource
 	private AccessTokenService accessTokenService;
 	@Resource
@@ -88,7 +86,7 @@ public class PandUserController {
 				}
 				parameters.put("userName", userName);
 				pandUser.setUserName(userName);
-				pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+				pandUser.setUserPassword(DigestUtils.md5Hex(userPassword));
 			}else if(regType.equals("3")){
 				if(PandStringUtils.isBlank(userPhone)){//手机验证码注册
 					return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
@@ -107,12 +105,13 @@ public class PandUserController {
 				}
 				
 				pandUser.setUserPhone(userPhone);
+				
 				//并把手机号作为用户名保存,默认密码为123456
-				pandUser.setUserName(userName);
+				pandUser.setUserName(userPhone);
 				if(PandStringUtils.isNotBlank(userPassword)){
-					pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+					pandUser.setUserPassword(DigestUtils.md5Hex(userPassword));
 				}else{
-					pandUser.setUserPassword(passwordMatcher.getPasswordService().encryptPassword("123456"));
+					pandUser.setUserPassword(DigestUtils.md5Hex("123456"));
 				}
 			}
 			
@@ -160,7 +159,7 @@ public class PandUserController {
 			if(user.getUserStatus()==4){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"已永久封号", null);
 			}
-			user.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+			user.setUserPassword(DigestUtils.md5Hex(userPassword));
 			
 			return PandResponseUtil.printJson("密码修改成功", null);//返回用户id
 			
@@ -265,7 +264,7 @@ public class PandUserController {
 //				return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
 			}
 			if(PandStringUtils.isNotBlank(userName)){//对比密码
-				String enStr = passwordMatcher.getPasswordService().encryptPassword(userPassword);
+				String enStr = DigestUtils.md5Hex(userPassword);
 				if(!enStr.equals(user.getUserPassword())){
 					return PandResponseUtil.printFailJson(PandResponseUtil.passwd_match_fail,"密码不匹配", "no matching");
 				}

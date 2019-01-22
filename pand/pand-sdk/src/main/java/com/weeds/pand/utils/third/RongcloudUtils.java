@@ -1,15 +1,9 @@
 package com.weeds.pand.utils.third;
 
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-
-import com.google.common.collect.Maps;
-import com.weeds.pand.utils.HttpUtils;
 
 import io.rong.RongCloud;
 import io.rong.methods.user.User;
-import io.rong.models.Result;
 import io.rong.models.response.TokenResult;
 import io.rong.models.user.UserModel;
 
@@ -22,7 +16,7 @@ public class RongcloudUtils {
 //	private static final String rongcloudUrl = "http://api-cn.ronghub.com/user/getToken";
 	
 	public static void main(String[] args) {
-		getRongcloudToken("ff8080816782751f016786b928f10007", "野草", "http://xxyweeds.top:8181/pand/img/user/20190107/d3d07fd5d92345c8bf9c873230e8fac5.png");
+//		getRongcloudToken("ff8080816782751f016786b928f10007", "野草", "http://xxyweeds.top:8181/pand/img/user/20190107/d3d07fd5d92345c8bf9c873230e8fac5.png");
 	}
 	
 	

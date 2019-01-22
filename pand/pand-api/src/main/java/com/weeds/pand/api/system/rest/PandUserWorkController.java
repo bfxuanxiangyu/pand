@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.shiro.authc.credential.PasswordMatcher;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,8 +67,6 @@ public class PandUserWorkController {
 	@Resource
 	private PandServiceService pandServiceService;
 	@Resource
-	private PasswordMatcher passwordMatcher;
-	@Resource
 	private SmsSendService smsSendService;
 	
 	/**
@@ -97,7 +95,7 @@ public class PandUserWorkController {
 				return PandResponseUtil.printFailJson(PandResponseUtil.phone_nobind,"手机未绑定", null);
 			}
 			
-			user.setUserPassword(passwordMatcher.getPasswordService().encryptPassword(userPassword));
+			user.setUserPassword(DigestUtils.md5Hex(userPassword));
 			
 			pandUserService.savePandUser(user);
 
@@ -174,7 +172,11 @@ public class PandUserWorkController {
 					oldObjById.setUserName(pandUser.getUserPhone());
 				}else{
 					oldObjById.setUserName(pandUser.getUserPhone());
-					oldObjById.setUserPassword(passwordMatcher.getPasswordService().encryptPassword("123456"));
+					if(PandStringUtils.isNotBlank(pandUser.getUserPassword())){
+						oldObjById.setUserPassword(DigestUtils.md5Hex(pandUser.getUserPassword()));
+					}else{
+						oldObjById.setUserPassword(DigestUtils.md5Hex("123456"));
+					}
 				}
 				
 			}
