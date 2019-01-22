@@ -190,6 +190,14 @@
 		    <artifactId>aliyun-java-sdk-cms</artifactId>
 		    <version>5.0.1</version>
 		</dependency>
+		<!-- 融云api -->
+		<dependency>
+	        <groupId>cn.rongcloud.im</groupId>
+	        <artifactId>server-sdk-java</artifactId>
+	        <version>3.0.1</version>
+	    </dependency>
+		
+		
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

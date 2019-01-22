@@ -20,19 +20,24 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.weeds.pand.auth.user.domain.Area;
 import com.weeds.pand.auth.user.service.AreaService;
+import com.weeds.pand.service.mechanic.domain.PandUser;
+import com.weeds.pand.service.mechanic.service.PandUserService;
 import com.weeds.pand.service.pandcore.domain.PandService;
 import com.weeds.pand.service.pandcore.service.PandServiceService;
 import com.weeds.pand.service.system.domain.Banner;
+import com.weeds.pand.service.system.domain.RongcloudToken;
 import com.weeds.pand.service.system.domain.Skills;
 import com.weeds.pand.service.system.domain.SystemVersionInfo;
 import com.weeds.pand.service.system.mapper.BannerMapper;
 import com.weeds.pand.service.system.mapper.SkillsMapper;
+import com.weeds.pand.service.system.service.RongcloudTokenService;
 import com.weeds.pand.service.system.service.SystemVersionInfoService;
 import com.weeds.pand.utils.HttpUtils;
 import com.weeds.pand.utils.PandDateUtils;
 import com.weeds.pand.utils.PandResponseUtil;
 import com.weeds.pand.utils.PandStringUtils;
 import com.weeds.pand.utils.TencentMapUtils;
+import com.weeds.pand.utils.third.RongcloudUtils;
 import com.weeds.pand.utils.weixin.GetWeixinInfoUtils;
 
 @Controller
@@ -53,6 +58,10 @@ public class SystemController {
 	private AreaService areaService;
 	@Resource
 	private PandServiceService pandServiceService;
+	@Resource
+	private PandUserService pandUserService;
+	@Resource
+	private RongcloudTokenService rongcloudTokenService;
 	
 	@Value("${tecent.key}")
 	private String key;
@@ -216,50 +225,112 @@ public class SystemController {
     @RequestMapping("/share_service_qr")
     public String shareService(String serviceId){
     	logger.info("获取分析二维码serviceId="+serviceId);
-        try {
-        	if(PandStringUtils.isBlank(serviceId)){
+    	try {
+    		if(PandStringUtils.isBlank(serviceId)){
     			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
     		}
-        	PandService obj = pandServiceService.getPandServiceById(serviceId);
-        	if(obj==null){
-        		return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"服务不存在", null);
+    		PandService obj = pandServiceService.getPandServiceById(serviceId);
+    		if(obj==null){
+    			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"服务不存在", null);
+    		}
+    		if(PandStringUtils.isNotBlank(obj.getQrUrl())){
+    			return PandResponseUtil.printJson("获取分析二维码成功", obj.getQrUrl());
+    		}
+    		
+    		String accessToken = GetWeixinInfoUtils.isVailToken(appId, secret);
+    		logger.info("---获取微信token="+accessToken);
+    		if(PandStringUtils.isBlank(accessToken)){
+    			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号不匹配", null);
+    		}
+    		String porder = "qrcode/";
+    		String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
+    		File imgFile = new File(savePath+porderPath);
+    		if(!imgFile.exists()){
+    			imgFile.mkdirs();
+    		}
+    		String path = "pages/service/servicedetails/servicedetails?id="+serviceId;
+    		
+    		String fileName = PandStringUtils.getUUID()+".png";
+    		boolean qrCodeUrl = GetWeixinInfoUtils.getQrCodeUrl(accessToken, path, 430, savePath+porderPath, fileName);
+    		if(!qrCodeUrl){
+    			//token失效，更换token再取一次
+    			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号异常", null);
+    		}
+    		String qrUrl = imgUrl+porderPath+fileName;
+    		obj.setQrUrl(qrUrl);
+    		try {
+    			pandServiceService.savePandService(obj);
+    		} catch (Exception e) {
+    			logger.error("二维码路径持久化异常"+e.getMessage(),e);
+    		}
+    		logger.info("二维码路径="+qrUrl);
+    		return PandResponseUtil.printJson("获取分析二维码成功", qrUrl);
+    	} catch (Exception e) {
+    		logger.error("分析二维码获取异常"+e.getMessage(),e);
+    		return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
+    	}
+    }
+    
+    
+    /**
+     * 根据userId获取融云token
+     * @param userId
+     * @param platForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/get_rongcloud_token")
+    public String getRongcloudToken(String userId){
+    	logger.info("获取融云token参数 userId="+userId);
+        try {
+        	if(PandStringUtils.isBlank(userId)){
+    			return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);
+    		}
+        	PandUser user = pandUserService.getPandUserObjById(userId);
+        	if(user == null){
+        		return PandResponseUtil.printFailJson(PandResponseUtil.PHONENO,"用户不存在", null);
+			}
+        	if(user.getUserStatus()==4){
+        		return PandResponseUtil.printFailJson(PandResponseUtil.PHONEALEDY,"用户已永久封号", null);
         	}
-        	if(PandStringUtils.isNotBlank(obj.getQrUrl())){
-        		return PandResponseUtil.printJson("获取分析二维码成功", obj.getQrUrl());
+        	String portraitUri = user.getUserHeadpng();//头像
+        	String name = user.getUserNickname();//昵称
+        	
+        	//根据UserId查询token   如果token不存在  去融云获取
+        	Map<String, Object> parameters = Maps.newHashMap();
+        	parameters.put("userId", userId);
+        	RongcloudToken rongcloud = rongcloudTokenService.getRongcloudTokenByOrder(parameters);
+        	String rongcloudToken = null;
+        	if(rongcloud==null || PandStringUtils.isBlank(rongcloud.getToken())){
+        		//请求融云服务器
+        		rongcloudToken = RongcloudUtils.getRongcloudToken(userId, name, portraitUri);
+        		if(PandStringUtils.isBlank(rongcloudToken)){
+        			return PandResponseUtil.printFailJson(PandResponseUtil.rongcloud_null,"聊天异常", null);
+        		}
+        		//入库
+        		rongcloud = new RongcloudToken();
+        		rongcloud.setCreateTime(new Date());
+        		rongcloud.setHeadImg(portraitUri);
+        		rongcloud.setNickName(name);
+        		rongcloud.setToken(rongcloudToken);
+        		rongcloud.setUserId(userId);
+        		rongcloudTokenService.saveRongcloudToken(rongcloud);
         	}
         	
-        	String accessToken = GetWeixinInfoUtils.isVailToken(appId, secret);
-        	logger.info("---获取微信token="+accessToken);
-        	if(PandStringUtils.isBlank(accessToken)){
-        		return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号不匹配", null);
-        	}
-        	String porder = "qrcode/";
-        	String porderPath = porder+PandDateUtils.dateToStr(new Date(), "yyyyMMdd")+"/";
-        	File imgFile = new File(savePath+porderPath);
-			if(!imgFile.exists()){
-				imgFile.mkdirs();
-			}
-			String path = "pages/service/servicedetails/servicedetails?id="+serviceId;
-			
-        	String fileName = PandStringUtils.getUUID()+".png";
-            boolean qrCodeUrl = GetWeixinInfoUtils.getQrCodeUrl(accessToken, path, 430, savePath+porderPath, fileName);
-            if(!qrCodeUrl){
-            	//token失效，更换token再取一次
-            	return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"微信账号异常", null);
-            }
-            String qrUrl = imgUrl+porderPath+fileName;
-            obj.setQrUrl(qrUrl);
-            try {
-				pandServiceService.savePandService(obj);
-			} catch (Exception e) {
-				logger.error("二维码路径持久化异常"+e.getMessage(),e);
-			}
-            logger.info("二维码路径="+qrUrl);
-            return PandResponseUtil.printJson("获取分析二维码成功", qrUrl);
+        	rongcloudToken = rongcloud.getToken();
+        	
+        	Map<String, Object> returnMap = Maps.newConcurrentMap();
+        	returnMap.put("token", rongcloudToken);
+        	returnMap.put("headImg", portraitUri);
+        	returnMap.put("name", name);
+        	returnMap.put("userId", userId);
+            return PandResponseUtil.printJson("融云token获取成功", returnMap);
         } catch (Exception e) {
-        	logger.error("分析二维码获取异常"+e.getMessage(),e);
+        	logger.error("融云token获取异常"+e.getMessage(),e);
         	return PandResponseUtil.printFailJson(PandResponseUtil.SERVERUPLOAD,"服务器升级", null);
         }
     }
+    
+    
     
 }
