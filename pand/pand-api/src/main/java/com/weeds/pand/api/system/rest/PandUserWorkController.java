@@ -78,7 +78,7 @@ public class PandUserWorkController {
 	 */
 	@ResponseBody
 	@RequestMapping("/panduser_setpasswd")
-	public String forgetpasswd(String userPassword,String userId,String token) {
+	public String forgetpasswd(String userPassword,String userId) {
 		try {
 			if(PandStringUtils.isBlank(userId) || PandStringUtils.isBlank(userPassword)){
 				return PandResponseUtil.printFailJson(PandResponseUtil.PARAMETERS,"缺少参数", null);

@@ -62,7 +62,7 @@ public class OauthFilter implements Filter {
 		logger.info("pand url :"+uri+",token="+token+",plat_source="+platForm);
 		if (uri.contains("/api/system/") || uri.contains("/api/freeuser/") || uri.contains("/api/pandwork/pand_service_list")
 				|| uri.contains("/api/pandwork/shop_detail") || uri.contains("/api/pandwork/service_detail") 
-				|| uri.contains("/api/pandwork/home_map_list")) {
+				|| uri.contains("/api/pandwork/home_map_list")|| uri.contains("/api/panduser/panduser_setpasswd")) {
 			chain.doFilter(request, response);
 			return;
 		}

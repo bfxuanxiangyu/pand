@@ -106,8 +106,12 @@ public class PandUserController {
 				
 				pandUser.setUserPhone(userPhone);
 				
-				//并把手机号作为用户名保存,默认密码为123456
-				pandUser.setUserName(userPhone);
+				//并把手机号作为用户名保存,默认密码为123456    支持手机号与用户名同时注册
+				if(PandStringUtils.isNotBlank(userName)){
+					pandUser.setUserName(userName);
+				}else{
+					pandUser.setUserName(userPhone);
+				}
 				if(PandStringUtils.isNotBlank(userPassword)){
 					pandUser.setUserPassword(DigestUtils.md5Hex(userPassword));
 				}else{
